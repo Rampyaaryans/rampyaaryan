@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.0 (2026-03-08)
+- 🎨 **4 Indian Color Themes**: Jai Shri Ram, Tiranga, Diwali Night, Ram Mandir
+- 🐱 **Neko Cat Cursor Follower**: Cute cat with moods (idle/moving/typing/sleeping/happy)
+- 📊 **Hindi Devanagari Status Bar**: Line/column in Hindi numerals (पंक्ति · स्तंभ)
+- 📿 **Mantra Mode**: Cycling Sanskrit mantras in status bar
+- 🏹 **Ram Quotes**: Rotating Sri Ram wisdom in status bar
+- 🔤 **Hindi Font Setup**: One-click Devanagari font configuration
+- 🪔 **Diwali Mode**: Festive celebration command
+- 🙏 **Namaste Greeting**: Welcome message on startup
+- 8 new commands, 4 configurable settings
+
 ## 1.0.0 (2026-03-08)
 - Initial release
 - Syntax highlighting for all Rampyaaryan keywords and 215+ built-in functions

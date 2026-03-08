@@ -1,0 +1,109 @@
+{
+  "name": "Ram Mandir 🛕",
+  "type": "light",
+  "colors": {
+    "editor.background": "#FFF8F0",
+    "editor.foreground": "#3C2415",
+    "editorCursor.foreground": "#CC4400",
+    "editor.lineHighlightBackground": "#FF993310",
+    "editor.selectionBackground": "#FF993330",
+    "editor.wordHighlightBackground": "#FF993320",
+    "editorLineNumber.foreground": "#C0A880",
+    "editorLineNumber.activeForeground": "#CC4400",
+    "editorBracketMatch.background": "#FF993325",
+    "editorBracketMatch.border": "#FF993380",
+
+    "activityBar.background": "#FF9933",
+    "activityBar.foreground": "#FFFFFF",
+    "activityBar.activeBorder": "#FFFFFF",
+    "activityBarBadge.background": "#CC3300",
+    "activityBarBadge.foreground": "#FFFFFF",
+
+    "sideBar.background": "#FFF5EB",
+    "sideBar.foreground": "#5A4030",
+    "sideBarTitle.foreground": "#CC4400",
+    "sideBarSectionHeader.background": "#FF993315",
+    "sideBarSectionHeader.foreground": "#8B4513",
+
+    "titleBar.activeBackground": "#FF993380",
+    "titleBar.activeForeground": "#3C2415",
+    "titleBar.inactiveBackground": "#FFE0C060",
+
+    "statusBar.background": "#CC7A29",
+    "statusBar.foreground": "#FFFFFF",
+    "statusBar.debuggingBackground": "#CC3300",
+    "statusBar.noFolderBackground": "#8B7355",
+    "statusBarItem.hoverBackground": "#FF993380",
+
+    "tab.activeBackground": "#FFF8F0",
+    "tab.activeForeground": "#3C2415",
+    "tab.inactiveBackground": "#FFF0E0",
+    "tab.inactiveForeground": "#8B7B65",
+    "tab.activeBorderTop": "#FF9933",
+    "editorGroupHeader.tabsBackground": "#FFF0E0",
+
+    "input.background": "#FFFFFF",
+    "input.foreground": "#3C2415",
+    "input.border": "#FF993350",
+    "focusBorder": "#FF9933",
+
+    "button.background": "#FF9933",
+    "button.foreground": "#FFFFFF",
+    "button.hoverBackground": "#FFB347",
+
+    "dropdown.background": "#FFFFFF",
+    "dropdown.border": "#FF993340",
+
+    "list.activeSelectionBackground": "#FF993325",
+    "list.activeSelectionForeground": "#3C2415",
+    "list.hoverBackground": "#FF993310",
+    "list.focusBackground": "#FF993320",
+
+    "terminal.background": "#FFF8F0",
+    "terminal.foreground": "#3C2415",
+    "terminal.ansiYellow": "#B8860B",
+    "terminal.ansiRed": "#CC3300",
+    "terminal.ansiGreen": "#006400",
+    "terminal.ansiBlue": "#8B4513",
+    "terminal.ansiCyan": "#996633",
+
+    "panel.background": "#FFF5EB",
+    "panel.border": "#FF993330",
+    "panelTitle.activeForeground": "#CC4400",
+    "panelTitle.activeBorder": "#FF9933",
+
+    "badge.background": "#CC4400",
+    "badge.foreground": "#FFFFFF",
+    "scrollbarSlider.background": "#FF993325",
+    "scrollbarSlider.hoverBackground": "#FF993340",
+
+    "editorWidget.background": "#FFF8F0",
+    "editorWidget.border": "#FF993340",
+
+    "minimap.selectionHighlight": "#FF993350"
+  },
+  "tokenColors": [
+    { "scope": "comment", "settings": { "foreground": "#A0927B", "fontStyle": "italic" } },
+    { "scope": ["string", "string.quoted"], "settings": { "foreground": "#006400" } },
+    { "scope": "string.regexp", "settings": { "foreground": "#2E7D32" } },
+    { "scope": "constant.numeric", "settings": { "foreground": "#CC4400" } },
+    { "scope": "constant.language", "settings": { "foreground": "#FF6600", "fontStyle": "italic" } },
+    { "scope": "constant.character.escape", "settings": { "foreground": "#996633" } },
+    { "scope": ["keyword", "keyword.control"], "settings": { "foreground": "#CC3300", "fontStyle": "bold" } },
+    { "scope": "keyword.operator", "settings": { "foreground": "#993300" } },
+    { "scope": ["storage.type", "storage.modifier"], "settings": { "foreground": "#CC4400", "fontStyle": "italic" } },
+    { "scope": ["entity.name.function", "support.function"], "settings": { "foreground": "#8B4513" } },
+    { "scope": "entity.name.class", "settings": { "foreground": "#B8860B", "fontStyle": "bold" } },
+    { "scope": "entity.name.type", "settings": { "foreground": "#996633" } },
+    { "scope": "variable", "settings": { "foreground": "#3C2415" } },
+    { "scope": "variable.parameter", "settings": { "foreground": "#5A4030", "fontStyle": "italic" } },
+    { "scope": "variable.other.property", "settings": { "foreground": "#6B5B45" } },
+    { "scope": "punctuation", "settings": { "foreground": "#8B7B65" } },
+    { "scope": "meta.function-call", "settings": { "foreground": "#8B4513" } },
+    { "scope": "support.class", "settings": { "foreground": "#B8860B" } },
+    { "scope": "markup.heading", "settings": { "foreground": "#CC3300", "fontStyle": "bold" } },
+    { "scope": "markup.bold", "settings": { "fontStyle": "bold" } },
+    { "scope": "markup.italic", "settings": { "fontStyle": "italic" } },
+    { "scope": "markup.inline.raw", "settings": { "foreground": "#006400" } }
+  ]
+}
