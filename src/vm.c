@@ -597,6 +597,16 @@ static InterpretResult run(VM* vm) {
             case OP_LIST_GET: {
                 Value indexVal = pop(vm);
                 Value listVal = pop(vm);
+                if (IS_MAP(listVal)) {
+                    ObjMap* map = AS_MAP(listVal);
+                    Value result;
+                    if (!mapGet(map, indexVal, &result)) {
+                        runtimeError(vm, "Ye key map mein nahi mili.");
+                        return INTERPRET_RUNTIME_ERROR;
+                    }
+                    push(vm, result);
+                    break;
+                }
                 if (!IS_LIST(listVal)) {
                     if (IS_STRING(listVal)) {
                         /* String indexing */
@@ -636,8 +646,14 @@ static InterpretResult run(VM* vm) {
                 Value value = pop(vm);
                 Value indexVal = pop(vm);
                 Value listVal = pop(vm);
+                if (IS_MAP(listVal)) {
+                    ObjMap* map = AS_MAP(listVal);
+                    mapSet(vm, map, indexVal, value);
+                    push(vm, value);
+                    break;
+                }
                 if (!IS_LIST(listVal)) {
-                    runtimeError(vm, "Sirf list mein index se value set kar sakte ho.");
+                    runtimeError(vm, "Sirf list ya map mein index se value set kar sakte ho.");
                     return INTERPRET_RUNTIME_ERROR;
                 }
                 if (!IS_NUMBER(indexVal)) {
@@ -677,6 +693,90 @@ static InterpretResult run(VM* vm) {
 
             case OP_HALT: {
                 return INTERPRET_OK;
+            }
+
+            /* ---- MAP OPERATIONS ---- */
+            case OP_MAP_NEW: {
+                uint8_t pairCount = READ_BYTE();
+                ObjMap* map = newMap(vm);
+                push(vm, OBJ_VAL(map)); /* protect from GC */
+                /* Key-value pairs are on stack: k1, v1, k2, v2, ... */
+                /* They are below the map on the stack */
+                for (int i = pairCount; i > 0; i--) {
+                    Value val = peek(vm, 2 * i - 1);
+                    Value key = peek(vm, 2 * i);
+                    mapSet(vm, map, key, val);
+                }
+                Value mapVal = pop(vm); /* the map */
+                for (int i = 0; i < pairCount * 2; i++) pop(vm);
+                push(vm, mapVal);
+                break;
+            }
+
+            /* ---- BITWISE OPERATIONS ---- */
+            case OP_BIT_AND: {
+                if (!IS_NUMBER(peek(vm, 0)) || !IS_NUMBER(peek(vm, 1))) {
+                    runtimeError(vm, "'&' sirf integers ke beech kaam karta hai.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                long long b = (long long)AS_NUMBER(pop(vm));
+                long long a = (long long)AS_NUMBER(pop(vm));
+                push(vm, NUMBER_VAL((double)(a & b)));
+                break;
+            }
+
+            case OP_BIT_OR: {
+                if (!IS_NUMBER(peek(vm, 0)) || !IS_NUMBER(peek(vm, 1))) {
+                    runtimeError(vm, "'|' sirf integers ke beech kaam karta hai.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                long long b = (long long)AS_NUMBER(pop(vm));
+                long long a = (long long)AS_NUMBER(pop(vm));
+                push(vm, NUMBER_VAL((double)(a | b)));
+                break;
+            }
+
+            case OP_BIT_XOR: {
+                if (!IS_NUMBER(peek(vm, 0)) || !IS_NUMBER(peek(vm, 1))) {
+                    runtimeError(vm, "'^' sirf integers ke beech kaam karta hai.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                long long b = (long long)AS_NUMBER(pop(vm));
+                long long a = (long long)AS_NUMBER(pop(vm));
+                push(vm, NUMBER_VAL((double)(a ^ b)));
+                break;
+            }
+
+            case OP_BIT_NOT: {
+                if (!IS_NUMBER(peek(vm, 0))) {
+                    runtimeError(vm, "'~' sirf integers ke saath kaam karta hai.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                long long a = (long long)AS_NUMBER(pop(vm));
+                push(vm, NUMBER_VAL((double)(~a)));
+                break;
+            }
+
+            case OP_SHIFT_LEFT: {
+                if (!IS_NUMBER(peek(vm, 0)) || !IS_NUMBER(peek(vm, 1))) {
+                    runtimeError(vm, "'<<' sirf integers ke beech kaam karta hai.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                long long b = (long long)AS_NUMBER(pop(vm));
+                long long a = (long long)AS_NUMBER(pop(vm));
+                push(vm, NUMBER_VAL((double)(a << b)));
+                break;
+            }
+
+            case OP_SHIFT_RIGHT: {
+                if (!IS_NUMBER(peek(vm, 0)) || !IS_NUMBER(peek(vm, 1))) {
+                    runtimeError(vm, "'>>' sirf integers ke beech kaam karta hai.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                long long b = (long long)AS_NUMBER(pop(vm));
+                long long a = (long long)AS_NUMBER(pop(vm));
+                push(vm, NUMBER_VAL((double)(a >> b)));
+                break;
             }
 
             default:

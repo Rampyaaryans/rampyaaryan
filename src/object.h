@@ -25,6 +25,7 @@ typedef enum {
     OBJ_CLOSURE,
     OBJ_UPVALUE,
     OBJ_LIST,
+    OBJ_MAP,
 } ObjType;
 
 /* ============================================================================
@@ -45,6 +46,7 @@ struct Obj {
 #define IS_NATIVE(value)    isObjType(value, OBJ_NATIVE)
 #define IS_CLOSURE(value)   isObjType(value, OBJ_CLOSURE)
 #define IS_LIST(value)      isObjType(value, OBJ_LIST)
+#define IS_MAP(value)       isObjType(value, OBJ_MAP)
 
 static inline bool isObjType(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
@@ -140,6 +142,33 @@ ObjList* newList(VM* vm);
 void listAppend(VM* vm, ObjList* list, Value value);
 Value listGet(ObjList* list, int index);
 void listSet(ObjList* list, int index, Value value);
+
+/* ============================================================================
+ *  MAP/DICTIONARY OBJECT
+ * ============================================================================ */
+typedef struct {
+    Value key;
+    Value value;
+    bool isOccupied;
+    bool isTombstone;
+} MapEntry;
+
+struct ObjMap {
+    Obj obj;
+    int count;
+    int capacity;
+    MapEntry* entries;
+};
+
+#define AS_MAP(value)       ((ObjMap*)AS_OBJ(value))
+
+ObjMap* newMap(VM* vm);
+bool mapSet(VM* vm, ObjMap* map, Value key, Value value);
+bool mapGet(ObjMap* map, Value key, Value* result);
+bool mapDelete(ObjMap* map, Value key);
+bool mapHasKey(ObjMap* map, Value key);
+int mapLength(ObjMap* map);
+uint32_t hashValue(Value value);
 
 /* ============================================================================
  *  OBJECT UTILITIES

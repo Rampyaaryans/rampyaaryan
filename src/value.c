@@ -64,6 +64,9 @@ bool isTruthy(Value value) {
             if (IS_LIST(value)) {
                 return AS_LIST(value)->items.count > 0;
             }
+            if (IS_MAP(value)) {
+                return AS_MAP(value)->count > 0;
+            }
             return true;
         }
         default: return false;
@@ -179,6 +182,41 @@ char* valueToString(Value value) {
                     }
                 }
                 snprintf(buffer + pos, bufSize - pos, "]");
+            } else if (IS_MAP(value)) {
+                ObjMap* map = AS_MAP(value);
+                free(buffer);
+                size_t bufSize = 1024;
+                buffer = (char*)malloc(bufSize);
+                if (buffer == NULL) return NULL;
+                int pos = 0;
+                pos += snprintf(buffer + pos, bufSize - pos, "{");
+                bool first = true;
+                for (int i = 0; i < map->capacity; i++) {
+                    if (!map->entries[i].isOccupied) continue;
+                    if (!first) pos += snprintf(buffer + pos, bufSize - pos, ", ");
+                    first = false;
+                    char* ks = valueToString(map->entries[i].key);
+                    char* vs = valueToString(map->entries[i].value);
+                    if (ks && vs) {
+                        if (IS_STRING(map->entries[i].key))
+                            pos += snprintf(buffer + pos, bufSize - pos, "\"%s\"", ks);
+                        else
+                            pos += snprintf(buffer + pos, bufSize - pos, "%s", ks);
+                        pos += snprintf(buffer + pos, bufSize - pos, ": ");
+                        if (IS_STRING(map->entries[i].value))
+                            pos += snprintf(buffer + pos, bufSize - pos, "\"%s\"", vs);
+                        else
+                            pos += snprintf(buffer + pos, bufSize - pos, "%s", vs);
+                    }
+                    if (ks) free(ks);
+                    if (vs) free(vs);
+                    if ((size_t)pos >= bufSize - 128) {
+                        bufSize *= 2;
+                        buffer = (char*)realloc(buffer, bufSize);
+                        if (buffer == NULL) return NULL;
+                    }
+                }
+                snprintf(buffer + pos, bufSize - pos, "}");
             } else {
                 snprintf(buffer, 256, "<object>");
             }
@@ -206,6 +244,7 @@ const char* valueTypeName(Value value) {
                 case OBJ_NATIVE:   return "built-in kaam";
                 case OBJ_CLOSURE:  return "kaam";
                 case OBJ_LIST:     return "suchi";
+                case OBJ_MAP:      return "shabdkosh";
                 case OBJ_UPVALUE:  return "upvalue";
             }
         }

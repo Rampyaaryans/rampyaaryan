@@ -1,6 +1,6 @@
 # Rampyaaryan Language Specification
 
-**Version 1.0.0**
+**Version 2.0.0**
 
 ## 1. Lexical Structure
 
@@ -21,6 +21,7 @@ sach, jhooth, khali, aur, ya, nahi
 ```
 +  -  *  /  %  **                    (arithmetic)
 == != > < >= <=                      (comparison)
+&  |  ^  ~  <<  >>                   (bitwise)
 aur  ya  nahi                        (logical)
 =  +=  -=  *=  /=                    (assignment)
 ```
@@ -35,6 +36,7 @@ aur  ya  nahi                        (logical)
 | Null | khali | `khali` |
 | List | suchi | `[1, 2, 3]` |
 | Function | kaam | `kaam add(a, b) { ... }` |
+| Map/Dict | shabdkosh | `{"key": "value"}`, `shabdkosh()` |
 
 ## 3. Statements
 
@@ -94,13 +96,17 @@ agla      # skip to next iteration
 ### Precedence (low to high)
 1. `ya` (or)
 2. `aur` (and)
-3. `== !=` (equality)
-4. `> < >= <=` (comparison)
-5. `+ -` (addition)
-6. `* / %` (multiplication)
-7. `**` (power)
-8. `nahi -` (unary)
-9. `() [] .` (call, index)
+3. `|` (bitwise OR)
+4. `^` (bitwise XOR)
+5. `&` (bitwise AND)
+6. `== !=` (equality)
+7. `> < >= <=` (comparison)
+8. `<< >>` (bit shifts)
+9. `+ -` (addition)
+10. `* / %` (multiplication)
+11. `**` (power)
+12. `~ nahi -` (unary: bitwise NOT, logical NOT, negate)
+13. `() [] .` (call, index)
 
 ### Function Calls
 ```
@@ -147,7 +153,31 @@ kaam counter() {
 - Indexing: `"hello"[0]` → `"h"`
 - Length: `lambai("hello")` → `5`
 
-## 8. Runtime Architecture
+## 8. Map Literals
+
+Maps can be created with literal syntax:
+```
+maano m = {"key1": value1, "key2": value2}
+```
+Keys must be strings. Values can be any type. Access and assignment use bracket notation:
+```
+m["key"]              # read
+m["new_key"] = value  # write
+```
+
+## 9. Bitwise Operations
+
+Bitwise operators work on integer values:
+```
+a & b       # AND
+a | b       # OR
+a ^ b       # XOR
+~a          # NOT (complement)
+a << n      # Left shift
+a >> n      # Right shift
+```
+
+## 10. Runtime Architecture
 
 - **Compilation**: Single-pass Pratt parser → bytecode
 - **Execution**: Stack-based virtual machine

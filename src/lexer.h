@@ -30,6 +30,12 @@ typedef enum {
     TOKEN_PLUS_EQUAL, TOKEN_MINUS_EQUAL,
     TOKEN_STAR_EQUAL, TOKEN_SLASH_EQUAL,
     TOKEN_STAR_STAR,  /* ** power */
+    TOKEN_AMPERSAND,         /* & bitwise AND */
+    TOKEN_PIPE,              /* | bitwise OR */
+    TOKEN_CARET,             /* ^ bitwise XOR */
+    TOKEN_TILDE,             /* ~ bitwise NOT */
+    TOKEN_LESS_LESS,         /* << left shift */
+    TOKEN_GREATER_GREATER,   /* >> right shift */
 
     /* Literals */
     TOKEN_IDENTIFIER, TOKEN_STRING, TOKEN_NUMBER,

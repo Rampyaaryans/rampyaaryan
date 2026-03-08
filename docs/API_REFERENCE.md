@@ -1,4 +1,4 @@
-# 📚 Rampyaaryan API Reference — All 65+ Built-in Functions
+# 📚 Rampyaaryan API Reference — All 145 Built-in Functions
 
 > Complete reference for every built-in function in the Rampyaaryan language.
 
@@ -6,13 +6,17 @@
 
 ## Table of Contents
 
-1. [Type Conversion (5)](#-type-conversion)
-2. [Type Checking (7)](#-type-checking)
-3. [String Operations (14)](#-string-operations)
-4. [List Operations (15)](#-list-operations)
-5. [Math Functions (20)](#-math-functions)
-6. [File I/O (4)](#-file-io)
-7. [System & Utility (11)](#-system--utility)
+1. [Type Conversion (6)](#-type-conversion)
+2. [Type Checking (10)](#-type-checking)
+3. [String Operations (27)](#-string-operations)
+4. [List Operations (23)](#-list-operations)
+5. [Higher-Order Functions (7)](#-higher-order-functions)
+6. [Map/Dictionary Functions (9)](#-mapdictionary-functions)
+7. [Math Functions (37)](#-math-functions)
+8. [Base Conversion (3)](#-base-conversion)
+9. [File I/O (4)](#-file-io)
+10. [System & Utility (11)](#-system--utility)
+11. [Date & Time (7)](#-date--time)
 
 ---
 
@@ -59,6 +63,16 @@ Converts to an integer (truncates decimals).
 purn(3.99)        # → 3
 purn("42")        # → 42
 purn(-3.7)        # → -3
+```
+
+
+### `bool_val(value)` → boolean
+Converts any value to a boolean.
+```
+bool_val(0)           # → jhooth
+bool_val(1)           # → sach
+bool_val("")          # → jhooth
+bool_val("hello")     # → sach
 ```
 
 ---
@@ -114,6 +128,27 @@ Returns `sach` if the value is an integer (whole number).
 kya_purn(42)         # → sach
 kya_purn(3.14)       # → jhooth
 kya_purn(5.0)        # → sach
+```
+
+
+### `kya_map(value)` → boolean
+Returns `sach` if the value is a map/dictionary.
+```
+kya_map({"a": 1})    # → sach
+kya_map([1,2])       # → jhooth
+```
+
+### `typeof_val(value)` → string
+Returns the type name (alias for `prakar`).
+```
+typeof_val(42)       # → "sankhya"
+typeof_val({"a":1})  # → "map"
+```
+
+### `print_type(value)` → null
+Prints the type of a value to console.
+```
+print_type(42)       # prints: sankhya
 ```
 
 ---
@@ -239,6 +274,77 @@ gino("banana", "a")     # → 3
 gino("hello", "ll")     # → 1
 ```
 
+
+### `title_case(str)` → string
+Converts string to Title Case (first letter of each word capitalized).
+```
+title_case("hello world")   # → "Hello World"
+title_case("namaste duniya") # → "Namaste Duniya"
+```
+
+### `capitalize(str)` → string
+Capitalizes the first character of the string.
+```
+capitalize("hello")          # → "Hello"
+capitalize("namaste")        # → "Namaste"
+```
+
+### `swapcase(str)` → string
+Swaps the case of each character.
+```
+swapcase("Hello World")     # → "hELLO wORLD"
+swapcase("aBcD")            # → "AbCd"
+```
+
+### `center(str, width, [fillchar])` → string
+Centers a string in a field of given width with optional fill character.
+```
+center("hi", 10)            # → "    hi    "
+center("hi", 10, "*")       # → "****hi****"
+```
+
+### `pad_left(str, width, [fillchar])` → string
+Left-pads a string to the given width.
+```
+pad_left("42", 5, "0")     # → "00042"
+pad_left("hi", 8)          # → "      hi"
+```
+
+### `pad_right(str, width, [fillchar])` → string
+Right-pads a string to the given width.
+```
+pad_right("hi", 8)         # → "hi      "
+pad_right("42", 5, "0")    # → "42000"
+```
+
+### `kya_ank(str)` → boolean
+Returns `sach` if all characters are digits.
+```
+kya_ank("12345")    # → sach
+kya_ank("12a45")    # → jhooth
+```
+
+### `kya_akshar(str)` → boolean
+Returns `sach` if all characters are alphabetic.
+```
+kya_akshar("hello")  # → sach
+kya_akshar("hello1") # → jhooth
+```
+
+### `kya_alnum(str)` → boolean
+Returns `sach` if all characters are alphanumeric.
+```
+kya_alnum("hello123") # → sach
+kya_alnum("hello!")   # → jhooth
+```
+
+### `kya_space(str)` → boolean
+Returns `sach` if all characters are whitespace.
+```
+kya_space("   ")     # → sach
+kya_space(" hi ")    # → jhooth
+```
+
 ---
 
 ## 📋 List Operations
@@ -361,6 +467,158 @@ sabse_chhota([3, 7, 1, 9]) # → 1
 Returns the average (mean) of numbers in a list.
 ```
 ausat([10, 20, 30])      # → 20
+```
+
+
+### `flatten(list)` → list
+Flattens a nested list into a single-level list.
+```
+flatten([[1,2],[3,[4,5]]])  # → [1, 2, 3, 4, 5]
+```
+
+### `tukda(list, size)` → list
+Splits a list into chunks of the given size.
+```
+tukda([1,2,3,4,5], 2)      # → [[1,2],[3,4],[5]]
+```
+
+### `ghuma(list, n)` → list
+Rotates a list by n positions.
+```
+ghuma([1,2,3,4,5], 2)      # → [3,4,5,1,2]
+ghuma([1,2,3,4,5], -1)     # → [5,1,2,3,4]
+```
+
+### `copy_suchi(list)` → list
+Creates a shallow copy of a list.
+```
+maano a = [1,2,3]
+maano b = copy_suchi(a)    # b is independent copy
+```
+
+### `khali_karo(list)` → list
+Removes all elements from a list in-place.
+```
+maano l = [1,2,3]
+khali_karo(l)              # l → []
+```
+
+---
+
+## 🔄 Higher-Order Functions
+
+### `naksha(list, function)` → list
+Applies a function to each element and returns a new list (map).
+```
+kaam double(x) { wapas do x * 2 }
+naksha([1,2,3], double)     # → [2, 4, 6]
+```
+
+### `chhaano(list, function)` → list
+Filters elements where the function returns truthy (filter).
+```
+kaam is_even(x) { wapas do x % 2 == 0 }
+chhaano([1,2,3,4,5], is_even) # → [2, 4]
+```
+
+### `ikkatha(list, function, initial)` → value
+Reduces a list to a single value using a function (reduce/fold).
+```
+kaam add(a, b) { wapas do a + b }
+ikkatha([1,2,3,4], add, 0)  # → 10
+```
+
+### `sab(list)` → boolean
+Returns `sach` if all elements in the list are truthy.
+```
+sab([1, 2, 3])       # → sach
+sab([1, 0, 3])       # → jhooth
+```
+
+### `koi(list)` → boolean
+Returns `sach` if any element in the list is truthy.
+```
+koi([0, 0, 1])       # → sach
+koi([0, 0, 0])       # → jhooth
+```
+
+### `jodi_banao(list1, list2)` → list
+Combines two lists into a list of pairs (zip).
+```
+jodi_banao([1,2,3], ["a","b","c"])  # → [[1,"a"],[2,"b"],[3,"c"]]
+```
+
+### `ginati_banao(list)` → list
+Returns a list of [index, value] pairs (enumerate).
+```
+ginati_banao(["a","b","c"])  # → [[0,"a"],[1,"b"],[2,"c"]]
+```
+
+---
+
+## 📖 Map/Dictionary Functions
+
+### `shabdkosh()` → map
+Creates a new empty map/dictionary. Maps can also be created with literal syntax `{key: value}`.
+```
+maano m = shabdkosh()
+maano m2 = {"naam": "Aryan", "umar": 20}
+```
+
+### `chabi(map)` → list
+Returns a list of all keys in the map.
+```
+maano m = {"a": 1, "b": 2}
+chabi(m)                    # → ["a", "b"]
+```
+
+### `mulya(map)` → list
+Returns a list of all values in the map.
+```
+maano m = {"a": 1, "b": 2}
+mulya(m)                    # → [1, 2]
+```
+
+### `jodi(map)` → list
+Returns a list of [key, value] pairs.
+```
+maano m = {"a": 1, "b": 2}
+jodi(m)                     # → [["a", 1], ["b", 2]]
+```
+
+### `map_hai(map, key)` → boolean
+Checks if a key exists in the map.
+```
+maano m = {"naam": "Aryan"}
+map_hai(m, "naam")          # → sach
+map_hai(m, "umar")          # → jhooth
+```
+
+### `map_get(map, key, default)` → value
+Gets a value by key, returning default if not found.
+```
+maano m = {"a": 1}
+map_get(m, "a", 0)          # → 1
+map_get(m, "b", 0)          # → 0
+```
+
+### `map_hatao(map, key)` → value
+Removes a key from the map and returns its value.
+```
+maano m = {"a": 1, "b": 2}
+map_hatao(m, "a")           # → 1, m is now {"b": 2}
+```
+
+### `map_milao(map1, map2)` → map
+Merges two maps into a new map. Keys from map2 overwrite map1.
+```
+map_milao({"a":1}, {"b":2}) # → {"a": 1, "b": 2}
+```
+
+### `map_lambai(map)` → number
+Returns the number of key-value pairs in the map.
+```
+map_lambai({"a":1, "b":2})  # → 2
 ```
 
 ---
@@ -492,6 +750,133 @@ Converts degrees to radians.
 radians(180)             # → 3.14159...
 ```
 
+
+### `log2_val(x)` → number
+Base-2 logarithm.
+```
+log2_val(8)                  # → 3
+log2_val(1024)               # → 10
+```
+
+### `factorial(n)` → number
+Returns the factorial of n (n!).
+```
+factorial(5)                 # → 120
+factorial(10)                # → 3628800
+```
+
+### `kya_prime(n)` → boolean
+Checks if a number is prime.
+```
+kya_prime(7)                 # → sach
+kya_prime(10)                # → jhooth
+```
+
+### `fib(n)` → number
+Returns the nth Fibonacci number.
+```
+fib(10)                      # → 55
+fib(20)                      # → 6765
+```
+
+### `hypot_val(a, b)` → number
+Returns the hypotenuse: sqrt(a² + b²).
+```
+hypot_val(3, 4)              # → 5
+```
+
+### `is_nan(x)` → boolean
+Checks if a value is NaN (Not a Number).
+```
+is_nan(0/0)                  # → sach (if supported)
+is_nan(42)                   # → jhooth
+```
+
+### `is_inf(x)` → boolean
+Checks if a value is infinity.
+```
+is_inf(INF())                # → sach
+is_inf(42)                   # → jhooth
+```
+
+### `INF()` → number
+Returns positive infinity.
+
+### `NAN_VAL()` → number
+Returns NaN (Not a Number).
+
+### `random_choice(list)` → value
+Returns a random element from a list.
+```
+random_choice(["a","b","c"]) # → random element
+```
+
+### `random_shuffle(list)` → list
+Shuffles a list randomly in-place.
+```
+maano l = [1,2,3,4,5]
+random_shuffle(l)            # l is now shuffled
+```
+
+### `random_int(min, max)` → number
+Returns a random integer between min and max (inclusive).
+```
+random_int(1, 100)           # → random integer 1-100
+```
+
+---
+
+## 🔢 Base Conversion
+
+### `hex_shabd(n)` → string
+Converts a number to its hexadecimal string representation.
+```
+hex_shabd(255)               # → "ff"
+hex_shabd(16)                # → "10"
+```
+
+### `oct_shabd(n)` → string
+Converts a number to its octal string representation.
+```
+oct_shabd(8)                 # → "10"
+oct_shabd(255)               # → "377"
+```
+
+### `bin_shabd(n)` → string
+Converts a number to its binary string representation.
+```
+bin_shabd(10)                # → "1010"
+bin_shabd(255)               # → "11111111"
+```
+
+---
+
+### `padho_file(path)` → string
+Reads the entire contents of a file.
+```
+maano data = padho_file("input.txt")
+```
+
+### `likho_file(path, content)` → boolean
+Writes content to a file (creates or overwrites).
+```
+likho_file("output.txt", "Hello!\n")
+```
+
+### `joodo_file(path, content)` → boolean
+Appends content to a file.
+```
+joodo_file("log.txt", "New entry\n")
+```
+
+### `file_hai(path)` → boolean
+Checks if a file exists.
+```
+agar file_hai("config.txt") {
+    likho "Config found!"
+}
+```
+
 ---
 
 ## 📁 File I/O
@@ -588,6 +973,31 @@ bahar(1)                 # Exit with error code 1
 
 ---
 
-> **Total: 65+ built-in functions** across 7 categories.
+## 📅 Date & Time
+
+### `din()` → number
+Returns the current day of the month (1-31).
+
+### `mahina()` → number
+Returns the current month (1-12).
+
+### `saal()` → number
+Returns the current year.
+
+### `ghanta()` → number
+Returns the current hour (0-23).
+
+### `minute()` → number
+Returns the current minute (0-59).
+
+### `second()` → number
+Returns the current second (0-59).
+
+### `hafta_din()` → number
+Returns the day of the week (0=Sunday, 6=Saturday).
+
+---
+
+> **Total: 145 built-in functions** across 12 categories.
 > 
 > Made with ❤️ by Rampyaaryan | [GitHub](https://github.com/Rampyaaryans/rampyaaryan)

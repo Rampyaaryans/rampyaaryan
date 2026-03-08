@@ -79,6 +79,17 @@ typedef enum {
     /* String Operations */
     OP_STR_CONCAT,      /* String concatenation */
 
+    /* Map Operations */
+    OP_MAP_NEW,         /* Create new map with N key-value pairs */
+
+    /* Bitwise Operations */
+    OP_BIT_AND,         /* & */
+    OP_BIT_OR,          /* | */
+    OP_BIT_XOR,         /* ^ */
+    OP_BIT_NOT,         /* ~ */
+    OP_SHIFT_LEFT,      /* << */
+    OP_SHIFT_RIGHT,     /* >> */
+
     /* Program Control */
     OP_HALT,            /* Stop VM */
 } OpCode;

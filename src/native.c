@@ -1352,7 +1352,796 @@ static Value nativeHashVal(VM* vm, int argCount, Value* args) {
 }
 
 /* ============================================================================
- *  REGISTRATION — 65+ Built-in Functions
+ *  MAP/DICTIONARY FUNCTIONS
+ * ============================================================================ */
+
+/* shabdkosh() – Create empty map, or from list of [key, value] pairs */
+static Value nativeShabdkosh(VM* vm, int argCount, Value* args) {
+    ObjMap* map = newMap(vm);
+    if (argCount == 0) return OBJ_VAL(map);
+    if (argCount == 1 && IS_LIST(args[0])) {
+        ObjList* list = AS_LIST(args[0]);
+        push(vm, OBJ_VAL(map));
+        for (int i = 0; i < list->items.count; i++) {
+            if (!IS_LIST(list->items.values[i])) {
+                pop(vm);
+                runtimeError(vm, "shabdkosh() ke liye har item ek [key, value] list honi chahiye.");
+                return NULL_VAL;
+            }
+            ObjList* pair = AS_LIST(list->items.values[i]);
+            if (pair->items.count != 2) {
+                pop(vm);
+                runtimeError(vm, "shabdkosh() ke liye har item mein exactly 2 elements hone chahiye.");
+                return NULL_VAL;
+            }
+            mapSet(vm, map, pair->items.values[0], pair->items.values[1]);
+        }
+        pop(vm);
+        return OBJ_VAL(map);
+    }
+    runtimeError(vm, "shabdkosh() ko 0 ya 1 (list of pairs) argument chahiye.");
+    return NULL_VAL;
+}
+
+/* chabi(map) – Return list of keys */
+static Value nativeChabi(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "chabi() sirf map ke liye hai.");
+        return NULL_VAL;
+    }
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* list = newList(vm);
+    push(vm, OBJ_VAL(list));
+    for (int i = 0; i < map->capacity; i++) {
+        if (map->entries[i].isOccupied)
+            listAppend(vm, list, map->entries[i].key);
+    }
+    pop(vm);
+    return OBJ_VAL(list);
+}
+
+/* mulya(map) – Return list of values */
+static Value nativeMulya(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "mulya() sirf map ke liye hai.");
+        return NULL_VAL;
+    }
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* list = newList(vm);
+    push(vm, OBJ_VAL(list));
+    for (int i = 0; i < map->capacity; i++) {
+        if (map->entries[i].isOccupied)
+            listAppend(vm, list, map->entries[i].value);
+    }
+    pop(vm);
+    return OBJ_VAL(list);
+}
+
+/* jodi(map) – Return list of [key, value] pairs */
+static Value nativeJodi(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "jodi() sirf map ke liye hai.");
+        return NULL_VAL;
+    }
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < map->capacity; i++) {
+        if (!map->entries[i].isOccupied) continue;
+        ObjList* pair = newList(vm);
+        push(vm, OBJ_VAL(pair));
+        listAppend(vm, pair, map->entries[i].key);
+        listAppend(vm, pair, map->entries[i].value);
+        pop(vm);
+        listAppend(vm, result, OBJ_VAL(pair));
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* map_hatao(map, key) – Delete key from map */
+static Value nativeMapHatao(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "map_hatao() sirf map ke liye hai.");
+        return NULL_VAL;
+    }
+    bool deleted = mapDelete(AS_MAP(args[0]), args[1]);
+    return BOOL_VAL(deleted);
+}
+
+/* map_hai(map, key) – Check if key exists */
+static Value nativeMapHai(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "map_hai() sirf map ke liye hai.");
+        return NULL_VAL;
+    }
+    return BOOL_VAL(mapHasKey(AS_MAP(args[0]), args[1]));
+}
+
+/* map_milao(map1, map2) – Merge two maps */
+static Value nativeMapMilao(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0]) || !IS_MAP(args[1])) {
+        runtimeError(vm, "map_milao() ko dono arguments map hone chahiye.");
+        return NULL_VAL;
+    }
+    ObjMap* a = AS_MAP(args[0]);
+    ObjMap* b = AS_MAP(args[1]);
+    ObjMap* result = newMap(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < a->capacity; i++)
+        if (a->entries[i].isOccupied) mapSet(vm, result, a->entries[i].key, a->entries[i].value);
+    for (int i = 0; i < b->capacity; i++)
+        if (b->entries[i].isOccupied) mapSet(vm, result, b->entries[i].key, b->entries[i].value);
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* map_lambai(map) – Return number of entries */
+static Value nativeMapLambai(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "map_lambai() sirf map ke liye hai.");
+        return NULL_VAL;
+    }
+    return NUMBER_VAL((double)AS_MAP(args[0])->count);
+}
+
+/* kya_map(v) – Is value a map? */
+static Value nativeKyaMap(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    return BOOL_VAL(IS_MAP(args[0]));
+}
+
+/* map_get(map, key, default) – Get with default value */
+static Value nativeMapGet(VM* vm, int argCount, Value* args) {
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "map_get() sirf map ke liye hai.");
+        return NULL_VAL;
+    }
+    Value result;
+    if (mapGet(AS_MAP(args[0]), args[1], &result)) return result;
+    return (argCount >= 3) ? args[2] : NULL_VAL;
+}
+
+/* ============================================================================
+ *  HIGHER-ORDER FUNCTIONS
+ * ============================================================================ */
+
+/* naksha(list, fn) – map() – applies native function to each element */
+static Value nativeNaksha(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "naksha() ka pehla argument list hona chahiye."); return NULL_VAL; }
+    if (!IS_NATIVE(args[1])) { runtimeError(vm, "naksha() ka doosra argument built-in function hona chahiye."); return NULL_VAL; }
+    ObjList* src = AS_LIST(args[0]);
+    ObjNative* fn = AS_NATIVE(args[1]);
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < src->items.count; i++) {
+        Value mapped = fn->function(vm, 1, &src->items.values[i]);
+        if (vm->hadError) { pop(vm); return NULL_VAL; }
+        listAppend(vm, result, mapped);
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* chhaano(list, fn) – filter() */
+static Value nativeChhaano(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "chhaano() ka pehla argument list hona chahiye."); return NULL_VAL; }
+    if (!IS_NATIVE(args[1])) { runtimeError(vm, "chhaano() ka doosra argument built-in function hona chahiye."); return NULL_VAL; }
+    ObjList* src = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    ObjNative* fn = AS_NATIVE(args[1]);
+    for (int i = 0; i < src->items.count; i++) {
+        Value testResult = fn->function(vm, 1, &src->items.values[i]);
+        if (vm->hadError) { pop(vm); return NULL_VAL; }
+        if (isTruthy(testResult)) {
+            listAppend(vm, result, src->items.values[i]);
+        }
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* ikkatha(list, fn, initial) – reduce() */
+static Value nativeIkkatha(VM* vm, int argCount, Value* args) {
+    if (!IS_LIST(args[0])) { runtimeError(vm, "ikkatha() ka pehla argument list hona chahiye."); return NULL_VAL; }
+    if (!IS_NATIVE(args[1])) { runtimeError(vm, "ikkatha() ka doosra argument built-in function hona chahiye."); return NULL_VAL; }
+    ObjList* src = AS_LIST(args[0]);
+    if (src->items.count == 0) {
+        return (argCount >= 3) ? args[2] : NULL_VAL;
+    }
+    ObjNative* fn = AS_NATIVE(args[1]);
+    Value accumulator = (argCount >= 3) ? args[2] : src->items.values[0];
+    int start = (argCount >= 3) ? 0 : 1;
+    for (int i = start; i < src->items.count; i++) {
+        Value fnArgs[2] = { accumulator, src->items.values[i] };
+        accumulator = fn->function(vm, 2, fnArgs);
+        if (vm->hadError) return NULL_VAL;
+    }
+    return accumulator;
+}
+
+/* sab(list) – all() - check if all values are truthy */
+static Value nativeSab(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "sab() sirf list ke liye hai."); return NULL_VAL; }
+    ObjList* list = AS_LIST(args[0]);
+    for (int i = 0; i < list->items.count; i++)
+        if (!isTruthy(list->items.values[i])) return BOOL_VAL(false);
+    return BOOL_VAL(true);
+}
+
+/* koi(list) – any() */
+static Value nativeKoi(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "koi() sirf list ke liye hai."); return NULL_VAL; }
+    ObjList* list = AS_LIST(args[0]);
+    for (int i = 0; i < list->items.count; i++)
+        if (isTruthy(list->items.values[i])) return BOOL_VAL(true);
+    return BOOL_VAL(false);
+}
+
+/* jodi_banao(l1, l2) – zip() */
+static Value nativeJodiBanao(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_LIST(args[1])) {
+        runtimeError(vm, "jodi_banao() ko dono arguments list hone chahiye.");
+        return NULL_VAL;
+    }
+    ObjList* a = AS_LIST(args[0]);
+    ObjList* b = AS_LIST(args[1]);
+    int len = a->items.count < b->items.count ? a->items.count : b->items.count;
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < len; i++) {
+        ObjList* pair = newList(vm);
+        push(vm, OBJ_VAL(pair));
+        listAppend(vm, pair, a->items.values[i]);
+        listAppend(vm, pair, b->items.values[i]);
+        pop(vm);
+        listAppend(vm, result, OBJ_VAL(pair));
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* ginati_banao(list) – enumerate() → list of [index, value] */
+static Value nativeGinatiBanao(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) {
+        runtimeError(vm, "ginati_banao() sirf list ke liye hai.");
+        return NULL_VAL;
+    }
+    ObjList* src = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < src->items.count; i++) {
+        ObjList* pair = newList(vm);
+        push(vm, OBJ_VAL(pair));
+        listAppend(vm, pair, NUMBER_VAL(i));
+        listAppend(vm, pair, src->items.values[i]);
+        pop(vm);
+        listAppend(vm, result, OBJ_VAL(pair));
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* ============================================================================
+ *  ADDITIONAL STRING FUNCTIONS
+ * ============================================================================ */
+
+/* title_case(str) – capitalize each word */
+static Value nativeTitleCase(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) { runtimeError(vm, "title_case() sirf string ke liye hai."); return NULL_VAL; }
+    ObjString* str = AS_STRING(args[0]);
+    char* buf = ALLOCATE(char, str->length + 1);
+    bool newWord = true;
+    for (int i = 0; i < str->length; i++) {
+        if (str->chars[i] == ' ' || str->chars[i] == '\t' || str->chars[i] == '\n') {
+            buf[i] = str->chars[i];
+            newWord = true;
+        } else if (newWord) {
+            buf[i] = toupper((unsigned char)str->chars[i]);
+            newWord = false;
+        } else {
+            buf[i] = tolower((unsigned char)str->chars[i]);
+        }
+    }
+    buf[str->length] = '\0';
+    return OBJ_VAL(takeString(vm, buf, str->length));
+}
+
+/* capitalize(str) – capitalize first char only */
+static Value nativeCapitalize(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) { runtimeError(vm, "capitalize() sirf string ke liye hai."); return NULL_VAL; }
+    ObjString* str = AS_STRING(args[0]);
+    if (str->length == 0) return args[0];
+    char* buf = ALLOCATE(char, str->length + 1);
+    memcpy(buf, str->chars, str->length);
+    buf[0] = toupper((unsigned char)buf[0]);
+    for (int i = 1; i < str->length; i++) buf[i] = tolower((unsigned char)buf[i]);
+    buf[str->length] = '\0';
+    return OBJ_VAL(takeString(vm, buf, str->length));
+}
+
+/* swapcase(str) – swap upper/lower */
+static Value nativeSwapcase(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) { runtimeError(vm, "swapcase() sirf string ke liye hai."); return NULL_VAL; }
+    ObjString* str = AS_STRING(args[0]);
+    char* buf = ALLOCATE(char, str->length + 1);
+    for (int i = 0; i < str->length; i++) {
+        unsigned char c = str->chars[i];
+        buf[i] = isupper(c) ? tolower(c) : toupper(c);
+    }
+    buf[str->length] = '\0';
+    return OBJ_VAL(takeString(vm, buf, str->length));
+}
+
+/* center(str, width, fillchar) */
+static Value nativeCenter(VM* vm, int argCount, Value* args) {
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) {
+        runtimeError(vm, "center() ko string aur number chahiye.");
+        return NULL_VAL;
+    }
+    ObjString* str = AS_STRING(args[0]);
+    int width = (int)AS_NUMBER(args[1]);
+    char fill = ' ';
+    if (argCount >= 3 && IS_STRING(args[2]) && AS_STRING(args[2])->length > 0)
+        fill = AS_STRING(args[2])->chars[0];
+    if (width <= str->length) return args[0];
+    int total = width - str->length;
+    int left = total / 2;
+    int right = total - left;
+    char* buf = ALLOCATE(char, width + 1);
+    memset(buf, fill, left);
+    memcpy(buf + left, str->chars, str->length);
+    memset(buf + left + str->length, fill, right);
+    buf[width] = '\0';
+    return OBJ_VAL(takeString(vm, buf, width));
+}
+
+/* kya_ank(str) – is_digit */
+static Value nativeKyaAnk(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0])) return BOOL_VAL(false);
+    ObjString* str = AS_STRING(args[0]);
+    if (str->length == 0) return BOOL_VAL(false);
+    for (int i = 0; i < str->length; i++)
+        if (!isdigit((unsigned char)str->chars[i])) return BOOL_VAL(false);
+    return BOOL_VAL(true);
+}
+
+/* kya_akshar(str) – is_alpha */
+static Value nativeKyaAkshar(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0])) return BOOL_VAL(false);
+    ObjString* str = AS_STRING(args[0]);
+    if (str->length == 0) return BOOL_VAL(false);
+    for (int i = 0; i < str->length; i++)
+        if (!isalpha((unsigned char)str->chars[i])) return BOOL_VAL(false);
+    return BOOL_VAL(true);
+}
+
+/* kya_alnum(str) – is_alphanumeric */
+static Value nativeKyaAlnum(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0])) return BOOL_VAL(false);
+    ObjString* str = AS_STRING(args[0]);
+    if (str->length == 0) return BOOL_VAL(false);
+    for (int i = 0; i < str->length; i++)
+        if (!isalnum((unsigned char)str->chars[i])) return BOOL_VAL(false);
+    return BOOL_VAL(true);
+}
+
+/* kya_space(str) – is_space */
+static Value nativeKyaSpace(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0])) return BOOL_VAL(false);
+    ObjString* str = AS_STRING(args[0]);
+    if (str->length == 0) return BOOL_VAL(false);
+    for (int i = 0; i < str->length; i++)
+        if (!isspace((unsigned char)str->chars[i])) return BOOL_VAL(false);
+    return BOOL_VAL(true);
+}
+
+/* pad_left(str, width, fillchar) */
+static Value nativePadLeft(VM* vm, int argCount, Value* args) {
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) {
+        runtimeError(vm, "pad_left() ko string aur number chahiye."); return NULL_VAL;
+    }
+    ObjString* str = AS_STRING(args[0]);
+    int width = (int)AS_NUMBER(args[1]);
+    char fill = ' ';
+    if (argCount >= 3 && IS_STRING(args[2]) && AS_STRING(args[2])->length > 0)
+        fill = AS_STRING(args[2])->chars[0];
+    if (width <= str->length) return args[0];
+    int padLen = width - str->length;
+    char* buf = ALLOCATE(char, width + 1);
+    memset(buf, fill, padLen);
+    memcpy(buf + padLen, str->chars, str->length);
+    buf[width] = '\0';
+    return OBJ_VAL(takeString(vm, buf, width));
+}
+
+/* pad_right(str, width, fillchar) */
+static Value nativePadRight(VM* vm, int argCount, Value* args) {
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) {
+        runtimeError(vm, "pad_right() ko string aur number chahiye."); return NULL_VAL;
+    }
+    ObjString* str = AS_STRING(args[0]);
+    int width = (int)AS_NUMBER(args[1]);
+    char fill = ' ';
+    if (argCount >= 3 && IS_STRING(args[2]) && AS_STRING(args[2])->length > 0)
+        fill = AS_STRING(args[2])->chars[0];
+    if (width <= str->length) return args[0];
+    int padLen = width - str->length;
+    char* buf = ALLOCATE(char, width + 1);
+    memcpy(buf, str->chars, str->length);
+    memset(buf + str->length, fill, padLen);
+    buf[width] = '\0';
+    return OBJ_VAL(takeString(vm, buf, width));
+}
+
+/* ============================================================================
+ *  ADDITIONAL MATH FUNCTIONS
+ * ============================================================================ */
+
+/* factorial(n) */
+static Value nativeFactorial(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) { runtimeError(vm, "factorial() ko number chahiye."); return NULL_VAL; }
+    int n = (int)AS_NUMBER(args[0]);
+    if (n < 0) { runtimeError(vm, "factorial() negative number ke liye nahi hai."); return NULL_VAL; }
+    double result = 1;
+    for (int i = 2; i <= n; i++) result *= i;
+    return NUMBER_VAL(result);
+}
+
+/* kya_prime(n) – is_prime */
+static Value nativeKyaPrime(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) { runtimeError(vm, "kya_prime() ko number chahiye."); return NULL_VAL; }
+    long long n = (long long)AS_NUMBER(args[0]);
+    if (n < 2) return BOOL_VAL(false);
+    if (n < 4) return BOOL_VAL(true);
+    if (n % 2 == 0 || n % 3 == 0) return BOOL_VAL(false);
+    for (long long i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return BOOL_VAL(false);
+    }
+    return BOOL_VAL(true);
+}
+
+/* random_choice(list) */
+static Value nativeRandomChoice(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "random_choice() sirf list ke liye hai."); return NULL_VAL; }
+    ObjList* list = AS_LIST(args[0]);
+    if (list->items.count == 0) { runtimeError(vm, "random_choice() khali list pe nahi chalta."); return NULL_VAL; }
+    int idx = rand() % list->items.count;
+    return list->items.values[idx];
+}
+
+/* random_shuffle(list) – returns new shuffled list */
+static Value nativeRandomShuffle(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "random_shuffle() sirf list ke liye hai."); return NULL_VAL; }
+    ObjList* src = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < src->items.count; i++)
+        listAppend(vm, result, src->items.values[i]);
+    /* Fisher-Yates shuffle */
+    for (int i = result->items.count - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        Value temp = result->items.values[i];
+        result->items.values[i] = result->items.values[j];
+        result->items.values[j] = temp;
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* random_int(min, max) */
+static Value nativeRandomInt(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0]) || !IS_NUMBER(args[1])) {
+        runtimeError(vm, "random_int() ko dono numbers chahiye."); return NULL_VAL;
+    }
+    int mn = (int)AS_NUMBER(args[0]);
+    int mx = (int)AS_NUMBER(args[1]);
+    if (mn > mx) { int t = mn; mn = mx; mx = t; }
+    return NUMBER_VAL((double)(mn + rand() % (mx - mn + 1)));
+}
+
+/* ============================================================================
+ *  ADDITIONAL LIST FUNCTIONS
+ * ============================================================================ */
+
+/* flatten(list) – flatten nested lists one level */
+static Value nativeFlatten(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "flatten() sirf list ke liye hai."); return NULL_VAL; }
+    ObjList* src = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < src->items.count; i++) {
+        if (IS_LIST(src->items.values[i])) {
+            ObjList* inner = AS_LIST(src->items.values[i]);
+            for (int j = 0; j < inner->items.count; j++)
+                listAppend(vm, result, inner->items.values[j]);
+        } else {
+            listAppend(vm, result, src->items.values[i]);
+        }
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* tukda(list, size) – chunk list into sublists of given size */
+static Value nativeTukda(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_NUMBER(args[1])) {
+        runtimeError(vm, "tukda() ko list aur number chahiye."); return NULL_VAL;
+    }
+    ObjList* src = AS_LIST(args[0]);
+    int size = (int)AS_NUMBER(args[1]);
+    if (size <= 0) { runtimeError(vm, "tukda() ka size 0 se bada hona chahiye."); return NULL_VAL; }
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < src->items.count; i += size) {
+        ObjList* chunk = newList(vm);
+        push(vm, OBJ_VAL(chunk));
+        for (int j = i; j < i + size && j < src->items.count; j++)
+            listAppend(vm, chunk, src->items.values[j]);
+        pop(vm);
+        listAppend(vm, result, OBJ_VAL(chunk));
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* ghuma(list, n) – rotate list by n positions */
+static Value nativeGhuma(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_NUMBER(args[1])) {
+        runtimeError(vm, "ghuma() ko list aur number chahiye."); return NULL_VAL;
+    }
+    ObjList* src = AS_LIST(args[0]);
+    int n = (int)AS_NUMBER(args[1]);
+    int count = src->items.count;
+    if (count == 0) return args[0];
+    n = ((n % count) + count) % count;
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = n; i < count; i++)
+        listAppend(vm, result, src->items.values[i]);
+    for (int i = 0; i < n; i++)
+        listAppend(vm, result, src->items.values[i]);
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* copy_suchi(list) – shallow copy of a list */
+static Value nativeCopySuchi(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "copy_suchi() sirf list ke liye hai."); return NULL_VAL; }
+    ObjList* src = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < src->items.count; i++)
+        listAppend(vm, result, src->items.values[i]);
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* khali_karo(list) – clear list in place */
+static Value nativeKhaliKaro(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) { runtimeError(vm, "khali_karo() sirf list ke liye hai."); return NULL_VAL; }
+    ObjList* list = AS_LIST(args[0]);
+    list->items.count = 0;
+    return NULL_VAL;
+}
+
+/* ============================================================================
+ *  CONVERSION FUNCTIONS
+ * ============================================================================ */
+
+/* hex_shabd(n) – number to hex string */
+static Value nativeHexShabd(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) { runtimeError(vm, "hex_shabd() ko number chahiye."); return NULL_VAL; }
+    char buf[32];
+    snprintf(buf, sizeof(buf), "0x%llx", (long long)AS_NUMBER(args[0]));
+    return OBJ_VAL(copyString(vm, buf, (int)strlen(buf)));
+}
+
+/* oct_shabd(n) – number to octal string */
+static Value nativeOctShabd(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) { runtimeError(vm, "oct_shabd() ko number chahiye."); return NULL_VAL; }
+    char buf[32];
+    snprintf(buf, sizeof(buf), "0o%llo", (long long)AS_NUMBER(args[0]));
+    return OBJ_VAL(copyString(vm, buf, (int)strlen(buf)));
+}
+
+/* bin_shabd(n) – number to binary string */
+static Value nativeBinShabd(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) { runtimeError(vm, "bin_shabd() ko number chahiye."); return NULL_VAL; }
+    long long n = (long long)AS_NUMBER(args[0]);
+    char buf[68];
+    int pos = 0;
+    buf[pos++] = '0'; buf[pos++] = 'b';
+    if (n == 0) { buf[pos++] = '0'; buf[pos] = '\0'; }
+    else {
+        unsigned long long un = (n < 0) ? (unsigned long long)(-n) : (unsigned long long)n;
+        char tmp[65]; int tpos = 0;
+        while (un > 0) { tmp[tpos++] = (un & 1) ? '1' : '0'; un >>= 1; }
+        if (n < 0) { buf[0] = '-'; buf[1] = '0'; buf[2] = 'b'; pos = 3; }
+        for (int i = tpos - 1; i >= 0; i--) buf[pos++] = tmp[i];
+        buf[pos] = '\0';
+    }
+    return OBJ_VAL(copyString(vm, buf, pos));
+}
+
+/* ============================================================================
+ *  DATE/TIME FUNCTIONS
+ * ============================================================================ */
+
+/* din() – day of month */
+static Value nativeDin(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    time_t t = time(NULL); struct tm* tm = localtime(&t);
+    return NUMBER_VAL((double)tm->tm_mday);
+}
+
+/* mahina() – month (1-12) */
+static Value nativeMahina(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    time_t t = time(NULL); struct tm* tm = localtime(&t);
+    return NUMBER_VAL((double)(tm->tm_mon + 1));
+}
+
+/* saal() – year */
+static Value nativeSaal(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    time_t t = time(NULL); struct tm* tm = localtime(&t);
+    return NUMBER_VAL((double)(tm->tm_year + 1900));
+}
+
+/* ghanta() – hour */
+static Value nativeGhanta(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    time_t t = time(NULL); struct tm* tm = localtime(&t);
+    return NUMBER_VAL((double)tm->tm_hour);
+}
+
+/* minute() – minute */
+static Value nativeMinute(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    time_t t = time(NULL); struct tm* tm = localtime(&t);
+    return NUMBER_VAL((double)tm->tm_min);
+}
+
+/* second() – second */
+static Value nativeSecond(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    time_t t = time(NULL); struct tm* tm = localtime(&t);
+    return NUMBER_VAL((double)tm->tm_sec);
+}
+
+/* hafta_din() – day of week (0=Sun, 6=Sat) */
+static Value nativeHaftaDin(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    time_t t = time(NULL); struct tm* tm = localtime(&t);
+    return NUMBER_VAL((double)tm->tm_wday);
+}
+
+/* ============================================================================
+ *  ADDITIONAL UTILITY FUNCTIONS
+ * ============================================================================ */
+
+/* typeof_val(v) – stronger type check returning string */
+static Value nativeTypeofVal(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    const char* name;
+    if (IS_MAP(args[0])) name = "shabdkosh";
+    else name = valueTypeName(args[0]);
+    return OBJ_VAL(copyString(vm, name, (int)strlen(name)));
+}
+
+/* bool_val(v) – convert to boolean */
+static Value nativeBoolVal(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    return BOOL_VAL(isTruthy(args[0]));
+}
+
+/* print_type(v) – print type and value (debug helper) */
+static Value nativePrintType(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    const char* name;
+    if (IS_MAP(args[0])) name = "shabdkosh";
+    else name = valueTypeName(args[0]);
+    printf("[%s] ", name);
+    printValue(args[0]);
+    printf("\n");
+    return NULL_VAL;
+}
+
+/* ============================================================================
+ *  ADDITIONAL MATH
+ * ============================================================================ */
+
+/* fib(n) – nth fibonacci number */
+static Value nativeFib(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) { runtimeError(vm, "fib() ko number chahiye."); return NULL_VAL; }
+    int n = (int)AS_NUMBER(args[0]);
+    if (n < 0) { runtimeError(vm, "fib() negative number ke liye nahi hai."); return NULL_VAL; }
+    if (n <= 1) return NUMBER_VAL((double)n);
+    double a = 0, b = 1;
+    for (int i = 2; i <= n; i++) { double c = a + b; a = b; b = c; }
+    return NUMBER_VAL(b);
+}
+
+/* hypot_val(a, b) – hypotenuse */
+static Value nativeHypot(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0]) || !IS_NUMBER(args[1])) {
+        runtimeError(vm, "hypot_val() ko dono numbers chahiye."); return NULL_VAL;
+    }
+    return NUMBER_VAL(hypot(AS_NUMBER(args[0]), AS_NUMBER(args[1])));
+}
+
+/* log2_val(n) */
+static Value nativeLog2(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) { runtimeError(vm, "log2_val() ko number chahiye."); return NULL_VAL; }
+    return NUMBER_VAL(log2(AS_NUMBER(args[0])));
+}
+
+/* is_nan(n) */
+static Value nativeIsNan(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_NUMBER(args[0])) return BOOL_VAL(false);
+    return BOOL_VAL(isnan(AS_NUMBER(args[0])));
+}
+
+/* is_inf(n) */
+static Value nativeIsInf(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_NUMBER(args[0])) return BOOL_VAL(false);
+    return BOOL_VAL(isinf(AS_NUMBER(args[0])));
+}
+
+/* INF constant */
+static Value nativeINF(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    return NUMBER_VAL(INFINITY);
+}
+
+/* NAN constant */
+static Value nativeNAN(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount; (void)args;
+    return NUMBER_VAL(NAN);
+}
+
+/* ============================================================================
+ *  REGISTRATION — 110+ Built-in Functions
  * ============================================================================ */
 void registerNatives(VM* vm) {
     /* ── I/O ── */
@@ -1364,6 +2153,7 @@ void registerNatives(VM* vm) {
     defineNative(vm, "dashmlav",  nativeDashmlav,  1);
     defineNative(vm, "shabd",     nativeShabd,     1);
     defineNative(vm, "purn",      nativePurn,      1);
+    defineNative(vm, "bool_val",  nativeBoolVal,   1);
 
     /* ── Type Checking ── */
     defineNative(vm, "kya_sankhya", nativeKyaSankhya, 1);
@@ -1373,6 +2163,9 @@ void registerNatives(VM* vm) {
     defineNative(vm, "kya_bool",    nativeKyaBool,    1);
     defineNative(vm, "kya_khali",   nativeKyaKhali,   1);
     defineNative(vm, "kya_purn",    nativeKyaPurn,    1);
+    defineNative(vm, "kya_map",     nativeKyaMap,     1);
+    defineNative(vm, "typeof_val",  nativeTypeofVal,  1);
+    defineNative(vm, "print_type",  nativePrintType,  1);
 
     /* ── String Operations ── */
     defineNative(vm, "lambai",       nativeLambai,       1);
@@ -1392,6 +2185,16 @@ void registerNatives(VM* vm) {
     defineNative(vm, "jodo_shabd",   nativeJodoShabd,    -1);
     defineNative(vm, "format",       nativeFormat,       -1);
     defineNative(vm, "gino",         nativeGino,         2);
+    defineNative(vm, "title_case",   nativeTitleCase,    1);
+    defineNative(vm, "capitalize",   nativeCapitalize,   1);
+    defineNative(vm, "swapcase",     nativeSwapcase,     1);
+    defineNative(vm, "center",       nativeCenter,       -1);
+    defineNative(vm, "kya_ank",      nativeKyaAnk,       1);
+    defineNative(vm, "kya_akshar",   nativeKyaAkshar,    1);
+    defineNative(vm, "kya_alnum",    nativeKyaAlnum,     1);
+    defineNative(vm, "kya_space",    nativeKyaSpace,     1);
+    defineNative(vm, "pad_left",     nativePadLeft,      -1);
+    defineNative(vm, "pad_right",    nativePadRight,     -1);
 
     /* ── List Operations ── */
     defineNative(vm, "joodo",       nativeJoodo,       2);
@@ -1412,6 +2215,31 @@ void registerNatives(VM* vm) {
     defineNative(vm, "sabse_bada",  nativeSabseBada,   1);
     defineNative(vm, "sabse_chhota", nativeSabseChhota, 1);
     defineNative(vm, "ausat",       nativeAusat,       1);
+    defineNative(vm, "flatten",     nativeFlatten,     1);
+    defineNative(vm, "tukda",       nativeTukda,       2);
+    defineNative(vm, "ghuma",       nativeGhuma,       2);
+    defineNative(vm, "copy_suchi",  nativeCopySuchi,   1);
+    defineNative(vm, "khali_karo",  nativeKhaliKaro,   1);
+
+    /* ── Higher-Order Functions ── */
+    defineNative(vm, "naksha",       nativeNaksha,      2);
+    defineNative(vm, "chhaano",      nativeChhaano,     2);
+    defineNative(vm, "ikkatha",      nativeIkkatha,     -1);
+    defineNative(vm, "sab",          nativeSab,         1);
+    defineNative(vm, "koi",          nativeKoi,         1);
+    defineNative(vm, "jodi_banao",   nativeJodiBanao,   2);
+    defineNative(vm, "ginati_banao", nativeGinatiBanao, 1);
+
+    /* ── Map/Dictionary ── */
+    defineNative(vm, "shabdkosh",   nativeShabdkosh,   -1);
+    defineNative(vm, "chabi",       nativeChabi,       1);
+    defineNative(vm, "mulya",       nativeMulya,       1);
+    defineNative(vm, "jodi",        nativeJodi,        1);
+    defineNative(vm, "map_hatao",   nativeMapHatao,    2);
+    defineNative(vm, "map_hai",     nativeMapHai,      2);
+    defineNative(vm, "map_milao",   nativeMapMilao,    2);
+    defineNative(vm, "map_lambai",  nativeMapLambai,   1);
+    defineNative(vm, "map_get",     nativeMapGet,      -1);
 
     /* ── Math ── */
     defineNative(vm, "abs_val",  nativeAbsVal,   1);
@@ -1429,16 +2257,33 @@ void registerNatives(VM* vm) {
     defineNative(vm, "atan_val", nativeAtan,     1);
     defineNative(vm, "log_val",  nativeLog,      1);
     defineNative(vm, "log10_val", nativeLog10,   1);
+    defineNative(vm, "log2_val", nativeLog2,     1);
     defineNative(vm, "exp_val",  nativeExp,      1);
     defineNative(vm, "power_val", nativePower,   2);
     defineNative(vm, "PI",       nativePI,       0);
     defineNative(vm, "E",        nativeE,        0);
+    defineNative(vm, "INF",      nativeINF,      0);
+    defineNative(vm, "NAN_VAL",  nativeNAN,      0);
     defineNative(vm, "gcd",      nativeGCD,      2);
     defineNative(vm, "lcm",      nativeLCM,      2);
     defineNative(vm, "sign",     nativeSign,      1);
     defineNative(vm, "clamp",    nativeClamp,     3);
     defineNative(vm, "degrees",  nativeDegrees,   1);
     defineNative(vm, "radians",  nativeRadians,   1);
+    defineNative(vm, "factorial", nativeFactorial, 1);
+    defineNative(vm, "kya_prime", nativeKyaPrime, 1);
+    defineNative(vm, "fib",      nativeFib,       1);
+    defineNative(vm, "hypot_val", nativeHypot,    2);
+    defineNative(vm, "is_nan",   nativeIsNan,     1);
+    defineNative(vm, "is_inf",   nativeIsInf,     1);
+    defineNative(vm, "random_choice",   nativeRandomChoice,   1);
+    defineNative(vm, "random_shuffle",  nativeRandomShuffle,  1);
+    defineNative(vm, "random_int",      nativeRandomInt,      2);
+
+    /* ── Conversion ── */
+    defineNative(vm, "hex_shabd", nativeHexShabd, 1);
+    defineNative(vm, "oct_shabd", nativeOctShabd, 1);
+    defineNative(vm, "bin_shabd", nativeBinShabd, 1);
 
     /* ── File I/O ── */
     defineNative(vm, "padho_file",  nativePadhoFile,  1);
@@ -1458,4 +2303,13 @@ void registerNatives(VM* vm) {
     defineNative(vm, "waqt",       nativeWaqt,       0);
     defineNative(vm, "timestamp",  nativeTimestamp,   0);
     defineNative(vm, "hash_val",   nativeHashVal,    1);
+
+    /* ── Date/Time ── */
+    defineNative(vm, "din",       nativeDin,       0);
+    defineNative(vm, "mahina",    nativeMahina,    0);
+    defineNative(vm, "saal",      nativeSaal,      0);
+    defineNative(vm, "ghanta",    nativeGhanta,    0);
+    defineNative(vm, "minute",    nativeMinute,    0);
+    defineNative(vm, "second",    nativeSecond,    0);
+    defineNative(vm, "hafta_din", nativeHaftaDin,  0);
 }

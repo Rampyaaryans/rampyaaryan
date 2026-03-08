@@ -115,6 +115,7 @@ maano kuch_nahi = khali
 | Null | khali | `khali` (null) |
 | List | suchi | `[1, 2, 3]`, `["a", "b"]` |
 | Function | kaam | `kaam add(a, b) { ... }` |
+| Map/Dict | shabdkosh | `{"key": "value"}`, `shabdkosh()` |
 
 ### Print (likho)
 ```
@@ -299,6 +300,48 @@ likho jod(data)              # Sum: 150
 likho ausat(data)            # Average: 30
 likho sabse_bada(data)       # Max: 50
 likho sabse_chhota(data)     # Min: 10
+
+# Advanced list operations
+flatten([[1,2],[3,[4,5]]])  # [1,2,3,4,5]
+tukda([1,2,3,4,5], 2)      # [[1,2],[3,4],[5]]
+ghuma([1,2,3,4,5], 2)      # [3,4,5,1,2]
+copy_suchi([1,2,3])         # Independent copy
+khali_karo(data)             # Clear all elements
+```
+
+---
+
+## 📖 Maps / Dictionaries
+
+### Creating Maps
+```
+# Literal syntax
+maano student = {"naam": "Aryan", "umar": 20, "active": sach}
+
+# Empty map
+maano m = shabdkosh()
+```
+
+### Accessing and Modifying
+```
+likho student["naam"]       # Access
+student["umar"] = 21        # Modify
+student["grade"] = "A"      # Add new key
+```
+
+### Map Functions
+```
+maano m = {"a": 1, "b": 2, "c": 3}
+
+chabi(m)                    # Keys: ["a", "b", "c"]
+mulya(m)                    # Values: [1, 2, 3]
+jodi(m)                     # Pairs: [["a",1], ["b",2], ["c",3]]
+map_lambai(m)               # Size: 3
+map_hai(m, "a")             # Has key? sach
+map_get(m, "d", 0)          # Get with default: 0
+map_hatao(m, "c")           # Remove key
+map_milao(m, {"d": 4})      # Merge maps
+kya_map(m)                  # Is map? sach
 ```
 
 ---
@@ -346,6 +389,59 @@ ascii_code("A")              # 65
 ascii_se(65)                 # "A"
 format("{} is {}", "Pi", 3.14)  # String formatting
 gino(s, "a")                 # Count occurrences
+
+# Advanced string operations
+title_case("hello world")   # "Hello World"
+capitalize("hello")         # "Hello"
+swapcase("Hello")           # "hELLO"
+center("hi", 10, "*")       # "****hi****"
+pad_left("42", 5, "0")      # "00042"
+pad_right("hi", 8)          # "hi      "
+kya_ank("12345")             # sach
+kya_akshar("hello")          # sach
+kya_alnum("hello1")          # sach
+kya_space("  ")              # sach
+```
+
+---
+
+## 🔢 Bitwise Operations
+
+```
+maano a = 12    # 1100 in binary
+maano b = 10    # 1010 in binary
+
+a & b           # AND: 8 (1000)
+a | b           # OR: 14 (1110)
+a ^ b           # XOR: 6 (0110)
+~a              # NOT: -13
+a << 2          # Left shift: 48
+a >> 1          # Right shift: 6
+
+# Base conversion
+hex_shabd(255)  # "ff"
+oct_shabd(255)  # "377"
+bin_shabd(255)  # "11111111"
+```
+
+---
+
+## 🔄 Higher-Order Functions
+
+```
+kaam square(x) { wapas do x * x }
+kaam is_even(x) { wapas do x % 2 == 0 }
+kaam add(a, b) { wapas do a + b }
+
+maano nums = [1, 2, 3, 4, 5]
+
+naksha(nums, square)          # Map: [1, 4, 9, 16, 25]
+chhaano(nums, is_even)        # Filter: [2, 4]
+ikkatha(nums, add, 0)         # Reduce: 15
+sab([1, 2, 3])                # All truthy? sach
+koi([0, 0, 1])                # Any truthy? sach
+jodi_banao([1,2], ["a","b"])  # Zip: [[1,"a"], [2,"b"]]
+ginati_banao(["a","b"])       # Enumerate: [[0,"a"], [1,"b"]]
 ```
 
 ---
@@ -388,6 +484,17 @@ lcm(12, 8)          # 24
 # Angle Conversion
 degrees(PI())       # 180
 radians(180)        # 3.14159...
+
+# Number Theory
+factorial(10)       # 3628800
+kya_prime(17)       # sach
+fib(10)             # 55
+
+# Advanced
+hypot_val(3, 4)     # 5
+log2_val(1024)      # 10
+is_nan(42)          # jhooth
+is_inf(INF())       # sach
 ```
 
 ---
@@ -405,6 +512,10 @@ kya_khali(khali)    # sach
 kya_purn(42)        # sach (is integer?)
 kya_purn(3.14)      # jhooth
 prakar(42)          # "sankhya"
+typeof_val(42)      # "sankhya" (alias)
+kya_map({"a":1})    # sach
+bool_val(1)         # sach
+print_type(42)      # prints: sankhya
 ```
 
 ### Type Conversion
@@ -432,6 +543,15 @@ timestamp()         # Unix timestamp
 env_var("PATH")     # Environment variable
 hash_val("hello")   # Hash of value
 bahar(0)            # Exit program
+
+# Date & Time
+din()               # Day of month
+mahina()            # Month (1-12)
+saal()              # Year
+ghanta()            # Hour (0-23)
+minute()            # Minute (0-59)
+second()            # Second (0-59)
+hafta_din()         # Day of week (0=Sun)
 ```
 
 ---

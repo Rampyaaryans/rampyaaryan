@@ -1,0 +1,137 @@
+/// ╔══════════════════════════════════╗
+/// ║  17: Bitwise Operations          ║
+/// ╚══════════════════════════════════╝
+
+likho "╔══════════════════════════════════╗"
+likho "║  Bitwise Operations Demo         ║"
+likho "╚══════════════════════════════════╝"
+
+/// === Basic Bitwise Operators ===
+kaam basic_bitwise() {
+    likho "=== Basic Bitwise ==="
+    maano a = 12
+    maano b = 10
+    likho "a = " + shabd(a) + " (" + bin_shabd(a) + ")"
+    likho "b = " + shabd(b) + " (" + bin_shabd(b) + ")"
+    likho ""
+    likho "a & b  = " + shabd(a & b) + "  (AND: " + bin_shabd(a & b) + ")"
+    likho "a | b  = " + shabd(a | b) + "  (OR: " + bin_shabd(a | b) + ")"
+    likho "a ^ b  = " + shabd(a ^ b) + "  (XOR: " + bin_shabd(a ^ b) + ")"
+    likho "~a     = " + shabd(~a) + " (NOT)"
+}
+basic_bitwise()
+
+/// === Shift Operators ===
+kaam shift_ops() {
+    likho "\n=== Shift Operators ==="
+    likho "1 << 0 = " + shabd(1 << 0)
+    likho "1 << 1 = " + shabd(1 << 1)
+    likho "1 << 2 = " + shabd(1 << 2)
+    likho "1 << 3 = " + shabd(1 << 3)
+    likho "1 << 4 = " + shabd(1 << 4)
+    likho ""
+    likho "16 >> 1 = " + shabd(16 >> 1)
+    likho "16 >> 2 = " + shabd(16 >> 2)
+    likho "16 >> 3 = " + shabd(16 >> 3)
+    likho "16 >> 4 = " + shabd(16 >> 4)
+}
+shift_ops()
+
+/// === Hex, Oct, Binary Conversions ===
+kaam conversions() {
+    likho "\n=== Number Conversions ==="
+    maano num = 255
+    likho shabd(num) + " in hex:    " + hex_shabd(num)
+    likho shabd(num) + " in octal:  " + oct_shabd(num)
+    likho shabd(num) + " in binary: " + bin_shabd(num)
+    likho ""
+    maano num2 = 42
+    likho shabd(num2) + " in hex:    " + hex_shabd(num2)
+    likho shabd(num2) + " in octal:  " + oct_shabd(num2)
+    likho shabd(num2) + " in binary: " + bin_shabd(num2)
+}
+conversions()
+
+/// === Permission System (Unix-style) ===
+kaam permission_demo() {
+    likho "\n=== 🔐 Permission System ==="
+    maano READ = 4
+    maano WRITE = 2
+    maano EXECUTE = 1
+
+    kaam set_permissions(r, w, x) {
+        maano perm = 0
+        agar (r) { perm = perm | READ }
+        agar (w) { perm = perm | WRITE }
+        agar (x) { perm = perm | EXECUTE }
+        wapas do perm
+    }
+
+    kaam check_permission(perm, flag) {
+        wapas do (perm & flag) != 0
+    }
+
+    kaam show_permissions(perm) {
+        maano s = ""
+        agar (check_permission(perm, READ)) {
+            s = s + "r"
+        } warna {
+            s = s + "-"
+        }
+        agar (check_permission(perm, WRITE)) {
+            s = s + "w"
+        } warna {
+            s = s + "-"
+        }
+        agar (check_permission(perm, EXECUTE)) {
+            s = s + "x"
+        } warna {
+            s = s + "-"
+        }
+        wapas do s
+    }
+
+    maano admin = set_permissions(sach, sach, sach)
+    maano user = set_permissions(sach, jhooth, sach)
+    maano guest = set_permissions(sach, jhooth, jhooth)
+
+    likho "Admin: " + show_permissions(admin) + " (" + shabd(admin) + ")"
+    likho "User:  " + show_permissions(user) + " (" + shabd(user) + ")"
+    likho "Guest: " + show_permissions(guest) + " (" + shabd(guest) + ")"
+}
+permission_demo()
+
+/// === Bit Flags ===
+kaam flags_demo() {
+    likho "\n=== 🚩 Bit Flags ==="
+    maano BOLD = 1 << 0
+    maano ITALIC = 1 << 1
+    maano UNDERLINE = 1 << 2
+
+    maano style = BOLD | UNDERLINE
+
+    kaam has_style(s, flag) {
+        wapas do (s & flag) != 0
+    }
+
+    likho "Style: " + shabd(style) + " (" + bin_shabd(style) + ")"
+    likho "Bold? " + shabd(has_style(style, BOLD))
+    likho "Italic? " + shabd(has_style(style, ITALIC))
+    likho "Underline? " + shabd(has_style(style, UNDERLINE))
+}
+flags_demo()
+
+/// === Swap without temp ===
+kaam xor_swap() {
+    likho "\n=== XOR Swap ==="
+    maano x = 42
+    maano y = 99
+    likho "Before: x=" + shabd(x) + ", y=" + shabd(y)
+    x = x ^ y
+    y = x ^ y
+    x = x ^ y
+    likho "After:  x=" + shabd(x) + ", y=" + shabd(y)
+}
+xor_swap()
+
+likho "\n⚡ Bitwise demo complete!"

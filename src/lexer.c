@@ -352,6 +352,11 @@ Token scanToken(Lexer* lexer) {
         case ';': return makeToken(lexer, TOKEN_SEMICOLON);
         case '%': return makeToken(lexer, TOKEN_PERCENT);
 
+        case '&': return makeToken(lexer, TOKEN_AMPERSAND);
+        case '|': return makeToken(lexer, TOKEN_PIPE);
+        case '^': return makeToken(lexer, TOKEN_CARET);
+        case '~': return makeToken(lexer, TOKEN_TILDE);
+
         case '+':
             return makeToken(lexer, match(lexer, '=') ? TOKEN_PLUS_EQUAL : TOKEN_PLUS);
         case '-':
@@ -366,8 +371,10 @@ Token scanToken(Lexer* lexer) {
         case '=':
             return makeToken(lexer, match(lexer, '=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL);
         case '<':
+            if (match(lexer, '<')) return makeToken(lexer, TOKEN_LESS_LESS);
             return makeToken(lexer, match(lexer, '=') ? TOKEN_LESS_EQUAL : TOKEN_LESS);
         case '>':
+            if (match(lexer, '>')) return makeToken(lexer, TOKEN_GREATER_GREATER);
             return makeToken(lexer, match(lexer, '=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
 
         case '"': return string(lexer, '"');
@@ -410,6 +417,12 @@ const char* tokenTypeName(RamTokenType type) {
         case TOKEN_STAR_EQUAL:    return "STAR_EQUAL";
         case TOKEN_SLASH_EQUAL:   return "SLASH_EQUAL";
         case TOKEN_STAR_STAR:     return "STAR_STAR";
+        case TOKEN_AMPERSAND:    return "AMPERSAND";
+        case TOKEN_PIPE:         return "PIPE";
+        case TOKEN_CARET:        return "CARET";
+        case TOKEN_TILDE:        return "TILDE";
+        case TOKEN_LESS_LESS:    return "LESS_LESS";
+        case TOKEN_GREATER_GREATER: return "GREATER_GREATER";
         case TOKEN_IDENTIFIER:    return "IDENTIFIER";
         case TOKEN_STRING:        return "STRING";
         case TOKEN_NUMBER:        return "NUMBER";

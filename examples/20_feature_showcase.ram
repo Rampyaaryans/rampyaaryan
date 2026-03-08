@@ -1,0 +1,225 @@
+/// ╔══════════════════════════════════╗
+/// ║  20: Comprehensive Feature Show  ║
+/// ╚══════════════════════════════════╝
+
+likho "╔══════════════════════════════════╗"
+likho "║  Rampyaaryan Feature Showcase     ║"
+likho "╚══════════════════════════════════╝"
+
+/// === 1. All Data Types ===
+kaam test_types() {
+    likho "\n=== Data Types ==="
+    maano num = 42
+    maano dec = 3.14
+    maano str = "Namaste"
+    maano bol = sach
+    maano lst = [1, 2, 3]
+    maano mp = {"key": "value"}
+    maano nul = khali
+    likho "Number:  " + shabd(num) + " -> " + typeof_val(num)
+    likho "Float:   " + shabd(dec) + " -> " + typeof_val(dec)
+    likho "String:  " + str + " -> " + typeof_val(str)
+    likho "Boolean: " + shabd(bol) + " -> " + typeof_val(bol)
+    likho "List:    " + shabd(lst) + " -> " + typeof_val(lst)
+    likho "Map:     " + shabd(mp) + " -> " + typeof_val(mp)
+    likho "Null:    " + shabd(nul) + " -> " + typeof_val(nul)
+}
+test_types()
+
+/// === 2. String Power ===
+kaam test_strings() {
+    likho "\n=== String Functions ==="
+    maano text = "rampyaaryan language"
+    likho "Original:   " + text
+    likho "Title:      " + title_case(text)
+    likho "Capitalize: " + capitalize(text)
+    likho "Upper:      " + bade_akshar(text)
+    likho "Length:     " + shabd(lambai(text))
+    likho "Replace:    " + badlo(text, "language", "bhasha")
+    likho "Center:     [" + center("STAR", 20, "=") + "]"
+    likho "Pad Left:   [" + pad_left("42", 8, "0") + "]"
+}
+test_strings()
+
+/// === 3. Math ===
+kaam test_math() {
+    likho "\n=== Math Functions ==="
+    likho "factorial(10): " + shabd(factorial(10))
+    likho "fib(15):       " + shabd(fib(15))
+    likho "kya_prime(97): " + shabd(kya_prime(97))
+    likho "hypot(5,12):   " + shabd(hypot_val(5, 12))
+    likho "log2(1024):    " + shabd(log2_val(1024))
+    likho "pow(2,10):     " + shabd(2 ** 10)
+    likho "sqrt(144):     " + shabd(sqrt_val(144))
+}
+test_math()
+
+/// === 4. List Operations ===
+kaam test_lists() {
+    likho "\n=== List Operations ==="
+    maano numbers = [64, 25, 12, 22, 11, 90, 45]
+    likho "Original:  " + shabd(numbers)
+
+    maano sorted = copy_suchi(numbers)
+    kram(sorted)
+    likho "Sorted:    " + shabd(sorted)
+
+    likho "Min:       " + shabd(sabse_chhota(numbers))
+    likho "Max:       " + shabd(sabse_bada(numbers))
+    likho "Sum:       " + shabd(jod(numbers))
+    likho "Flatten:   " + shabd(flatten([[1, 2], [3, 4], [5]]))
+    likho "Chunks(3): " + shabd(tukda([1,2,3,4,5,6,7,8,9], 3))
+}
+test_lists()
+
+/// === 5. Map Magic ===
+kaam test_maps() {
+    likho "\n=== Map Operations ==="
+    maano config = {"app": "MeraApp", "ver": "2.0", "debug": sach}
+    likho "Config: " + shabd(config)
+    likho "Keys:   " + shabd(chabi(config))
+    likho "Values: " + shabd(mulya(config))
+
+    maano extra = {"theme": "dark", "lang": "hi"}
+    maano merged = map_milao(config, extra)
+    likho "Merged: " + shabd(merged)
+}
+test_maps()
+
+/// === 6. Bitwise ===
+kaam test_bitwise() {
+    likho "\n=== Bitwise Operators ==="
+    maano A = 1 << 0
+    maano B = 1 << 1
+    maano C = 1 << 2
+    maano flags = A | C
+    likho "Flags: " + bin_shabd(flags) + " (A and C)"
+    likho "Has A? " + shabd((flags & A) != 0)
+    likho "Has B? " + shabd((flags & B) != 0)
+    flags = flags ^ A
+    likho "Toggle A: " + bin_shabd(flags)
+}
+test_bitwise()
+
+/// === 7. Conversions ===
+kaam test_convert() {
+    likho "\n=== Conversions ==="
+    likho "255 hex: " + hex_shabd(255)
+    likho "255 oct: " + oct_shabd(255)
+    likho "255 bin: " + bin_shabd(255)
+    likho "bool(1): " + shabd(bool_val(1))
+    likho "bool(0): " + shabd(bool_val(0))
+    likho "purn(3.7): " + shabd(purn(3.7))
+}
+test_convert()
+
+/// === 8. Closures ===
+kaam test_closures() {
+    likho "\n=== Closures ==="
+
+    kaam make_counter() {
+        maano count = 0
+        kaam increment() {
+            count = count + 1
+            wapas do count
+        }
+        wapas do increment
+    }
+
+    maano counter = make_counter()
+    likho "Count: " + shabd(counter())
+    likho "Count: " + shabd(counter())
+    likho "Count: " + shabd(counter())
+
+    kaam make_adder(n) {
+        kaam add(x) {
+            wapas do x + n
+        }
+        wapas do add
+    }
+
+    maano add5 = make_adder(5)
+    likho "add5(3): " + shabd(add5(3))
+    likho "add5(7): " + shabd(add5(7))
+}
+test_closures()
+
+/// === 9. Recursion - Quicksort ===
+kaam test_recursion() {
+    likho "\n=== Recursion ==="
+
+    kaam quicksort(arr) {
+        agar lambai(arr) <= 1 { wapas do arr }
+        maano pivot = arr[0]
+        maano left = []
+        maano right = []
+        maano i = 1
+        jab tak i < lambai(arr) {
+            agar arr[i] < pivot {
+                joodo(left, arr[i])
+            } warna {
+                joodo(right, arr[i])
+            }
+            i = i + 1
+        }
+        maano sl = quicksort(left)
+        maano sr = quicksort(right)
+        joodo(sl, pivot)
+        maano k = 0
+        jab tak k < lambai(sr) {
+            joodo(sl, sr[k])
+            k = k + 1
+        }
+        wapas do sl
+    }
+
+    maano unsorted = [38, 27, 43, 3, 9, 82, 10]
+    likho "Before: " + shabd(unsorted)
+    likho "After:  " + shabd(quicksort(unsorted))
+}
+test_recursion()
+
+/// === 10. Date/Time ===
+kaam test_datetime() {
+    likho "\n=== Date & Time ==="
+    likho "Date: " + shabd(din()) + "/" + shabd(mahina()) + "/" + shabd(saal())
+    likho "Time: " + shabd(ghanta()) + ":" + shabd(minute()) + ":" + shabd(second())
+}
+test_datetime()
+
+/// === 11. String Checks ===
+kaam test_str_checks() {
+    likho "\n=== String Checks ==="
+    likho "'123' digit?  " + shabd(kya_ank("123"))
+    likho "'abc' alpha?  " + shabd(kya_akshar("abc"))
+    likho "'ab1' alnum?  " + shabd(kya_alnum("ab1"))
+    likho "'   ' space?  " + shabd(kya_space("   "))
+    likho "swapcase:     " + swapcase("Hello World")
+}
+test_str_checks()
+
+/// === 12. Hashing ===
+kaam test_hash() {
+    likho "\n=== Hashing ==="
+    likho "hash('hello'): " + shabd(hash_val("hello"))
+    likho "hash(42):      " + shabd(hash_val(42))
+}
+test_hash()
+
+/// === Final Summary ===
+kaam summary() {
+    likho "\n=== ALL FEATURES WORKING ==="
+    likho "  7 Data Types"
+    likho "  30+ String Functions"
+    likho "  20+ Math Functions"
+    likho "  15+ List Functions"
+    likho "  10+ Map Functions"
+    likho "  6 Bitwise Operators"
+    likho "  Type Conversions"
+    likho "  Date/Time Functions"
+    likho "  Closures & Higher-Order"
+    likho "  Recursion Support"
+    likho "  110+ Built-in Functions"
+    likho "\nRampyaaryan - Powerful like Python!"
+}
+summary()

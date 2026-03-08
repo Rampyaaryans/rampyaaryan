@@ -26,10 +26,14 @@ typedef enum {
     PREC_NOT,          /* nahi             */
     PREC_EQUALITY,     /* == !=            */
     PREC_COMPARISON,   /* < > <= >=        */
+    PREC_BIT_OR,       /* |                */
+    PREC_BIT_XOR,      /* ^                */
+    PREC_BIT_AND,      /* &                */
+    PREC_SHIFT,        /* << >>            */
     PREC_TERM,         /* + -              */
     PREC_FACTOR,       /* * / %            */
     PREC_POWER,        /* **               */
-    PREC_UNARY,        /* - nahi           */
+    PREC_UNARY,        /* - nahi ~         */
     PREC_CALL,         /* . () []          */
     PREC_PRIMARY,
 } Precedence;
@@ -500,6 +504,7 @@ static void unary(Parser* parser, bool canAssign) {
     switch (operatorType) {
         case TOKEN_MINUS: emitByte(parser, OP_NEGATE); break;
         case TOKEN_NAHI:  emitByte(parser, OP_NOT); break;
+        case TOKEN_TILDE: emitByte(parser, OP_BIT_NOT); break;
         default: return;
     }
 }
@@ -524,6 +529,11 @@ static void binary(Parser* parser, bool canAssign) {
         case TOKEN_GREATER_EQUAL: emitByte(parser, OP_GREATER_EQUAL); break;
         case TOKEN_LESS:          emitByte(parser, OP_LESS); break;
         case TOKEN_LESS_EQUAL:    emitByte(parser, OP_LESS_EQUAL); break;
+        case TOKEN_AMPERSAND:     emitByte(parser, OP_BIT_AND); break;
+        case TOKEN_PIPE:          emitByte(parser, OP_BIT_OR); break;
+        case TOKEN_CARET:         emitByte(parser, OP_BIT_XOR); break;
+        case TOKEN_LESS_LESS:     emitByte(parser, OP_SHIFT_LEFT); break;
+        case TOKEN_GREATER_GREATER: emitByte(parser, OP_SHIFT_RIGHT); break;
         default: return;
     }
 }
@@ -643,6 +653,27 @@ static void listLiteral(Parser* parser, bool canAssign) {
     emitBytes(parser, OP_LIST_NEW, (uint8_t)itemCount);
 }
 
+/* --- MAP/DICT LITERAL --- */
+static void mapLiteral(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+    int pairCount = 0;
+    skipNewlines(parser);
+    if (!check(parser, TOKEN_RIGHT_BRACE)) {
+        do {
+            skipNewlines(parser);
+            expression(parser);        /* key */
+            consume(parser, TOKEN_COLON, "':' lagao key ke baad map mein.");
+            skipNewlines(parser);
+            expression(parser);        /* value */
+            pairCount++;
+            skipNewlines(parser);
+        } while (matchToken(parser, TOKEN_COMMA));
+    }
+    skipNewlines(parser);
+    consume(parser, TOKEN_RIGHT_BRACE, "'}' lagao map band karne ke liye.");
+    emitBytes(parser, OP_MAP_NEW, (uint8_t)pairCount);
+}
+
 /* --- INDEX ACCESS --- */
 static void index_(Parser* parser, bool canAssign) {
     expression(parser);
@@ -675,7 +706,7 @@ static void inputExpr(Parser* parser, bool canAssign) {
 static ParseRule rules[] = {
     [TOKEN_LEFT_PAREN]    = {grouping, call,    PREC_CALL},
     [TOKEN_RIGHT_PAREN]   = {NULL,     NULL,    PREC_NONE},
-    [TOKEN_LEFT_BRACE]    = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_LEFT_BRACE]    = {mapLiteral, NULL,  PREC_NONE},
     [TOKEN_RIGHT_BRACE]   = {NULL,     NULL,    PREC_NONE},
     [TOKEN_LEFT_BRACKET]  = {listLiteral, index_, PREC_CALL},
     [TOKEN_RIGHT_BRACKET] = {NULL,     NULL,    PREC_NONE},
@@ -689,6 +720,12 @@ static ParseRule rules[] = {
     [TOKEN_STAR]          = {NULL,     binary,  PREC_FACTOR},
     [TOKEN_PERCENT]       = {NULL,     binary,  PREC_FACTOR},
     [TOKEN_STAR_STAR]     = {NULL,     binary,  PREC_POWER},
+    [TOKEN_AMPERSAND]     = {NULL,     binary,  PREC_BIT_AND},
+    [TOKEN_PIPE]          = {NULL,     binary,  PREC_BIT_OR},
+    [TOKEN_CARET]         = {NULL,     binary,  PREC_BIT_XOR},
+    [TOKEN_TILDE]         = {unary,    NULL,    PREC_NONE},
+    [TOKEN_LESS_LESS]     = {NULL,     binary,  PREC_SHIFT},
+    [TOKEN_GREATER_GREATER] = {NULL,   binary,  PREC_SHIFT},
     [TOKEN_BANG]          = {unary,    NULL,    PREC_NONE},
     [TOKEN_BANG_EQUAL]    = {NULL,     binary,  PREC_EQUALITY},
     [TOKEN_EQUAL]         = {NULL,     NULL,    PREC_NONE},

@@ -11,6 +11,8 @@
 #include "vm.h"
 #include "chunk.h"
 
+#include <math.h>
+
 /* ============================================================================
  *  OBJECT ALLOCATION
  * ============================================================================ */
@@ -184,6 +186,141 @@ void listSet(ObjList* list, int index, Value value) {
 }
 
 /* ============================================================================
+ *  VALUE HASHING (for map keys)
+ * ============================================================================ */
+uint32_t hashValue(Value value) {
+    switch (value.type) {
+        case VAL_BOOL: return AS_BOOL(value) ? 3u : 5u;
+        case VAL_NULL: return 7u;
+        case VAL_NUMBER: {
+            double num = AS_NUMBER(value);
+            if (num == 0) return 0u;
+            uint32_t hash = 2166136261u;
+            uint8_t* bytes = (uint8_t*)&num;
+            for (size_t i = 0; i < sizeof(double); i++) {
+                hash ^= bytes[i];
+                hash *= 16777619u;
+            }
+            return hash;
+        }
+        case VAL_OBJ: {
+            if (IS_STRING(value)) {
+                return AS_STRING(value)->hash;
+            }
+            uintptr_t ptr = (uintptr_t)AS_OBJ(value);
+            return (uint32_t)(ptr ^ (ptr >> 16));
+        }
+        default: return 0u;
+    }
+}
+
+/* ============================================================================
+ *  MAP/DICTIONARY OBJECT
+ * ============================================================================ */
+ObjMap* newMap(VM* vm) {
+    ObjMap* map = ALLOCATE_OBJ(vm, ObjMap, OBJ_MAP);
+    map->count = 0;
+    map->capacity = 0;
+    map->entries = NULL;
+    return map;
+}
+
+static MapEntry* findMapEntry(MapEntry* entries, int capacity, Value key) {
+    uint32_t index = hashValue(key) & (capacity - 1);
+    MapEntry* tombstone = NULL;
+
+    for (;;) {
+        MapEntry* entry = &entries[index];
+        if (!entry->isOccupied) {
+            if (!entry->isTombstone) {
+                return tombstone != NULL ? tombstone : entry;
+            } else {
+                if (tombstone == NULL) tombstone = entry;
+            }
+        } else if (valuesEqual(entry->key, key)) {
+            return entry;
+        }
+        index = (index + 1) & (capacity - 1);
+    }
+}
+
+static void adjustMapCapacity(VM* vm, ObjMap* map, int capacity) {
+    MapEntry* entries = ALLOCATE(MapEntry, capacity);
+    for (int i = 0; i < capacity; i++) {
+        entries[i].isOccupied = false;
+        entries[i].isTombstone = false;
+        entries[i].key = NULL_VAL;
+        entries[i].value = NULL_VAL;
+    }
+
+    map->count = 0;
+    for (int i = 0; i < map->capacity; i++) {
+        MapEntry* entry = &map->entries[i];
+        if (!entry->isOccupied) continue;
+
+        MapEntry* dest = findMapEntry(entries, capacity, entry->key);
+        dest->key = entry->key;
+        dest->value = entry->value;
+        dest->isOccupied = true;
+        dest->isTombstone = false;
+        map->count++;
+    }
+
+    FREE_ARRAY(MapEntry, map->entries, map->capacity);
+    map->entries = entries;
+    map->capacity = capacity;
+}
+
+bool mapSet(VM* vm, ObjMap* map, Value key, Value value) {
+    if (map->count + 1 > map->capacity * 3 / 4) {
+        int capacity = GROW_CAPACITY(map->capacity);
+        if (capacity < 8) capacity = 8;
+        adjustMapCapacity(vm, map, capacity);
+    }
+
+    MapEntry* entry = findMapEntry(map->entries, map->capacity, key);
+    bool isNewKey = !entry->isOccupied;
+    if (isNewKey && !entry->isTombstone) map->count++;
+
+    entry->key = key;
+    entry->value = value;
+    entry->isOccupied = true;
+    entry->isTombstone = false;
+    return isNewKey;
+}
+
+bool mapGet(ObjMap* map, Value key, Value* result) {
+    if (map->count == 0) return false;
+
+    MapEntry* entry = findMapEntry(map->entries, map->capacity, key);
+    if (!entry->isOccupied) return false;
+
+    *result = entry->value;
+    return true;
+}
+
+bool mapDelete(ObjMap* map, Value key) {
+    if (map->count == 0) return false;
+
+    MapEntry* entry = findMapEntry(map->entries, map->capacity, key);
+    if (!entry->isOccupied) return false;
+
+    entry->isOccupied = false;
+    entry->isTombstone = true;
+    return true;
+}
+
+bool mapHasKey(ObjMap* map, Value key) {
+    if (map->count == 0) return false;
+    MapEntry* entry = findMapEntry(map->entries, map->capacity, key);
+    return entry->isOccupied;
+}
+
+int mapLength(ObjMap* map) {
+    return map->count;
+}
+
+/* ============================================================================
  *  PRINT OBJECT
  * ============================================================================ */
 void printObject(Value value) {
@@ -225,6 +362,21 @@ void printObject(Value value) {
                 printValueRepr(list->items.values[i]);
             }
             printf("]");
+            break;
+        }
+        case OBJ_MAP: {
+            ObjMap* map = AS_MAP(value);
+            printf("{");
+            bool first = true;
+            for (int i = 0; i < map->capacity; i++) {
+                if (!map->entries[i].isOccupied) continue;
+                if (!first) printf(", ");
+                first = false;
+                printValueRepr(map->entries[i].key);
+                printf(": ");
+                printValueRepr(map->entries[i].value);
+            }
+            printf("}");
             break;
         }
     }
@@ -272,6 +424,12 @@ void freeObject(VM* vm, Obj* object) {
             ObjList* list = (ObjList*)object;
             freeValueArray(&list->items);
             FREE(ObjList, object);
+            break;
+        }
+        case OBJ_MAP: {
+            ObjMap* map = (ObjMap*)object;
+            FREE_ARRAY(MapEntry, map->entries, map->capacity);
+            FREE(ObjMap, object);
             break;
         }
     }

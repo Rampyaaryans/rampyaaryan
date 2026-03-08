@@ -50,7 +50,7 @@ likho chhatra    # â†’ sach
 
 ## Lesson 3: Data Types ðŸ·ï¸
 
-Rampyaaryan has 6 core data types:
+Rampyaaryan has 7 core data types:
 
 ```
 # Numbers (sankhya)
@@ -74,6 +74,9 @@ maano rang = ["lal", "hara", "neela"]
 kaam namaste() {
     likho "Namaste!"
 }
+
+# Maps/Dictionaries (shabdkosh)
+maano student = {"naam": "Aryan", "umar": 20}
 ```
 
 Check any type with `prakar()`:
@@ -698,9 +701,192 @@ likho format("Hash of 'hello': {}", hash_val("hello"))
 
 ---
 
+## Lesson 16: Maps / Dictionaries 📖
+
+Rampyaaryan supports key-value data structures called maps (shabdkosh):
+
+### Creating Maps
+```
+# Literal syntax
+maano student = {"naam": "Aryan", "umar": 20, "active": sach}
+
+# Empty map
+maano khali_map = shabdkosh()
+```
+
+### Accessing and Modifying
+```
+maano student = {"naam": "Aryan", "umar": 20}
+
+# Access by key
+likho student["naam"]        # → Aryan
+
+# Modify
+student["umar"] = 21
+
+# Add new key
+student["grade"] = "A"
+```
+
+### Map Functions
+```
+maano m = {"a": 1, "b": 2, "c": 3}
+
+likho chabi(m)              # → ["a", "b", "c"]
+likho mulya(m)              # → [1, 2, 3]
+likho jodi(m)               # → [["a",1], ["b",2], ["c",3]]
+likho map_lambai(m)         # → 3
+likho map_hai(m, "a")       # → sach
+likho map_get(m, "d", 0)    # → 0 (default)
+
+map_hatao(m, "c")           # Remove key "c"
+
+maano m2 = {"d": 4}
+maano merged = map_milao(m, m2)  # Merge maps
+```
+
+### Practical Example: Phone Book
+```
+maano contacts = shabdkosh()
+contacts["Ram"] = "9876543210"
+contacts["Shyam"] = "9876543211"
+
+maano sabhi = chabi(contacts)
+har i = 0; i < lambai(sabhi); i = i + 1 {
+    likho format("{}: {}", sabhi[i], contacts[sabhi[i]])
+}
+```
+
+---
+
+## Lesson 17: Bitwise Operations 🔢
+
+Rampyaaryan supports bitwise operators for low-level operations:
+
+### Operators
+```
+maano a = 12    # Binary: 1100
+maano b = 10    # Binary: 1010
+
+likho a & b     # AND  → 8   (1000)
+likho a | b     # OR   → 14  (1110)
+likho a ^ b     # XOR  → 6   (0110)
+likho ~a        # NOT  → -13
+likho a << 2    # Left shift  → 48
+likho a >> 1    # Right shift → 6
+```
+
+### Base Conversion
+```
+likho hex_shabd(255)    # → "ff"
+likho oct_shabd(255)    # → "377"
+likho bin_shabd(255)    # → "11111111"
+```
+
+### Practical: Permission Flags
+```
+maano READ = 4      # 100
+maano WRITE = 2     # 010
+maano EXECUTE = 1   # 001
+
+maano permissions = READ | WRITE   # 110 = 6
+
+agar permissions & READ {
+    likho "Read allowed"
+}
+agar permissions & EXECUTE {
+    likho "Execute allowed"
+} warna {
+    likho "Execute not allowed"
+}
+```
+
+---
+
+## Lesson 18: Higher-Order Functions 🔄
+
+Functions that take other functions as arguments:
+
+### Map / Filter / Reduce
+```
+kaam square(x) { wapas do x * x }
+kaam is_even(x) { wapas do x % 2 == 0 }
+kaam add(a, b) { wapas do a + b }
+
+maano nums = [1, 2, 3, 4, 5]
+
+# Map: apply function to each element
+likho naksha(nums, square)       # → [1, 4, 9, 16, 25]
+
+# Filter: keep elements where function returns sach
+likho chhaano(nums, is_even)     # → [2, 4]
+
+# Reduce: combine all elements
+likho ikkatha(nums, add, 0)      # → 15
+```
+
+### All / Any
+```
+maano nums = [2, 4, 6, 8]
+likho sab(nums)     # → sach (all truthy)
+likho koi([0,0,1])  # → sach (at least one truthy)
+```
+
+### Zip and Enumerate
+```
+maano names = ["Ram", "Shyam"]
+maano marks = [85, 92]
+
+maano pairs = jodi_banao(names, marks)
+# → [["Ram", 85], ["Shyam", 92]]
+
+maano indexed = ginati_banao(names)
+# → [[0, "Ram"], [1, "Shyam"]]
+```
+
+---
+
+## Lesson 19: Date, Time & Advanced Math 📅
+
+### Date & Time
+```
+likho format("Date: {}-{}-{}", saal(), mahina(), din())
+likho format("Time: {}:{}:{}", ghanta(), minute(), second())
+likho format("Day of week: {}", hafta_din())   # 0=Sunday
+```
+
+### Advanced Math
+```
+likho factorial(10)    # → 3628800
+likho kya_prime(17)    # → sach
+likho fib(10)          # → 55
+likho hypot_val(3, 4)  # → 5
+likho log2_val(1024)   # → 10
+```
+
+### Advanced Strings
+```
+likho title_case("hello world")  # → "Hello World"
+likho capitalize("hello")       # → "Hello"
+likho swapcase("Hello")         # → "hELLO"
+likho center("hi", 10, "*")     # → "****hi****"
+likho pad_left("42", 5, "0")    # → "00042"
+likho kya_ank("12345")          # → sach
+likho kya_akshar("hello")       # → sach
+```
+
+### Advanced Lists
+```
+likho flatten([[1,2],[3,[4,5]]])    # → [1,2,3,4,5]
+likho tukda([1,2,3,4,5], 2)        # → [[1,2],[3,4],[5]]
+likho ghuma([1,2,3,4,5], 2)        # → [3,4,5,1,2]
+```
+
+---
+
 ## Next Steps ðŸš€
 
-- Read the [API Reference](API_REFERENCE.md) for all 65+ built-in functions
+- Read the [API Reference](API_REFERENCE.md) for all 145 built-in functions
 - Check out the [examples/](../examples/) folder for more programs
 - Read the [Language Specification](LANGUAGE_SPEC.md) for the full grammar
 - Join us on [GitHub](https://github.com/Rampyaaryans/rampyaaryan)!

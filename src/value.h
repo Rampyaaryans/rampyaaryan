@@ -14,6 +14,7 @@
 typedef struct Obj Obj;
 typedef struct ObjString ObjString;
 typedef struct ObjList ObjList;
+typedef struct ObjMap ObjMap;
 typedef struct ObjFunction ObjFunction;
 
 /* ============================================================================

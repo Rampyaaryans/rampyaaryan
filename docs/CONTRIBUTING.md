@@ -42,7 +42,7 @@ make
 
 - [ ] More built-in functions
 - [ ] File I/O support
-- [ ] HashMap/Dictionary type
+- [x] HashMap/Dictionary type
 - [ ] Module/import system
 - [ ] Error recovery improvements
 - [ ] More examples

@@ -1,0 +1,124 @@
+/// ╔══════════════════════════════════╗
+/// ║  18: Higher-Order Functions      ║
+/// ╚══════════════════════════════════╝
+
+likho "╔══════════════════════════════════╗"
+likho "║  Higher-Order Functions Demo      ║"
+likho "╚══════════════════════════════════╝"
+
+/// === all() and any() ===
+kaam test_sab_koi() {
+    likho "=== sab() aur koi() ==="
+    likho "[1,2,3,4,5] sab truthy? " + shabd(sab([1, 2, 3, 4, 5]))
+    likho "[1,0,3,4] sab truthy? " + shabd(sab([1, 0, 3, 4]))
+    likho "[0,false,null] koi truthy? " + shabd(koi([0, jhooth, khali]))
+    likho "[0,false,1] koi truthy? " + shabd(koi([0, jhooth, 1]))
+}
+test_sab_koi()
+
+/// === zip() ===
+kaam test_zip() {
+    likho "\n=== jodi_banao() (zip) ==="
+    maano names = ["Arjun", "Priya", "Rahul"]
+    maano scores = [95, 88, 76]
+    maano paired = jodi_banao(names, scores)
+    likho "Names + Scores:"
+    maano i = 0
+    jab tak (i < lambai(paired)) {
+        maano pair = paired[i]
+        likho "  " + pair[0] + ": " + shabd(pair[1])
+        i = i + 1
+    }
+}
+test_zip()
+
+/// === enumerate() ===
+kaam test_enumerate() {
+    likho "\n=== ginati_banao() (enumerate) ==="
+    maano fruits = ["Seb", "Kela", "Aam", "Angoor"]
+    maano indexed = ginati_banao(fruits)
+    maano j = 0
+    jab tak (j < lambai(indexed)) {
+        maano item = indexed[j]
+        likho "  #" + shabd(item[0]) + " -> " + item[1]
+        j = j + 1
+    }
+}
+test_enumerate()
+
+/// === flatten() ===
+kaam test_flatten() {
+    likho "\n=== flatten() ==="
+    maano nested = [[1, 2], [3, 4], [5, 6, 7]]
+    likho "Nested: " + shabd(nested)
+    likho "Flat:   " + shabd(flatten(nested))
+}
+test_flatten()
+
+/// === chunk() ===
+kaam test_chunk() {
+    likho "\n=== tukda() (chunk) ==="
+    maano data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    maano chunks = tukda(data, 3)
+    likho "Data: " + shabd(data)
+    likho "Chunks of 3: " + shabd(chunks)
+}
+test_chunk()
+
+/// === rotate() ===
+kaam test_rotate() {
+    likho "\n=== ghuma() (rotate) ==="
+    maano arr = [1, 2, 3, 4, 5]
+    likho "Original:    " + shabd(arr)
+    maano r1 = ghuma(copy_suchi(arr), 2)
+    likho "Rotate by 2: " + shabd(r1)
+    maano r2 = ghuma(copy_suchi(arr), -1)
+    likho "Rotate by -1: " + shabd(r2)
+}
+test_rotate()
+
+/// === Results Table ===
+kaam test_table() {
+    likho "\n=== Student Results ==="
+    maano students = ["Arjun", "Priya", "Rahul", "Sneha", "Vikram"]
+    maano marks_list = [92, 88, 76, 95, 83]
+
+    maano results = jodi_banao(students, marks_list)
+    likho pad_right("Name", 12, " ") + pad_right("Marks", 8, " ") + "Grade"
+    likho pad_right("----", 12, " ") + pad_right("-----", 8, " ") + "-----"
+
+    maano k = 0
+    jab tak (k < lambai(results)) {
+        maano r = results[k]
+        maano grade = "C"
+        agar (r[1] >= 90) {
+            grade = "A+"
+        } warna agar (r[1] >= 80) {
+            grade = "A"
+        } warna agar (r[1] >= 70) {
+            grade = "B"
+        }
+        likho pad_right(r[0], 12, " ") + pad_right(shabd(r[1]), 8, " ") + grade
+        k = k + 1
+    }
+}
+test_table()
+
+/// === Copy and Clear ===
+kaam test_copy() {
+    likho "\n=== copy_suchi() aur khali_karo() ==="
+    maano original = [10, 20, 30]
+    maano copy = copy_suchi(original)
+    likho "Original: " + shabd(original)
+    likho "Copy:     " + shabd(copy)
+    joodo(copy, 40)
+    likho "After adding to copy:"
+    likho "  Original: " + shabd(original)
+    likho "  Copy:     " + shabd(copy)
+    khali_karo(copy)
+    likho "After clear: " + shabd(copy)
+    likho "Original:    " + shabd(original)
+}
+test_copy()
+
+likho "\n Higher-order functions demo complete!"

@@ -138,6 +138,13 @@ int disassembleInstruction(Chunk* chunk, int offset) {
         case OP_LIST_GET:       return simpleInstruction("OP_LIST_GET", offset);
         case OP_LIST_SET:       return simpleInstruction("OP_LIST_SET", offset);
         case OP_STR_CONCAT:     return simpleInstruction("OP_STR_CONCAT", offset);
+        case OP_MAP_NEW:        return byteInstruction("OP_MAP_NEW", chunk, offset);
+        case OP_BIT_AND:        return simpleInstruction("OP_BIT_AND", offset);
+        case OP_BIT_OR:         return simpleInstruction("OP_BIT_OR", offset);
+        case OP_BIT_XOR:        return simpleInstruction("OP_BIT_XOR", offset);
+        case OP_BIT_NOT:        return simpleInstruction("OP_BIT_NOT", offset);
+        case OP_SHIFT_LEFT:     return simpleInstruction("OP_SHIFT_LEFT", offset);
+        case OP_SHIFT_RIGHT:    return simpleInstruction("OP_SHIFT_RIGHT", offset);
         case OP_HALT:           return simpleInstruction("OP_HALT", offset);
 
         default:

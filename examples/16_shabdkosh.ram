@@ -1,0 +1,99 @@
+/// ╔══════════════════════════════════╗
+/// ║  16: Shabdkosh (Dictionary/Map)  ║
+/// ╚══════════════════════════════════╝
+
+likho "╔══════════════════════════════════╗"
+likho "║  Shabdkosh (Dictionary) Demo     ║"
+likho "╚══════════════════════════════════╝"
+
+/// === Creating Maps ===
+likho "=== Map Banana ==="
+maano student = {"naam": "Arjun", "umar": 20, "city": "Delhi", "marks": 92}
+likho "Student: " + shabd(student)
+
+/// === Accessing Values ===
+likho "\n=== Values Access ==="
+likho "Naam: " + student["naam"]
+likho "Umar: " + shabd(student["umar"])
+likho "City: " + student["city"]
+
+/// === Modifying Maps ===
+likho "\n=== Map Update ==="
+student["marks"] = 95
+student["email"] = "arjun@example.com"
+likho "Updated: " + shabd(student)
+
+/// === Map Functions ===
+likho "\n=== Map Functions ==="
+likho "Keys: " + shabd(chabi(student))
+likho "Values: " + shabd(mulya(student))
+likho "Length: " + shabd(map_lambai(student))
+likho "Has 'naam': " + shabd(map_hai(student, "naam"))
+likho "Has 'phone': " + shabd(map_hai(student, "phone"))
+
+/// === Map Get with Default ===
+likho "\n=== Default Values ==="
+likho "Phone: " + shabd(map_get(student, "phone", "N/A"))
+likho "Naam: " + shabd(map_get(student, "naam", "Unknown"))
+
+/// === Deleting Keys ===
+likho "\n=== Key Delete ==="
+map_hatao(student, "email")
+likho "After delete: " + shabd(student)
+
+/// === Merging Maps ===
+likho "\n=== Map Merge ==="
+maano info1 = {"naam": "Ram", "umar": 25}
+maano info2 = {"city": "Mumbai", "kaam": "Engineer"}
+maano combined = map_milao(info1, info2)
+likho "Merged: " + shabd(combined)
+
+/// === Phonebook Example ===
+likho "\n=== 📞 Phonebook ==="
+maano phonebook = {
+    "Amit": "9876543210",
+    "Priya": "8765432109",
+    "Rahul": "7654321098"
+}
+
+kaam dhundo(book, naam) {
+    agar (map_hai(book, naam)) {
+        wapas do naam + ": " + book[naam]
+    }
+    wapas do naam + " nahi mila!"
+}
+
+likho dhundo(phonebook, "Amit")
+likho dhundo(phonebook, "Priya")
+likho dhundo(phonebook, "Unknown")
+
+/// === Inventory System ===
+likho "\n=== 📦 Inventory ==="
+maano inventory = {
+    "seb": 50,
+    "kela": 30,
+    "aam": 20,
+    "santara": 40
+}
+
+kaam sell(inv, item, qty) {
+    agar (map_hai(inv, item) == jhooth) {
+        likho item + " available nahi hai!"
+        wapas do inv
+    }
+    maano current = inv[item]
+    agar (current < qty) {
+        likho item + " mein sirf " + shabd(current) + " hai!"
+        wapas do inv
+    }
+    inv[item] = current - qty
+    likho item + " x" + shabd(qty) + " sold! Remaining: " + shabd(inv[item])
+    wapas do inv
+}
+
+inventory = sell(inventory, "seb", 10)
+inventory = sell(inventory, "aam", 25)
+inventory = sell(inventory, "kela", 5)
+likho "Final inventory: " + shabd(inventory)
+
+likho "\n🗃️ Shabdkosh demo complete!"

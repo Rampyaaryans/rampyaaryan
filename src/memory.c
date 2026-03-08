@@ -135,6 +135,16 @@ static void blackenObject(VM* vm, Obj* object) {
             markArray(vm, &list->items);
             break;
         }
+        case OBJ_MAP: {
+            ObjMap* map = (ObjMap*)object;
+            for (int i = 0; i < map->capacity; i++) {
+                if (map->entries[i].isOccupied) {
+                    markValue(vm, map->entries[i].key);
+                    markValue(vm, map->entries[i].value);
+                }
+            }
+            break;
+        }
         case OBJ_NATIVE:
         case OBJ_STRING:
             break;

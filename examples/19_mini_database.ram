@@ -1,0 +1,124 @@
+/// ╔══════════════════════════════════╗
+/// ║  19: Mini Database with Maps     ║
+/// ╚══════════════════════════════════╝
+
+likho "╔══════════════════════════════════╗"
+likho "║  📀 Mini Database System          ║"
+likho "╚══════════════════════════════════╝"
+
+/// === Database: List of Maps ===
+maano db = []
+
+kaam add_record(database, record) {
+    joodo(database, record)
+    wapas do database
+}
+
+kaam find_by_key(database, key, value) {
+    maano results = []
+    maano i = 0
+    jab tak (i < lambai(database)) {
+        maano rec = database[i]
+        agar (map_hai(rec, key)) {
+            agar (shabd(rec[key]) == shabd(value)) {
+                joodo(results, rec)
+            }
+        }
+        i = i + 1
+    }
+    wapas do results
+}
+
+kaam count_records(database) {
+    wapas do lambai(database)
+}
+
+kaam show_all(database) {
+    maano i = 0
+    jab tak (i < lambai(database)) {
+        likho "  [" + shabd(i) + "] " + shabd(database[i])
+        i = i + 1
+    }
+}
+
+/// === Add Student Records ===
+likho "=== Adding Records ==="
+db = add_record(db, {"id": 1, "naam": "Arjun", "umar": 20, "city": "Delhi", "marks": 92})
+db = add_record(db, {"id": 2, "naam": "Priya", "umar": 19, "city": "Mumbai", "marks": 88})
+db = add_record(db, {"id": 3, "naam": "Rahul", "umar": 21, "city": "Delhi", "marks": 76})
+db = add_record(db, {"id": 4, "naam": "Sneha", "umar": 20, "city": "Pune", "marks": 95})
+db = add_record(db, {"id": 5, "naam": "Vikram", "umar": 22, "city": "Delhi", "marks": 83})
+
+likho "Total records: " + shabd(count_records(db))
+likho "\n=== All Records ==="
+show_all(db)
+
+/// === Query: Find by City ===
+likho "\n=== 🔍 Query: City = Delhi ==="
+maano delhi_students = find_by_key(db, "city", "Delhi")
+likho "Found " + shabd(lambai(delhi_students)) + " students from Delhi:"
+show_all(delhi_students)
+
+/// === Query: Find by Name ===
+likho "\n=== 🔍 Query: Naam = Sneha ==="
+maano found = find_by_key(db, "naam", "Sneha")
+agar (lambai(found) > 0) {
+    likho "Found: " + shabd(found[0])
+} warna {
+    likho "Not found!"
+}
+
+/// === Statistics ===
+likho "\n=== 📊 Statistics ==="
+
+kaam calculate_stats(database, field) {
+    maano total = 0
+    maano highest = 0
+    maano lowest = 99999
+    maano i = 0
+    jab tak (i < lambai(database)) {
+        maano val = database[i][field]
+        total = total + val
+        agar (val > highest) { highest = val }
+        agar (val < lowest) { lowest = val }
+        i = i + 1
+    }
+    maano avg = total / lambai(database)
+    wapas do {"total": total, "average": avg, "highest": highest, "lowest": lowest, "count": lambai(database)}
+}
+
+maano stats = calculate_stats(db, "marks")
+likho "Marks Statistics:"
+likho "  Total:   " + shabd(stats["total"])
+likho "  Average: " + shabd(stats["average"])
+likho "  Highest: " + shabd(stats["highest"])
+likho "  Lowest:  " + shabd(stats["lowest"])
+likho "  Count:   " + shabd(stats["count"])
+
+/// === Update Record ===
+likho "\n=== ✏️ Update Record ==="
+likho "Before: " + shabd(db[1])
+db[1]["marks"] = 91
+db[1]["city"] = "Bangalore"
+likho "After:  " + shabd(db[1])
+
+/// === Grade Distribution ===
+likho "\n=== 📈 Grade Distribution ==="
+maano grades = {"A+": 0, "A": 0, "B": 0, "C": 0}
+maano m = 0
+jab tak (m < lambai(db)) {
+    maano marks = db[m]["marks"]
+    agar (marks >= 90) {
+        grades["A+"] = grades["A+"] + 1
+    } warna agar (marks >= 80) {
+        grades["A"] = grades["A"] + 1
+    } warna agar (marks >= 70) {
+        grades["B"] = grades["B"] + 1
+    } warna {
+        grades["C"] = grades["C"] + 1
+    }
+    m = m + 1
+}
+likho "Grades: " + shabd(grades)
+
+likho "\n💾 Mini database demo complete!"
