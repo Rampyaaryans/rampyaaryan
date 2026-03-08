@@ -1,94 +1,89 @@
-# Rampyaaryan VS Code Extension 🙏
+# Rampyaaryan VS Code Extension
 
-Syntax highlighting, **Indian themes**, **Neko cat**, **Hindi UI**, file icons & language support for **Rampyaaryan** (`.ram`) — India's First Hinglish Programming Language 🇮🇳
+Syntax highlighting, **Indian themes**, **WebNeko cat**, **Hindi UI**, file icons & language support for **Rampyaaryan** (`.ram`) — India's First Hinglish Programming Language.
 
-## ✨ Features
+## Features
 
-### 🎨 Indian Color Themes
+### Indian Color Themes
 
 4 beautiful themes inspired by Indian culture:
 
 | Theme | Style | Description |
 |-------|-------|-------------|
-| **Jai Shri Ram** 🙏 | Dark | Warm saffron & gold on deep brown — devotional coding |
-| **Tiranga** 🇮🇳 | Dark | Indian tricolor — saffron activity bar, green status bar, navy editor |
-| **Diwali Night** ✨ | Dark | Festival of lights — deep purple with golden sparkles |
-| **Ram Mandir** 🛕 | Light | Sacred marble white with saffron accents |
+| **Jai Shri Ram** | Dark | Warm saffron & gold on deep brown — devotional coding |
+| **Tiranga** | Dark | Indian tricolor — saffron activity bar, green status bar, navy editor |
+| **Diwali Night** | Dark | Festival of lights — deep purple with golden sparkles |
+| **Ram Mandir** | Light | Sacred marble white with saffron accents |
 
 > `Ctrl+K Ctrl+T` → Select any Rampyaaryan theme!
 
-### 🐱 Neko Cat Cursor Follower
+### WebNeko Cat
 
-A cute cat that follows your cursor with different moods!
+An animated Neko cat in a dedicated panel — inspired by the classic WebNeko (webneko.net). The cat follows your mouse, sits, sleeps, scratches, yawns, and washes itself. Click to toggle chase mode.
 
-- 😺 **Idle** — Cat is chilling
-- 🐱 **Moving** — Cat follows your cursor
-- 😸 **Typing** — Cat is excited while you code
-- 😴 **Sleeping** — Cat naps when you're idle
-- 😻 **Happy** — Cat loves your code!
+- **Sitting** — Cat rests when idle
+- **Running** — Cat chases the mouse cursor
+- **Sleeping** — Cat naps with ZZZ after being idle
+- **Alert** — Cat perks up when mouse moves
+- **Scratching** — Random idle animation
+- **Yawning** — Random idle animation
+- **Washing** — Random idle animation
 
-> `Ctrl+Shift+P` → "Rampyaaryan: Enable Neko Cat 🐱"
+> `Ctrl+Shift+P` → "Rampyaaryan: Open Neko Cat"
 
-### 📊 Hindi Devanagari Status Bar
+### Hindi Devanagari Status Bar
 
-Line and column numbers displayed in **Hindi Devanagari numerals** (पंक्ति ४२ · स्तंभ १५).
+Line and column numbers displayed in **Hindi Devanagari numerals**.
 
 > `Ctrl+Shift+P` → "Rampyaaryan: Toggle Hindi Status Bar"
 
-### 📿 Mantra Mode
+### Mantra Mode
 
-Cycling Sanskrit mantras in the status bar for peaceful coding:
-
-- ॐ नमः शिवाय
-- जय श्री राम
-- सत्यमेव जयते
-- वसुधैव कुटुम्बकम्
-- and more...
+Cycling Sanskrit mantras in the status bar for peaceful coding.
 
 > `Ctrl+Shift+P` → "Rampyaaryan: Toggle Mantra Mode"
 
-### 🏹 Ram Quotes
+### Ram Quotes
 
 Rotating Sri Ram quotes and wisdom in the status bar — keeping you inspired while coding.
 
-### 🔤 Hindi Font Setup
+### Hindi Font Setup
 
 One-click Devanagari font configuration — makes Hindi text render beautifully in the editor.
 
 > `Ctrl+Shift+P` → "Rampyaaryan: Set Hindi/Devanagari Font"
 
-### 🪔 Diwali Mode
+### Diwali Mode
 
-Festive celebration mode with Diwali greetings!
+Festive celebration mode with Diwali greetings.
 
 > `Ctrl+Shift+P` → "Rampyaaryan: Diwali Mode"
 
-### 🖊️ Syntax Highlighting
+### Syntax Highlighting
 
 Full TextMate grammar for all Rampyaaryan keywords, 215+ built-in functions, strings, numbers, comments, and operators.
 
-### 📁 File Icons
+### File Icons
 
 `.ram` files show the Rampyaaryan logo icon in the explorer — auto-detected, no config needed.
 
-## 🎮 All Commands
+## All Commands
 
 | Command | Description |
 |---------|-------------|
-| `Rampyaaryan: Enable Neko Cat 🐱` | Start the cursor-following cat |
-| `Rampyaaryan: Disable Neko Cat 😿` | Hide the cat |
-| `Rampyaaryan: Namaste! 🙏` | Show welcome greeting |
+| `Rampyaaryan: Open Neko Cat` | Open animated Neko cat panel |
+| `Rampyaaryan: Namaste` | Show welcome greeting |
 | `Rampyaaryan: Toggle Hindi Status Bar` | Hindi line/column numbers |
-| `Rampyaaryan: Toggle Mantra Mode 📿` | Cycling mantras |
-| `Rampyaaryan: Toggle Ram Quotes 🏹` | Rotating Ram wisdom |
-| `Rampyaaryan: Set Hindi/Devanagari Font 🔤` | Setup Devanagari font |
-| `Rampyaaryan: Diwali Mode 🪔` | Festival celebration |
+| `Rampyaaryan: Toggle Mantra Mode` | Cycling mantras |
+| `Rampyaaryan: Next Mantra` | Skip to next mantra |
+| `Rampyaaryan: Toggle Ram Quotes` | Rotating Ram wisdom |
+| `Rampyaaryan: Set Hindi/Devanagari Font` | Setup Devanagari font |
+| `Rampyaaryan: Diwali Mode` | Festival celebration |
 
-## ⚙️ Settings
+## Settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `rampyaaryan.nekoCat.enabled` | `false` | Auto-enable Neko cat on startup |
 | `rampyaaryan.hindiStatusBar.enabled` | `true` | Show Hindi numerals in status bar |
 | `rampyaaryan.mantra.enabled` | `false` | Auto-start Mantra Mode |
 | `rampyaaryan.greeting.enabled` | `true` | Show Namaste greeting on startup |
@@ -135,4 +130,4 @@ Full TextMate grammar for all Rampyaaryan keywords, 215+ built-in functions, str
 
 ---
 
-**जय श्री राम 🚩 | Made in India 🇮🇳 | Built with Pride**
+**Jai Shri Ram | Made in India | Built with Pride**

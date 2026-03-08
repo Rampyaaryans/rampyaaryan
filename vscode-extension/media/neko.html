@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  overflow: hidden;
+  background: transparent;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+  cursor: default;
+}
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+#info {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  opacity: 0.85;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+}
+body.vscode-dark #info, body.vscode-high-contrast #info {
+  background: rgba(255,255,255,0.08);
+  color: #ccc;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+body.vscode-light #info {
+  background: rgba(0,0,0,0.06);
+  color: #555;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+#info.hidden { opacity: 0; }
+#corner-text {
+  position: fixed;
+  bottom: 8px;
+  right: 12px;
+  font-size: 11px;
+  opacity: 0.35;
+}
+body.vscode-dark #corner-text { color: #aaa; }
+body.vscode-light #corner-text { color: #777; }
+</style>
+</head>
+<body>
+<div id="info">Click anywhere to make Neko chase! Click again to stop.</div>
+<div id="corner-text">Neko 3.0 - Rampyaaryan</div>
+<canvas id="c"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const info = document.getElementById('info');
+
+  let W, H;
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ─── Neko State ───
+  let nekoX = 100, nekoY = 100;
+  let mouseX = W / 2, mouseY = H / 2;
+  let chasing = false;
+  let state = 'sit';      // sit, run, sleep, alert, scratch, yawn, wash
+  let direction = 0;       // angle in radians
+  let frame = 0;
+  let frameTick = 0;
+  let idleTicks = 0;
+  let sleepFrame = 0;
+  const SPEED = 3.5;
+  const CHASE_DIST = 20;
+
+  // ─── Theme Detection ───
+  function isDark() {
+    return document.body.classList.contains('vscode-dark') ||
+           document.body.classList.contains('vscode-high-contrast');
+  }
+
+  // ─── Cat Drawing ───
+  const BODY_COLORS = { fur: '#E8A040', dark: '#C07820', nose: '#E06060', eye: '#333', white: '#FFFBE8' };
+
+  function drawCat(x, y, st, dir, fr) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    const c = BODY_COLORS;
+    const scale = 2.2;
+    ctx.scale(scale, scale);
+
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.beginPath();
+    ctx.ellipse(0, 14, 12, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (st === 'sleep') {
+      drawSleeping(c, fr);
+    } else if (st === 'sit') {
+      drawSitting(c);
+    } else if (st === 'alert') {
+      drawAlert(c);
+    } else if (st === 'scratch') {
+      drawScratching(c, fr);
+    } else if (st === 'yawn') {
+      drawYawning(c);
+    } else if (st === 'wash') {
+      drawWashing(c, fr);
+    } else if (st === 'run') {
+      drawRunning(c, dir, fr);
+    }
+
+    ctx.restore();
+  }
+
+  function drawEar(c, lx, ly, rx, ry) {
+    // Left ear
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.moveTo(lx - 4, ly);
+    ctx.lineTo(lx, ly - 8);
+    ctx.lineTo(lx + 4, ly);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#F0C8A0';
+    ctx.beginPath();
+    ctx.moveTo(lx - 2, ly);
+    ctx.lineTo(lx, ly - 5);
+    ctx.lineTo(lx + 2, ly);
+    ctx.closePath();
+    ctx.fill();
+    // Right ear
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.moveTo(rx - 4, ry);
+    ctx.lineTo(rx, ry - 8);
+    ctx.lineTo(rx + 4, ry);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#F0C8A0';
+    ctx.beginPath();
+    ctx.moveTo(rx - 2, ry);
+    ctx.lineTo(rx, ry - 5);
+    ctx.lineTo(rx + 2, ry);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawEyes(c, lx, ly, rx, ry, open) {
+    if (open) {
+      // White
+      ctx.fillStyle = c.white;
+      ctx.beginPath(); ctx.ellipse(lx, ly, 3, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(rx, ry, 3, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+      // Pupil
+      ctx.fillStyle = c.eye;
+      ctx.beginPath(); ctx.arc(lx + 0.5, ly + 0.5, 1.8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(rx + 0.5, ry + 0.5, 1.8, 0, Math.PI * 2); ctx.fill();
+      // Shine
+      ctx.fillStyle = '#FFF';
+      ctx.beginPath(); ctx.arc(lx + 1.2, ly - 0.8, 0.7, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(rx + 1.2, ry - 0.8, 0.7, 0, Math.PI * 2); ctx.fill();
+    } else {
+      // Closed eyes (crescents)
+      ctx.strokeStyle = c.eye;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(lx, ly, 2.5, 0.2, Math.PI - 0.2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(rx, ry, 2.5, 0.2, Math.PI - 0.2); ctx.stroke();
+    }
+  }
+
+  function drawNose(c, nx, ny) {
+    ctx.fillStyle = c.nose;
+    ctx.beginPath();
+    ctx.moveTo(nx, ny - 1.5);
+    ctx.lineTo(nx - 2, ny + 1);
+    ctx.lineTo(nx + 2, ny + 1);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawWhiskers(c, nx, ny) {
+    ctx.strokeStyle = c.dark;
+    ctx.lineWidth = 0.5;
+    // Left
+    ctx.beginPath(); ctx.moveTo(nx - 3, ny); ctx.lineTo(nx - 12, ny - 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(nx - 3, ny + 1); ctx.lineTo(nx - 12, ny + 2); ctx.stroke();
+    // Right
+    ctx.beginPath(); ctx.moveTo(nx + 3, ny); ctx.lineTo(nx + 12, ny - 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(nx + 3, ny + 1); ctx.lineTo(nx + 12, ny + 2); ctx.stroke();
+  }
+
+  function drawTail(c, tx, ty, curve, wag) {
+    ctx.strokeStyle = c.fur;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    const wobble = Math.sin(wag) * 4;
+    ctx.bezierCurveTo(tx + curve + wobble, ty - 5, tx + curve * 1.5 + wobble, ty - 12, tx + curve * 1.2 + wobble * 1.5, ty - 18);
+    ctx.stroke();
+    // Tip
+    ctx.strokeStyle = c.dark;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(tx + curve * 1.1 + wobble * 1.3, ty - 15);
+    ctx.lineTo(tx + curve * 1.2 + wobble * 1.5, ty - 18);
+    ctx.stroke();
+  }
+
+  function drawStripes(c, bx, by) {
+    ctx.strokeStyle = c.dark;
+    ctx.lineWidth = 1.2;
+    ctx.globalAlpha = 0.3;
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.moveTo(bx + i * 4 - 1, by - 6);
+      ctx.lineTo(bx + i * 4 + 1, by + 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ─── State Drawings ───
+
+  function drawSitting(c) {
+    // Body
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, 6, 9, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawStripes(c, 0, 6);
+    // Paws
+    ctx.fillStyle = c.white;
+    ctx.beginPath(); ctx.ellipse(-4, 14, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(4, 14, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+    // Head
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, -5, 8, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawEar(c, -5, -9, 5, -9);
+    drawEyes(c, -3, -5, 3, -5, true);
+    drawNose(c, 0, -2);
+    drawWhiskers(c, 0, -1);
+    // Mouth
+    ctx.strokeStyle = c.dark;
+    ctx.lineWidth = 0.6;
+    ctx.beginPath(); ctx.arc(-1.5, 0, 1.5, -0.3, Math.PI * 0.8); ctx.stroke();
+    ctx.beginPath(); ctx.arc(1.5, 0, 1.5, Math.PI * 0.2, Math.PI + 0.3); ctx.stroke();
+    // Tail
+    drawTail(c, 8, 10, 8, Date.now() / 600);
+  }
+
+  function drawAlert(c) {
+    // Body (slightly upright)
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, 6, 8, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawStripes(c, 0, 6);
+    // Paws
+    ctx.fillStyle = c.white;
+    ctx.beginPath(); ctx.ellipse(-4, 14, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(4, 14, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+    // Head
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, -6, 8, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Bigger ears when alert
+    drawEar(c, -5, -10, 5, -10);
+    // Big eyes
+    drawEyes(c, -3, -6, 3, -6, true);
+    drawNose(c, 0, -3);
+    drawWhiskers(c, 0, -2);
+    // Tail up
+    drawTail(c, 8, 8, 10, Date.now() / 300);
+  }
+
+  function drawSleeping(c, fr) {
+    // Curled body
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, 6, 11, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawStripes(c, 0, 6);
+    // Tail wrapping around
+    ctx.strokeStyle = c.fur;
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(0, 8, 10, -0.5, Math.PI * 0.6);
+    ctx.stroke();
+    ctx.strokeStyle = c.dark;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(0, 8, 10, Math.PI * 0.45, Math.PI * 0.6);
+    ctx.stroke();
+    // Head resting
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(-2, -1, 7, 6, -0.15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawEar(c, -6, -5, 3, -5);
+    // Closed eyes
+    drawEyes(c, -4, -1, 1, -1, false);
+    drawNose(c, -1.5, 2);
+    // ZZZ
+    const t = Date.now() / 500;
+    const zAlpha = (Math.sin(t) + 1) / 2 * 0.6 + 0.2;
+    ctx.globalAlpha = zAlpha;
+    ctx.fillStyle = isDark() ? '#AAA' : '#777';
+    ctx.font = 'bold 7px sans-serif';
+    ctx.fillText('z', 8, -6 - (fr % 2) * 2);
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText('z', 13, -11 - (fr % 2) * 2);
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText('Z', 18, -16 - (fr % 2) * 2);
+    ctx.globalAlpha = 1;
+  }
+
+  function drawScratching(c, fr) {
+    // Body
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, 4, 8, 10, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    // Scratching paw (alternating)
+    ctx.fillStyle = c.white;
+    const pawY = fr % 2 === 0 ? -8 : -5;
+    ctx.beginPath(); ctx.ellipse(7, pawY, 3, 2, 0.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-4, 14, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+    // Head turned
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(2, -6, 7, 7, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    drawEar(c, -3, -10, 7, -9);
+    drawEyes(c, 0, -6, 5, -5, fr % 2 === 0);
+    drawNose(c, 3, -3);
+    // Scratch lines
+    ctx.strokeStyle = isDark() ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = 0.8;
+    const sx = 10, sy = pawY;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(sx + i * 2, sy - 3);
+      ctx.lineTo(sx + i * 2 + 1, sy + 3);
+      ctx.stroke();
+    }
+    drawTail(c, -7, 10, -8, Date.now() / 400);
+  }
+
+  function drawYawning(c) {
+    // Body
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, 6, 9, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawStripes(c, 0, 6);
+    ctx.fillStyle = c.white;
+    ctx.beginPath(); ctx.ellipse(-4, 14, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(4, 14, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+    // Head
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, -5, 8, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawEar(c, -5, -9, 5, -9);
+    // Squinted eyes
+    drawEyes(c, -3, -5, 3, -5, false);
+    // Open mouth (yawning)
+    ctx.fillStyle = '#E06080';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 4, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#C04060';
+    ctx.beginPath();
+    ctx.ellipse(0, 1, 2.5, 1.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawTail(c, 8, 10, 6, Date.now() / 800);
+  }
+
+  function drawWashing(c, fr) {
+    // Body sitting
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, 6, 9, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawStripes(c, 0, 6);
+    // One paw up to face
+    ctx.fillStyle = c.white;
+    const py = fr % 2 === 0 ? -4 : -3;
+    ctx.beginPath(); ctx.ellipse(-6, py, 3, 2.5, -0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(4, 14, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+    // Head
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, -5, 8, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawEar(c, -5, -9, 5, -9);
+    drawEyes(c, -3, -5, 3, -5, fr % 2 === 0);
+    drawNose(c, 0, -2);
+    drawTail(c, 8, 10, 7, Date.now() / 700);
+  }
+
+  function drawRunning(c, dir, fr) {
+    const facing = Math.cos(dir) >= 0 ? 1 : -1;
+    ctx.scale(facing, 1);
+
+    // Body (elongated)
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(0, 4, 11, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawStripes(c, 0, 4);
+
+    // Legs (animated)
+    ctx.fillStyle = c.dark;
+    const legPhase = fr % 2;
+    // Front legs
+    ctx.fillStyle = c.fur;
+    if (legPhase === 0) {
+      ctx.fillRect(5, 9, 2.5, 6);
+      ctx.fillRect(8, 10, 2.5, 5);
+    } else {
+      ctx.fillRect(6, 10, 2.5, 5);
+      ctx.fillRect(9, 9, 2.5, 6);
+    }
+    // Back legs
+    if (legPhase === 0) {
+      ctx.fillRect(-9, 9, 2.5, 6);
+      ctx.fillRect(-6, 10, 2.5, 5);
+    } else {
+      ctx.fillRect(-8, 10, 2.5, 5);
+      ctx.fillRect(-5, 9, 2.5, 6);
+    }
+    // Paws
+    ctx.fillStyle = c.white;
+    const pawOff = legPhase === 0 ? 0 : 1;
+    ctx.beginPath(); ctx.ellipse(6 + pawOff, 15, 2, 1.2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(9 + pawOff, 15, 2, 1.2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-8 + pawOff, 15, 2, 1.2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-5 + pawOff, 15, 2, 1.2, 0, 0, Math.PI * 2); ctx.fill();
+
+    // Head
+    ctx.fillStyle = c.fur;
+    ctx.beginPath();
+    ctx.ellipse(8, -3, 7, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    drawEar(c, 4, -7, 12, -7);
+    drawEyes(c, 6, -3, 11, -3, true);
+    drawNose(c, 9, 0);
+    // Only right whiskers visible when running
+    ctx.strokeStyle = c.dark;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(12, -1); ctx.lineTo(20, -3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(20, 1); ctx.stroke();
+
+    // Tail
+    const tw = Date.now() / 250;
+    ctx.strokeStyle = c.fur;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-10, 2);
+    const wobble = Math.sin(tw) * 5;
+    ctx.bezierCurveTo(-15, 0 + wobble, -18, -5 + wobble, -16, -10 + wobble);
+    ctx.stroke();
+    ctx.strokeStyle = c.dark;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(-17, -8 + wobble);
+    ctx.lineTo(-16, -10 + wobble);
+    ctx.stroke();
+  }
+
+  // ─── Input ───
+  canvas.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  canvas.addEventListener('click', () => {
+    chasing = !chasing;
+    if (chasing) {
+      state = 'alert';
+      idleTicks = 0;
+      info.textContent = 'Neko is chasing! Click to stop.';
+      info.classList.remove('hidden');
+      setTimeout(() => info.classList.add('hidden'), 2500);
+    } else {
+      state = 'sit';
+      idleTicks = 0;
+      info.textContent = 'Neko stopped. Click to chase again!';
+      info.classList.remove('hidden');
+      setTimeout(() => info.classList.add('hidden'), 2500);
+    }
+  });
+
+  // Hide info after a few seconds
+  setTimeout(() => info.classList.add('hidden'), 4000);
+
+  // ─── Game Loop ───
+  function update() {
+    frameTick++;
+
+    if (chasing) {
+      const dx = mouseX - nekoX;
+      const dy = mouseY - nekoY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > CHASE_DIST) {
+        direction = Math.atan2(dy, dx);
+        nekoX += Math.cos(direction) * SPEED;
+        nekoY += Math.sin(direction) * SPEED;
+        state = 'run';
+        idleTicks = 0;
+        if (frameTick % 6 === 0) frame++;
+      } else {
+        idleTicks++;
+        if (idleTicks < 60) {
+          state = 'sit';
+        } else if (idleTicks < 120) {
+          state = 'yawn';
+        } else if (idleTicks < 200) {
+          state = 'wash';
+          if (frameTick % 20 === 0) frame++;
+        } else if (idleTicks < 280) {
+          state = 'scratch';
+          if (frameTick % 12 === 0) frame++;
+        } else {
+          state = 'sleep';
+          if (frameTick % 30 === 0) { frame++; sleepFrame++; }
+        }
+      }
+    } else {
+      idleTicks++;
+      if (idleTicks < 90) {
+        state = 'sit';
+      } else if (idleTicks < 160) {
+        state = 'yawn';
+      } else if (idleTicks < 250) {
+        state = 'wash';
+        if (frameTick % 20 === 0) frame++;
+      } else if (idleTicks < 340) {
+        state = 'scratch';
+        if (frameTick % 12 === 0) frame++;
+      } else {
+        state = 'sleep';
+        if (frameTick % 30 === 0) { frame++; sleepFrame++; }
+      }
+    }
+
+    // Keep neko on screen
+    nekoX = Math.max(30, Math.min(W - 30, nekoX));
+    nekoY = Math.max(40, Math.min(H - 30, nekoY));
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+    drawCat(nekoX, nekoY, state, direction, frame);
+  }
+
+  function loop() {
+    update();
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  // Start in center-bottom
+  nekoX = W / 2;
+  nekoY = H - 80;
+  loop();
+})();
+</script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 {
   "name": "rampyaaryan",
   "displayName": "Rampyaaryan - Hinglish Programming Language",
-  "description": "Syntax highlighting, Indian themes, Neko cat, Hindi UI, file icons & language support for Rampyaaryan (.ram) — India's First Hinglish Programming Language 🇮🇳",
-  "version": "2.0.0",
+  "description": "Syntax highlighting, Indian themes, Neko cat, Hindi UI, file icons and language support for Rampyaaryan (.ram) — India's First Hinglish Programming Language",
+  "version": "3.0.0",
   "publisher": "Rampyaaryans",
   "license": "SEE LICENSE IN LICENSE",
   "icon": "images/icon.png",
@@ -67,22 +67,22 @@
     ],
     "themes": [
       {
-        "label": "Jai Shri Ram 🙏",
+        "label": "Jai Shri Ram",
         "uiTheme": "vs-dark",
         "path": "./themes/jai-shri-ram-color-theme.json"
       },
       {
-        "label": "Tiranga 🇮🇳",
+        "label": "Tiranga",
         "uiTheme": "vs-dark",
         "path": "./themes/tiranga-color-theme.json"
       },
       {
-        "label": "Diwali Night ✨",
+        "label": "Diwali Night",
         "uiTheme": "vs-dark",
         "path": "./themes/diwali-night-color-theme.json"
       },
       {
-        "label": "Ram Mandir 🛕",
+        "label": "Ram Mandir",
         "uiTheme": "vs",
         "path": "./themes/ram-mandir-color-theme.json"
       }
@@ -95,23 +95,17 @@
       }
     ],
     "commands": [
-      { "command": "rampyaaryan.enableNekoCat", "title": "Rampyaaryan: Enable Neko Cat 🐱" },
-      { "command": "rampyaaryan.disableNekoCat", "title": "Rampyaaryan: Disable Neko Cat 😿" },
-      { "command": "rampyaaryan.namaste", "title": "Rampyaaryan: Namaste! 🙏" },
-      { "command": "rampyaaryan.toggleHindiStatusBar", "title": "Rampyaaryan: Toggle Hindi Status Bar 📊" },
-      { "command": "rampyaaryan.toggleMantra", "title": "Rampyaaryan: Toggle Mantra Mode 📿" },
-      { "command": "rampyaaryan.toggleRamQuotes", "title": "Rampyaaryan: Toggle Ram Quotes 🏹" },
-      { "command": "rampyaaryan.setHindiFont", "title": "Rampyaaryan: Set Hindi/Devanagari Font 🔤" },
-      { "command": "rampyaaryan.diwaliMode", "title": "Rampyaaryan: Diwali Mode 🪔" }
+      { "command": "rampyaaryan.openNeko", "title": "Rampyaaryan: Open Neko Cat" },
+      { "command": "rampyaaryan.namaste", "title": "Rampyaaryan: Namaste!" },
+      { "command": "rampyaaryan.toggleHindiStatusBar", "title": "Rampyaaryan: Toggle Hindi Status Bar" },
+      { "command": "rampyaaryan.toggleMantra", "title": "Rampyaaryan: Toggle Mantra Mode" },
+      { "command": "rampyaaryan.toggleRamQuotes", "title": "Rampyaaryan: Toggle Ram Quotes" },
+      { "command": "rampyaaryan.setHindiFont", "title": "Rampyaaryan: Set Hindi/Devanagari Font" },
+      { "command": "rampyaaryan.diwaliMode", "title": "Rampyaaryan: Diwali Mode" }
     ],
     "configuration": {
       "title": "Rampyaaryan",
       "properties": {
-        "rampyaaryan.nekoCat.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable Neko cat following your cursor 🐱"
-        },
         "rampyaaryan.hindiStatusBar.enabled": {
           "type": "boolean",
           "default": true,
@@ -120,12 +114,12 @@
         "rampyaaryan.mantra.enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Show cycling Sanskrit mantras in status bar 📿"
+          "description": "Show cycling Sanskrit mantras in status bar"
         },
         "rampyaaryan.greeting.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Show Namaste greeting on startup 🙏"
+          "description": "Show Namaste greeting on startup"
         }
       }
     }

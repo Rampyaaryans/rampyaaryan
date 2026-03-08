@@ -1,67 +1,53 @@
 const vscode = require('vscode');
+const path = require('path');
+const fs = require('fs');
 
 // ════════════════════════════════════════════════════════════════
-//   🐱 Neko Cat  ·  🙏 Hindi Status Bar  ·  📿 Mantra Mode
+//   Neko Cat  ·  Hindi Status Bar  ·  Mantra Mode
+//   Rampyaaryan VS Code Extension
 // ════════════════════════════════════════════════════════════════
 
-const HINDI_DIGITS = ['०','१','२','३','४','५','६','७','८','९'];
-
-const CAT_FACES = {
-    idle:     '😺',
-    moving:   '🐱',
-    typing:   '😸',
-    sleeping: '😴',
-    happy:    '😻',
-    shocked:  '🙀',
-    love:     '😽'
-};
+const HINDI_DIGITS = ['\u0966','\u0967','\u0968','\u0969','\u096A','\u096B','\u096C','\u096D','\u096E','\u096F'];
 
 const MANTRAS = [
-    'ॐ नमः शिवाय 🙏',
-    'जय श्री राम 🙏',
-    'हरे कृष्ण हरे राम',
-    'सत्यमेव जयते',
-    'वसुधैव कुटुम्बकम्',
-    'कर्मण्येवाधिकारस्ते',
-    'ॐ जय जगदीश हरे',
-    'श्री राम जय राम जय जय राम',
-    'ॐ शांति शांति शांति',
-    'सर्वे भवन्तु सुखिनः',
-    'तमसो मा ज्योतिर्गमय',
-    'योगः कर्मसु कौशलम्'
+    '\u0950 \u0928\u092E\u0903 \u0936\u093F\u0935\u093E\u092F',
+    '\u091C\u092F \u0936\u094D\u0930\u0940 \u0930\u093E\u092E',
+    '\u0939\u0930\u0947 \u0915\u0943\u0937\u094D\u0923 \u0939\u0930\u0947 \u0930\u093E\u092E',
+    '\u0938\u0924\u094D\u092F\u092E\u0947\u0935 \u091C\u092F\u0924\u0947',
+    '\u0935\u0938\u0941\u0927\u0948\u0935 \u0915\u0941\u091F\u0941\u092E\u094D\u092C\u0915\u092E\u094D',
+    '\u0915\u0930\u094D\u092E\u0923\u094D\u092F\u0947\u0935\u093E\u0927\u093F\u0915\u093E\u0930\u0938\u094D\u0924\u0947',
+    '\u0950 \u091C\u092F \u091C\u0917\u0926\u0940\u0936 \u0939\u0930\u0947',
+    '\u0936\u094D\u0930\u0940 \u0930\u093E\u092E \u091C\u092F \u0930\u093E\u092E \u091C\u092F \u091C\u092F \u0930\u093E\u092E',
+    '\u0950 \u0936\u093E\u0902\u0924\u093F \u0936\u093E\u0902\u0924\u093F \u0936\u093E\u0902\u0924\u093F',
+    '\u0938\u0930\u094D\u0935\u0947 \u092D\u0935\u0928\u094D\u0924\u0941 \u0938\u0941\u0916\u093F\u0928\u0903',
+    '\u0924\u092E\u0938\u094B \u092E\u093E \u091C\u094D\u092F\u094B\u0924\u093F\u0930\u094D\u0917\u092E\u092F',
+    '\u092F\u094B\u0917\u0903 \u0915\u0930\u094D\u092E\u0938\u0941 \u0915\u094C\u0936\u0932\u092E\u094D'
 ];
 
 const RAM_QUOTES = [
-    '🏹 धर्म की जय हो',
-    '🪷 राम नाम सत्य है',
-    '🙏 बोलो सियापति रामचन्द्र की जय',
-    '🕉️ रघुपति राघव राजा राम',
-    '📿 मर्यादा पुरुषोत्तम',
-    '🏹 सत्य का मार्ग ही धर्म है',
-    '🪷 जय सियाराम',
-    '🙏 मंगल भवन अमंगल हारी'
+    '\u0927\u0930\u094D\u092E \u0915\u0940 \u091C\u092F \u0939\u094B',
+    '\u0930\u093E\u092E \u0928\u093E\u092E \u0938\u0924\u094D\u092F \u0939\u0948',
+    '\u092C\u094B\u0932\u094B \u0938\u093F\u092F\u093E\u092A\u0924\u093F \u0930\u093E\u092E\u091A\u0928\u094D\u0926\u094D\u0930 \u0915\u0940 \u091C\u092F',
+    '\u0930\u0918\u0941\u092A\u0924\u093F \u0930\u093E\u0918\u0935 \u0930\u093E\u091C\u093E \u0930\u093E\u092E',
+    '\u092E\u0930\u094D\u092F\u093E\u0926\u093E \u092A\u0941\u0930\u0941\u0937\u094B\u0924\u094D\u0924\u092E',
+    '\u0938\u0924\u094D\u092F \u0915\u093E \u092E\u093E\u0930\u094D\u0917 \u0939\u0940 \u0927\u0930\u094D\u092E \u0939\u0948',
+    '\u091C\u092F \u0938\u093F\u092F\u093E\u0930\u093E\u092E',
+    '\u092E\u0902\u0917\u0932 \u092D\u0935\u0928 \u0905\u092E\u0902\u0917\u0932 \u0939\u093E\u0930\u0940'
 ];
 
 // ═══════ State ═══════
-let nekoCatEnabled = false;
 let hindiBarEnabled = true;
 let mantraEnabled = false;
 
 let hindiStatusItem = null;
 let mantraStatusItem = null;
-let catStatusItem = null;
 let ramQuoteItem = null;
+let nekoPanel = null;
 
-let catDecorationTypes = {};
-let currentCatState = 'idle';
-let idleTimeout = null;
-let sleepTimeout = null;
 let mantraInterval = null;
 let mantraIndex = 0;
 let quoteInterval = null;
 let quoteIndex = 0;
-let lastCursorLine = -1;
-let lastCursorCol = -1;
 
 // ═══════ Helpers ═══════
 
@@ -69,122 +55,27 @@ function toHindiNumerals(n) {
     return String(n).split('').map(d => HINDI_DIGITS[parseInt(d)] || d).join('');
 }
 
-// ═══════ Neko Cat ═══════
+// ═══════ Neko Webview ═══════
 
-function initCatDecorations() {
-    disposeCatDecorations();
-    for (const [state, emoji] of Object.entries(CAT_FACES)) {
-        catDecorationTypes[state] = vscode.window.createTextEditorDecorationType({
-            after: {
-                contentText: ` ${emoji}`,
-                margin: '0 0 0 4px',
-                textDecoration: 'none; position: relative; top: -1px;'
-            }
-        });
-    }
-}
-
-function disposeCatDecorations() {
-    for (const dt of Object.values(catDecorationTypes)) {
-        dt.dispose();
-    }
-    catDecorationTypes = {};
-}
-
-function updateCatInEditor(editor) {
-    if (!nekoCatEnabled || !editor) return;
-
-    // Clear all states from editor
-    for (const dt of Object.values(catDecorationTypes)) {
-        editor.setDecorations(dt, []);
+function openNekoPanel(context) {
+    if (nekoPanel) {
+        nekoPanel.reveal();
+        return;
     }
 
-    // Place current cat at cursor
-    const pos = editor.selection.active;
-    const dt = catDecorationTypes[currentCatState];
-    if (dt) {
-        editor.setDecorations(dt, [new vscode.Range(pos, pos)]);
-    }
+    nekoPanel = vscode.window.createWebviewPanel(
+        'rampyaaryanNeko',
+        'Neko',
+        vscode.ViewColumn.Two,
+        { enableScripts: true, retainContextWhenHidden: true }
+    );
 
-    // Update status bar
-    if (catStatusItem) {
-        catStatusItem.text = `${CAT_FACES[currentCatState]} नेको`;
-        catStatusItem.show();
-    }
-}
+    // Load the neko HTML
+    const nekoHtmlPath = path.join(context.extensionPath, 'media', 'neko.html');
+    let htmlContent = fs.readFileSync(nekoHtmlPath, 'utf8');
+    nekoPanel.webview.html = htmlContent;
 
-function setCatState(state, editor) {
-    currentCatState = state;
-    updateCatInEditor(editor);
-}
-
-function onCursorMove(editor) {
-    if (!nekoCatEnabled || !editor) return;
-
-    const pos = editor.selection.active;
-    const moved = pos.line !== lastCursorLine || pos.character !== lastCursorCol;
-    lastCursorLine = pos.line;
-    lastCursorCol = pos.character;
-
-    if (moved) {
-        setCatState('moving', editor);
-
-        // Reset idle timer
-        if (idleTimeout) clearTimeout(idleTimeout);
-        if (sleepTimeout) clearTimeout(sleepTimeout);
-
-        idleTimeout = setTimeout(() => {
-            setCatState('idle', editor);
-            sleepTimeout = setTimeout(() => {
-                setCatState('sleeping', editor);
-            }, 8000);
-        }, 2000);
-    }
-}
-
-function onTextChange(editor) {
-    if (!nekoCatEnabled || !editor) return;
-
-    setCatState('typing', editor);
-
-    if (idleTimeout) clearTimeout(idleTimeout);
-    if (sleepTimeout) clearTimeout(sleepTimeout);
-
-    idleTimeout = setTimeout(() => {
-        // Random happy/love reaction after typing stops
-        const reaction = Math.random() > 0.7 ? 'love' : Math.random() > 0.5 ? 'happy' : 'idle';
-        setCatState(reaction, editor);
-        sleepTimeout = setTimeout(() => {
-            setCatState('sleeping', editor);
-        }, 8000);
-    }, 1500);
-}
-
-function enableNekoCat() {
-    nekoCatEnabled = true;
-    initCatDecorations();
-    const editor = vscode.window.activeTextEditor;
-    if (editor) {
-        setCatState('happy', editor);
-        setTimeout(() => setCatState('idle', editor), 2000);
-    }
-    if (catStatusItem) catStatusItem.show();
-    vscode.window.showInformationMessage('🐱 नेको बिल्ली चालू! Neko Cat is following your cursor!');
-}
-
-function disableNekoCat() {
-    nekoCatEnabled = false;
-    if (idleTimeout) clearTimeout(idleTimeout);
-    if (sleepTimeout) clearTimeout(sleepTimeout);
-    const editor = vscode.window.activeTextEditor;
-    if (editor) {
-        for (const dt of Object.values(catDecorationTypes)) {
-            editor.setDecorations(dt, []);
-        }
-    }
-    disposeCatDecorations();
-    if (catStatusItem) catStatusItem.hide();
-    vscode.window.showInformationMessage('😿 नेको बिल्ली बंद। Neko Cat disabled.');
+    nekoPanel.onDidDispose(() => { nekoPanel = null; }, null, context.subscriptions);
 }
 
 // ═══════ Hindi Status Bar ═══════
@@ -197,8 +88,8 @@ function updateHindiStatusBar(editor) {
     const pos = editor.selection.active;
     const line = toHindiNumerals(pos.line + 1);
     const col = toHindiNumerals(pos.character + 1);
-    hindiStatusItem.text = `$(book) पंक्ति ${line} · स्तंभ ${col}`;
-    hindiStatusItem.tooltip = `Line ${pos.line + 1}, Column ${pos.character + 1} — हिन्दी में`;
+    hindiStatusItem.text = `$(book) \u092A\u0902\u0915\u094D\u0924\u093F ${line} \u00b7 \u0938\u094D\u0924\u0902\u092D ${col}`;
+    hindiStatusItem.tooltip = `Line ${pos.line + 1}, Column ${pos.character + 1}`;
     hindiStatusItem.show();
 }
 
@@ -216,7 +107,7 @@ function startMantra() {
             mantraStatusItem.text = `$(heart) ${MANTRAS[mantraIndex]}`;
         }
     }, 5000);
-    vscode.window.showInformationMessage('📿 मंत्र मोड चालू! Mantra Mode activated.');
+    vscode.window.showInformationMessage('Mantra Mode activated.');
 }
 
 function stopMantra() {
@@ -230,13 +121,13 @@ function stopMantra() {
 
 function startRamQuotes() {
     if (ramQuoteItem) {
-        ramQuoteItem.text = RAM_QUOTES[quoteIndex];
+        ramQuoteItem.text = `$(bookmark) ${RAM_QUOTES[quoteIndex]}`;
         ramQuoteItem.show();
     }
     quoteInterval = setInterval(() => {
         quoteIndex = (quoteIndex + 1) % RAM_QUOTES.length;
         if (ramQuoteItem) {
-            ramQuoteItem.text = RAM_QUOTES[quoteIndex];
+            ramQuoteItem.text = `$(bookmark) ${RAM_QUOTES[quoteIndex]}`;
         }
     }, 12000);
 }
@@ -259,29 +150,21 @@ function activate(context) {
 
     mantraStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
     mantraStatusItem.name = 'Rampyaaryan Mantra';
-    mantraStatusItem.tooltip = 'क्लिक करें अगला मंत्र देखने के लिए — Click for next mantra';
+    mantraStatusItem.tooltip = 'Click for next mantra';
     mantraStatusItem.command = 'rampyaaryan.nextMantra';
     context.subscriptions.push(mantraStatusItem);
 
-    catStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 150);
-    catStatusItem.name = 'Neko Cat';
-    catStatusItem.tooltip = 'नेको बिल्ली — Neko Cat';
-    context.subscriptions.push(catStatusItem);
-
     ramQuoteItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -1);
     ramQuoteItem.name = 'Ram Quote';
-    ramQuoteItem.tooltip = 'श्री राम वचन — Sri Ram Quote';
+    ramQuoteItem.tooltip = 'Sri Ram Quote';
     context.subscriptions.push(ramQuoteItem);
 
     // ── Commands ──
     context.subscriptions.push(
-        vscode.commands.registerCommand('rampyaaryan.enableNekoCat', () => enableNekoCat()),
-        vscode.commands.registerCommand('rampyaaryan.disableNekoCat', () => disableNekoCat()),
+        vscode.commands.registerCommand('rampyaaryan.openNeko', () => openNekoPanel(context)),
         vscode.commands.registerCommand('rampyaaryan.namaste', () => {
             vscode.window.showInformationMessage(
-                '🙏 नमस्ते! जय श्री राम!\n' +
-                'रामप्यारयन में आपका स्वागत है!\n' +
-                'Welcome to Rampyaaryan — India\'s First Hinglish Programming Language!'
+                'Namaste! Jai Shri Ram! Welcome to Rampyaaryan.'
             );
         }),
         vscode.commands.registerCommand('rampyaaryan.toggleHindiStatusBar', () => {
@@ -289,16 +172,16 @@ function activate(context) {
             if (hindiBarEnabled) {
                 const editor = vscode.window.activeTextEditor;
                 if (editor) updateHindiStatusBar(editor);
-                vscode.window.showInformationMessage('📊 हिन्दी स्टेटस बार चालू!');
+                vscode.window.showInformationMessage('Hindi Status Bar enabled.');
             } else {
                 if (hindiStatusItem) hindiStatusItem.hide();
-                vscode.window.showInformationMessage('📊 Hindi Status Bar disabled.');
+                vscode.window.showInformationMessage('Hindi Status Bar disabled.');
             }
         }),
         vscode.commands.registerCommand('rampyaaryan.toggleMantra', () => {
             if (mantraEnabled) {
                 stopMantra();
-                vscode.window.showInformationMessage('📿 मंत्र मोड बंद। Mantra Mode disabled.');
+                vscode.window.showInformationMessage('Mantra Mode disabled.');
             } else {
                 startMantra();
             }
@@ -314,10 +197,10 @@ function activate(context) {
         vscode.commands.registerCommand('rampyaaryan.toggleRamQuotes', () => {
             if (quoteInterval) {
                 stopRamQuotes();
-                vscode.window.showInformationMessage('Ram quotes disabled.');
+                vscode.window.showInformationMessage('Ram Quotes disabled.');
             } else {
                 startRamQuotes();
-                vscode.window.showInformationMessage('🏹 श्री राम वचन चालू! Ram Quotes enabled.');
+                vscode.window.showInformationMessage('Ram Quotes enabled.');
             }
         }),
         vscode.commands.registerCommand('rampyaaryan.setHindiFont', async () => {
@@ -326,20 +209,19 @@ function activate(context) {
             const hindiFont = 'Noto Sans Devanagari';
 
             if (currentFont.includes(hindiFont)) {
-                vscode.window.showInformationMessage('हिन्दी फॉन्ट पहले से सेट है! Hindi font is already set.');
+                vscode.window.showInformationMessage('Hindi font is already set.');
                 return;
             }
 
             const newFont = currentFont ? `${hindiFont}, ${currentFont}` : `${hindiFont}, Consolas, monospace`;
             await editorConfig.update('fontFamily', newFont, vscode.ConfigurationTarget.Global);
-            vscode.window.showInformationMessage(`🔤 फॉन्ट सेट: ${hindiFont} — Hindi/Devanagari text will now render beautifully!`);
+            vscode.window.showInformationMessage(`Font set: ${hindiFont} — Devanagari text will render beautifully.`);
         }),
         vscode.commands.registerCommand('rampyaaryan.diwaliMode', () => {
             const messages = [
-                '🪔 दीपावली की हार्दिक शुभकामनाएँ!',
-                '✨ Happy Diwali from Rampyaaryan!',
-                '🎆 शुभ दीपावली — May your code shine bright!',
-                '🪔🪔🪔🪔🪔🪔🪔🪔🪔🪔🪔🪔🪔🪔🪔'
+                '\u0926\u0940\u092A\u093E\u0935\u0932\u0940 \u0915\u0940 \u0939\u093E\u0930\u094D\u0926\u093F\u0915 \u0936\u0941\u092D\u0915\u093E\u092E\u0928\u093E\u090F\u0901!',
+                'Happy Diwali from Rampyaaryan!',
+                '\u0936\u0941\u092D \u0926\u0940\u092A\u093E\u0935\u0932\u0940 — May your code shine bright!'
             ];
             messages.forEach((msg, i) => {
                 setTimeout(() => vscode.window.showInformationMessage(msg), i * 1200);
@@ -352,61 +234,42 @@ function activate(context) {
         vscode.window.onDidChangeTextEditorSelection(e => {
             if (e.textEditor) {
                 updateHindiStatusBar(e.textEditor);
-                onCursorMove(e.textEditor);
-            }
-        }),
-        vscode.workspace.onDidChangeTextDocument(e => {
-            const editor = vscode.window.activeTextEditor;
-            if (editor && e.document === editor.document) {
-                onTextChange(editor);
             }
         }),
         vscode.window.onDidChangeActiveTextEditor(editor => {
             if (editor) {
                 updateHindiStatusBar(editor);
-                if (nekoCatEnabled) {
-                    updateCatInEditor(editor);
-                }
             }
         })
     );
 
     // ── Initialize from config ──
-    nekoCatEnabled = config.get('nekoCat.enabled', false);
     hindiBarEnabled = config.get('hindiStatusBar.enabled', true);
     mantraEnabled = config.get('mantra.enabled', false);
 
-    if (nekoCatEnabled) {
-        initCatDecorations();
-    }
     if (mantraEnabled) {
         startMantra();
     }
 
-    // Start Ram quotes
     startRamQuotes();
 
     // ── Initial update ──
     const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor) {
         updateHindiStatusBar(activeEditor);
-        if (nekoCatEnabled) {
-            setCatState('happy', activeEditor);
-        }
     }
 
     // ── Greeting ──
     if (config.get('greeting.enabled', true)) {
         setTimeout(() => {
             vscode.window.showInformationMessage(
-                '🙏 नमस्ते! जय श्री राम! — Welcome to Rampyaaryan!',
-                'जय श्री राम 🚩',
+                'Namaste! Jai Shri Ram! — Welcome to Rampyaaryan!',
+                'Jai Shri Ram',
                 'Dismiss'
             ).then(choice => {
-                if (choice === 'जय श्री राम 🚩') {
+                if (choice === 'Jai Shri Ram') {
                     vscode.window.showInformationMessage(
-                        '🏹 बोलो सियापति रामचन्द्र की जय! 🚩\n' +
-                        'श्री राम जय राम जय जय राम!'
+                        'Sri Ram Jay Ram Jay Jay Ram!'
                     );
                 }
             });
@@ -415,11 +278,9 @@ function activate(context) {
 }
 
 function deactivate() {
-    if (idleTimeout) clearTimeout(idleTimeout);
-    if (sleepTimeout) clearTimeout(sleepTimeout);
     if (mantraInterval) clearInterval(mantraInterval);
     if (quoteInterval) clearInterval(quoteInterval);
-    disposeCatDecorations();
+    if (nekoPanel) nekoPanel.dispose();
 }
 
 module.exports = { activate, deactivate };

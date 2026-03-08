@@ -30,3 +30,6 @@ out.txt
 test_output.txt
 data.csv
 test.c
+
+# VS Code Extension
+*.vsix
