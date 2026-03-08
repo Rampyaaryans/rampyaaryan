@@ -65,7 +65,10 @@ Full TextMate grammar for all Rampyaaryan keywords, 215+ built-in functions, str
 
 ### File Icons
 
-`.ram` files show the Rampyaaryan logo icon in the explorer — auto-detected, no config needed.
+To see the golden R icon for `.ram` files in the explorer:
+
+1. Open **File > Preferences > File Icon Theme** (or press `Ctrl+Shift+P` and search "File Icon Theme")
+2. Select **Rampyaaryan File Icons**
 
 ## All Commands
 
