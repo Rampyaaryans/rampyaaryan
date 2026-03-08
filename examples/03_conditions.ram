@@ -1,0 +1,47 @@
+# ============================================
+# Rampyaaryan Example 03 - Conditions (agar-warna)
+# ============================================
+
+maano umar = 18
+
+agar umar >= 18 {
+    likho "Aap vote de sakte ho! ✓"
+} warna {
+    likho "Aap abhi chote ho, vote nahi de sakte. ✗"
+}
+
+# Grade calculator
+maano marks = 85
+
+likho ""
+likho "Marks:", marks
+
+agar marks >= 90 {
+    likho "Grade: A+ (Outstanding!)"
+} warna agar marks >= 80 {
+    likho "Grade: A (Excellent!)"
+} warna agar marks >= 70 {
+    likho "Grade: B (Good)"
+} warna agar marks >= 60 {
+    likho "Grade: C (Average)"
+} warna agar marks >= 50 {
+    likho "Grade: D (Below Average)"
+} warna {
+    likho "Grade: F (Fail)"
+}
+
+# Logical operators
+maano x = 15
+
+likho ""
+agar x > 10 aur x < 20 {
+    likho x, "10 aur 20 ke beech mein hai"
+}
+
+agar x == 15 ya x == 20 {
+    likho x, "ya to 15 hai ya 20"
+}
+
+agar nahi (x > 100) {
+    likho x, "100 se chhota hai"
+}

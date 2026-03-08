@@ -1,0 +1,128 @@
+# ============================================
+# Rampyaaryan Example 14 - Advanced Lists
+# Slicing, searching, statistics, algorithms
+# ============================================
+
+likho "╔══════════════════════════════════╗"
+likho "║   Advanced List Operations       ║"
+likho "╚══════════════════════════════════╝"
+
+kaam slicing() {
+    maano numbers = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    likho "Numbers:", numbers
+
+    likho ""
+    likho "=== Katao (Slicing) ==="
+    likho "First 3:", katao(numbers, 0, 3)
+    likho "Last 3:", katao(numbers, -3)
+    likho "Middle:", katao(numbers, 3, 7)
+
+    likho ""
+    likho "Pahla:", pahla(numbers)
+    likho "Aakhri:", aakhri(numbers)
+}
+slicing()
+
+kaam searching() {
+    maano numbers = [10, 20, 30, 40, 50]
+    likho ""
+    likho "=== Search ==="
+    likho "30 ka index:", index_of(numbers, 30)
+    likho "99 ka index:", index_of(numbers, 99)
+    likho "50 shamil hai?", shamil(numbers, 50)
+
+    likho ""
+    likho "=== Daalo (Insert) ==="
+    maano fruits = ["seb", "kela", "aam"]
+    likho "Pehle:", fruits
+    daalo(fruits, 1, "angoor")
+    likho "Index 1 par angoor:", fruits
+
+    likho ""
+    maano list1 = [1, 2, 3]
+    maano list2 = [4, 5, 6]
+    likho "Milao:", milao(list1, list2)
+
+    likho ""
+    maano duplicates = [1, 2, 3, 2, 4, 3, 5, 1, 6, 4]
+    likho "Duplicates:", duplicates
+    likho "Anokha:", anokha(duplicates)
+}
+searching()
+
+kaam statistics() {
+    likho ""
+    likho "=== Statistics ==="
+    maano marks = [85, 92, 78, 95, 88, 76, 91, 83, 97, 80]
+    likho "Marks:", marks
+    likho "Total (jod):", jod(marks)
+    likho "Average (ausat):", ausat(marks)
+    likho "Highest:", sabse_bada(marks)
+    likho "Lowest:", sabse_chhota(marks)
+    likho "Count:", lambai(marks)
+}
+statistics()
+
+kaam grades() {
+    likho ""
+    likho "=== Grade Distribution ==="
+    maano marks = [85, 92, 78, 95, 88, 76, 91, 83, 97, 80]
+    maano a = 0
+    maano b = 0
+    maano c = 0
+    har i = 0; i < lambai(marks); i = i + 1 {
+        agar marks[i] >= 90 {
+            a = a + 1
+        } warna agar marks[i] >= 80 {
+            b = b + 1
+        } warna {
+            c = c + 1
+        }
+    }
+    likho format("A grade: {} students", a)
+    likho format("B grade: {} students", b)
+    likho format("C grade: {} students", c)
+}
+grades()
+
+kaam matrix_demo() {
+    likho ""
+    likho "=== Matrix ==="
+    maano m = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    har i = 0; i < lambai(m); i = i + 1 {
+        maano row = ""
+        har j = 0; j < lambai(m[i]); j = j + 1 {
+            row = row + shabd(m[i][j]) + "\t"
+        }
+        likho row
+    }
+}
+matrix_demo()
+
+kaam stack_queue() {
+    likho ""
+    likho "=== Stack (LIFO) ==="
+    maano stack = []
+    joodo(stack, "A")
+    joodo(stack, "B")
+    joodo(stack, "C")
+    likho "Stack:", stack
+    likho "Pop:", nikalo(stack)
+    likho "Pop:", nikalo(stack)
+    likho "Stack:", stack
+
+    likho ""
+    likho "=== Queue (FIFO) ==="
+    maano queue = []
+    joodo(queue, "First")
+    joodo(queue, "Second")
+    joodo(queue, "Third")
+    likho "Queue:", queue
+    likho "Dequeue:", nikalo(queue, 0)
+    likho "Dequeue:", nikalo(queue, 0)
+    likho "Queue:", queue
+}
+stack_queue()
+
+likho ""
+likho "Advanced lists complete!"

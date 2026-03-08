@@ -1,0 +1,76 @@
+# ============================================
+# Rampyaaryan Example 07 - Calculator
+# Interactive calculator with Hinglish UI
+# ============================================
+
+kaam calculator() {
+    likho "╔══════════════════════════════════╗"
+    likho "║    🧮 Rampyaaryan Calculator     ║"
+    likho "╠══════════════════════════════════╣"
+    likho "║  1. Jodo   (+)  Addition         ║"
+    likho "║  2. Ghataao(-) Subtraction        ║"
+    likho "║  3. Guna   (*) Multiplication     ║"
+    likho "║  4. Bhaag  (/) Division           ║"
+    likho "║  5. Power  (**) Exponent          ║"
+    likho "║  6. Modulo (%) Remainder          ║"
+    likho "║  7. GCD     - Greatest Common     ║"
+    likho "║  0. Bahar  - Exit                 ║"
+    likho "╚══════════════════════════════════╝"
+    likho ""
+
+    maano choice = pucho("Choose (0-7): ")
+    maano n = sankhya(choice)
+
+    agar n == 0 {
+        likho "Alvida! 🙏"
+        wapas do khali
+    }
+
+    maano a_str = pucho("Pehla number: ")
+    maano b_str = pucho("Doosra number: ")
+    maano a = sankhya(a_str)
+    maano b = sankhya(b_str)
+
+    maano result = 0
+
+    agar n == 1 {
+        result = a + b
+        likho a, "+", b, "=", result
+    } warna agar n == 2 {
+        result = a - b
+        likho a, "-", b, "=", result
+    } warna agar n == 3 {
+        result = a * b
+        likho a, "*", b, "=", result
+    } warna agar n == 4 {
+        agar b == 0 {
+            likho "Zero se divide nahi kar sakte!"
+        } warna {
+            result = a / b
+            likho a, "/", b, "=", result
+        }
+    } warna agar n == 5 {
+        result = a ** b
+        likho a, "**", b, "=", result
+    } warna agar n == 6 {
+        result = a % b
+        likho a, "%", b, "=", result
+    } warna agar n == 7 {
+        result = gcd(a, b)
+        likho "GCD(", a, ",", b, ") =", result
+    } warna {
+        likho "Galat choice!"
+    }
+}
+
+kaam gcd(a, b) {
+    jab tak b != 0 {
+        maano temp = b
+        b = a % b
+        a = temp
+    }
+    wapas do a
+}
+
+# Run calculator once (for non-interactive testing)
+calculator()

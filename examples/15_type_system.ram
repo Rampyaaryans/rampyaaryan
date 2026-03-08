@@ -1,0 +1,103 @@
+# ============================================
+# Rampyaaryan Example 15 - Type System
+# Type checking, conversion, and validation
+# ============================================
+
+likho "╔══════════════════════════════════╗"
+likho "║   Type System Showcase           ║"
+likho "╚══════════════════════════════════╝"
+
+kaam type_checking() {
+    maano num = 42
+    maano str = "hello"
+    maano lst = [1, 2, 3]
+
+    likho "=== Type Checking ==="
+    likho format("{} → sankhya? {}", num, kya_sankhya(num))
+    likho format("{} → shabd? {}", str, kya_shabd(str))
+    likho format("list → suchi? {}", kya_suchi(lst))
+    likho format("sach → bool? {}", kya_bool(sach))
+    likho format("khali → khali? {}", kya_khali(khali))
+
+    likho ""
+    likho "=== Purn (Integer) Check ==="
+    likho "42 purn hai?", kya_purn(42)
+    likho "3.14 purn hai?", kya_purn(3.14)
+    likho "5.0 purn hai?", kya_purn(5.0)
+}
+type_checking()
+
+kaam type_conversion() {
+    likho ""
+    likho "=== Type Conversion ==="
+    likho "sankhya('42') =", sankhya("42")
+    likho "sankhya('3.14') =", sankhya("3.14")
+    likho "shabd(42) =", shabd(42)
+    likho "shabd(sach) =", shabd(sach)
+    likho "shabd([1,2,3]) =", shabd([1, 2, 3])
+    likho "purn(3.99) =", purn(3.99)
+}
+type_conversion()
+
+kaam prakar_demo() {
+    likho ""
+    likho "=== Prakar (typeof) ==="
+    likho "prakar(42) =", prakar(42)
+    likho "prakar('hello') =", prakar("hello")
+    likho "prakar(sach) =", prakar(sach)
+    likho "prakar(khali) =", prakar(khali)
+    likho "prakar([1,2]) =", prakar([1, 2])
+}
+prakar_demo()
+
+kaam safe_functions() {
+    likho ""
+    likho "=== Type-Safe Function ==="
+    kaam safe_add(a, b) {
+        agar nahi kya_sankhya(a) ya nahi kya_sankhya(b) {
+            likho "Dono arguments number hone chahiye!"
+            wapas do khali
+        }
+        wapas do a + b
+    }
+    likho "safe_add(5, 3) =", safe_add(5, 3)
+    likho "safe_add('5', 3) =", safe_add("5", 3)
+}
+safe_functions()
+
+kaam validation() {
+    likho ""
+    likho "=== Input Validation ==="
+    kaam validate(value, expected) {
+        maano actual = prakar(value)
+        agar actual == expected {
+            likho format("OK: {} is valid ({})", value, expected)
+            wapas do sach
+        } warna {
+            likho format("FAIL: expected {}, got {}", expected, actual)
+            wapas do jhooth
+        }
+    }
+    validate(42, "sankhya")
+    validate("hello", "shabd")
+    validate(sach, "sankhya")
+    validate([1,2], "suchi")
+}
+validation()
+
+kaam hashing() {
+    likho ""
+    likho "=== Hash Values ==="
+    likho "hash('hello') =", hash_val("hello")
+    likho "hash('world') =", hash_val("world")
+    likho "hash(42) =", hash_val(42)
+    maano same = hash_val("test") == hash_val("test")
+    likho "Same string, same hash:", same
+}
+hashing()
+
+likho ""
+likho "Type system complete!"
+
+likho ""
+likho "🔍 Type system showcase complete!"

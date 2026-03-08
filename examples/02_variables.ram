@@ -1,0 +1,39 @@
+# ============================================
+# Rampyaaryan Example 02 - Variables & Types
+# ============================================
+
+maano naam = "Rampyaaryan"
+maano version = 1.0
+maano active = sach
+maano data = khali
+
+likho "Naam:", naam
+likho "Version:", version
+likho "Active:", active
+likho "Data:", data
+
+# Type checking
+likho ""
+likho "naam ka prakar:", prakar(naam)
+likho "version ka prakar:", prakar(version)
+likho "active ka prakar:", prakar(active)
+likho "data ka prakar:", prakar(data)
+
+# Math operations
+maano a = 10
+maano b = 3
+
+likho ""
+likho "a =", a, ", b =", b
+likho "a + b =", a + b
+likho "a - b =", a - b
+likho "a * b =", a * b
+likho "a / b =", a / b
+likho "a % b =", a % b
+likho "a ** b =", a ** b
+
+# String operations
+maano greeting = "Namaste " + naam + "!"
+likho ""
+likho greeting
+likho "Naam ki lambai:", lambai(naam)

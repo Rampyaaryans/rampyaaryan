@@ -1,0 +1,51 @@
+# ============================================
+# Rampyaaryan Example 04 - Loops (Jab Tak & Har)
+# ============================================
+
+# While loop - jab tak
+likho "=== Ulti Ginti (Countdown) ==="
+maano count = 5
+jab tak count > 0 {
+    likho count, "..."
+    count = count - 1
+}
+likho "🚀 LAUNCH!"
+
+# For loop - har
+likho ""
+likho "=== 2 ka Table ==="
+har i = 1; i <= 10; i = i + 1 {
+    likho "2 x", i, "=", 2 * i
+}
+
+# Break (ruko) example
+likho ""
+likho "=== Pehla 5 se bada number ==="
+maano numbers = [1, 3, 7, 2, 9, 4]
+har i = 0; i < lambai(numbers); i = i + 1 {
+    agar numbers[i] > 5 {
+        likho "Mila:", numbers[i], "(index", i, "par)"
+        ruko
+    }
+}
+
+# Continue (agla) example
+likho ""
+likho "=== Sirf Even Numbers ==="
+har i = 1; i <= 10; i = i + 1 {
+    agar i % 2 != 0 {
+        agla
+    }
+    likho i
+}
+
+# Nested loops - Star pattern
+likho ""
+likho "=== Star Triangle ==="
+har i = 1; i <= 5; i = i + 1 {
+    maano line = ""
+    har j = 0; j < i; j = j + 1 {
+        line = line + "⭐"
+    }
+    likho line
+}

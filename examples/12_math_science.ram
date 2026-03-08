@@ -1,0 +1,109 @@
+# ============================================
+# Rampyaaryan Example 12 - Math & Science
+# Trigonometry, logarithms, constants
+# ============================================
+
+likho "╔══════════════════════════════════╗"
+likho "║   🧮 Math & Science Lab         ║"
+likho "╚══════════════════════════════════╝"
+
+# Constants
+likho "PI =", PI()
+likho "E  =", E()
+
+kaam basic_math() {
+    likho ""
+    likho "=== Basic Math ==="
+    likho "abs(-42) =", abs_val(-42)
+    likho "sqrt(144) =", sqrt_val(144)
+    likho "power(2, 10) =", power_val(2, 10)
+    likho "gol(3.7) =", gol(3.7)
+    likho "upar(3.2) =", upar(3.2)
+    likho "neeche(3.9) =", neeche(3.9)
+}
+basic_math()
+
+kaam gcd_lcm() {
+    likho ""
+    likho "=== GCD & LCM ==="
+    likho "GCD(48, 18) =", gcd(48, 18)
+    likho "LCM(12, 8) =", lcm(12, 8)
+    likho "GCD(100, 75) =", gcd(100, 75)
+    likho "LCM(15, 20) =", lcm(15, 20)
+}
+gcd_lcm()
+
+kaam trig() {
+    likho ""
+    likho "=== Trigonometry ==="
+    maano angle = PI() / 4
+    likho "45 deg in radians =", angle
+    likho "sin(45) =", sin_val(angle)
+    likho "cos(45) =", cos_val(angle)
+    likho "tan(45) =", tan_val(angle)
+}
+trig()
+
+kaam trig_table() {
+    likho ""
+    likho "Angles:"
+    har deg = 0; deg <= 360; deg = deg + 45 {
+        maano rad = radians(deg)
+        maano s = gol(sin_val(rad) * 1000) / 1000
+        maano c = gol(cos_val(rad) * 1000) / 1000
+        likho format("  {} deg -> sin={}, cos={}", deg, s, c)
+    }
+}
+trig_table()
+
+kaam logs() {
+    likho ""
+    likho "=== Logarithms ==="
+    likho "ln(E()) =", log_val(E())
+    likho "log10(1000) =", log10_val(1000)
+    likho "exp(1) =", exp_val(1)
+    likho "ln(100) =", log_val(100)
+}
+logs()
+
+kaam sign_clamp() {
+    likho ""
+    likho "=== Sign & Clamp ==="
+    likho "sign(-42) =", sign(-42)
+    likho "sign(0) =", sign(0)
+    likho "sign(99) =", sign(99)
+    likho "clamp(150, 0, 100) =", clamp(150, 0, 100)
+    likho "clamp(-5, 0, 100) =", clamp(-5, 0, 100)
+    likho "clamp(50, 0, 100) =", clamp(50, 0, 100)
+}
+sign_clamp()
+
+kaam statistics() {
+    likho ""
+    likho "=== Statistics ==="
+    maano data = [23, 45, 12, 67, 34, 89, 5, 72, 41, 56]
+    likho "Data:", data
+    likho "Sum (jod):", jod(data)
+    likho "Average (ausat):", ausat(data)
+    likho "Max (sabse_bada):", sabse_bada(data)
+    likho "Min (sabse_chhota):", sabse_chhota(data)
+    likho "Length:", lambai(data)
+}
+statistics()
+
+kaam benchmark() {
+    likho ""
+    likho "=== Benchmark ==="
+    maano start = ghadi()
+    maano result = 1
+    har i = 1; i <= 20; i = i + 1 {
+        result = result * i
+    }
+    maano elapsed = ghadi() - start
+    likho "20! =", result
+    likho format("Time: {} seconds", elapsed)
+}
+benchmark()
+
+likho ""
+likho "Math lab complete!"

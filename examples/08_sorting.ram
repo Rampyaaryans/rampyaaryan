@@ -1,0 +1,72 @@
+# ============================================
+# Rampyaaryan Example 08 - Sorting Algorithms
+# ============================================
+
+likho "=== Bubble Sort ==="
+kaam bubble_sort(arr) {
+    maano n = lambai(arr)
+    har i = 0; i < n - 1; i = i + 1 {
+        har j = 0; j < n - i - 1; j = j + 1 {
+            agar arr[j] > arr[j + 1] {
+                maano temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
+            }
+        }
+    }
+    wapas do arr
+}
+
+maano data1 = [64, 34, 25, 12, 22, 11, 90]
+likho "Pehle:", data1
+bubble_sort(data1)
+likho "Baad mein:", data1
+
+likho ""
+likho "=== Selection Sort ==="
+kaam selection_sort(arr) {
+    maano n = lambai(arr)
+    har i = 0; i < n - 1; i = i + 1 {
+        maano min_idx = i
+        har j = i + 1; j < n; j = j + 1 {
+            agar arr[j] < arr[min_idx] {
+                min_idx = j
+            }
+        }
+        agar min_idx != i {
+            maano temp = arr[i]
+            arr[i] = arr[min_idx]
+            arr[min_idx] = temp
+        }
+    }
+    wapas do arr
+}
+
+maano data2 = [29, 10, 14, 37, 13, 45, 7]
+likho "Pehle:", data2
+selection_sort(data2)
+likho "Baad mein:", data2
+
+likho ""
+likho "=== Insertion Sort ==="
+kaam insertion_sort(arr) {
+    maano n = lambai(arr)
+    har i = 1; i < n; i = i + 1 {
+        maano key = arr[i]
+        maano j = i - 1
+        jab tak j >= 0 aur arr[j] > key {
+            arr[j + 1] = arr[j]
+            j = j - 1
+        }
+        arr[j + 1] = key
+    }
+    wapas do arr
+}
+
+maano data3 = [38, 27, 43, 3, 9, 82, 10]
+likho "Pehle:", data3
+insertion_sort(data3)
+likho "Baad mein:", data3
+
+likho ""
+likho "✓ Sab sort ho gaye!"

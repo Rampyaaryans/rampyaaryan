@@ -1,0 +1,73 @@
+# ============================================
+# Rampyaaryan Example 13 - File I/O
+# Read, write, and process files
+# ============================================
+
+likho "╔══════════════════════════════════╗"
+likho "║   📁 File I/O Operations        ║"
+likho "╚══════════════════════════════════╝"
+
+# Write a file
+maano filename = "test_output.txt"
+likho_file(filename, "Namaste Duniya!\n")
+likho "✅ File likhi:", filename
+
+# Append to file
+joodo_file(filename, "Yeh doosri line hai.\n")
+joodo_file(filename, "Aur yeh teesri!\n")
+likho "✅ Lines append kiye"
+
+# Check if file exists
+likho "File exists?", file_hai(filename)
+likho "Fake file?", file_hai("nonexistent.xyz")
+
+# Read file
+likho ""
+likho "=== File ka content ==="
+maano content = padho_file(filename)
+likho content
+
+# Process file content
+likho "=== Processing ==="
+maano lines = todo(content, "\n")
+maano line_num = 1
+har i = 0; i < lambai(lines); i = i + 1 {
+    agar lambai(lines[i]) > 0 {
+        likho format("Line {}: {}", line_num, lines[i])
+        line_num = line_num + 1
+    }
+}
+
+# Write CSV data
+likho ""
+likho "=== CSV Generator ==="
+maano csv_file = "data.csv"
+likho_file(csv_file, "Naam,Umar,Shaher\n")
+joodo_file(csv_file, "Rampyaaryan,21,Delhi\n")
+joodo_file(csv_file, "Mohit,25,Mumbai\n")
+joodo_file(csv_file, "Priya,22,Bangalore\n")
+joodo_file(csv_file, "Arjun,28,Chennai\n")
+likho "✅ CSV file banai:", csv_file
+
+maano csv_data = padho_file(csv_file)
+maano csv_lines = todo(csv_data, "\n")
+har i = 0; i < lambai(csv_lines); i = i + 1 {
+    agar lambai(csv_lines[i]) > 0 {
+        maano fields = todo(csv_lines[i], ",")
+        agar i == 0 {
+            likho "Headers:", fields
+        } warna {
+            likho format("  → {} (age: {}, city: {})", fields[0], fields[1], fields[2])
+        }
+    }
+}
+
+# System info
+likho ""
+likho "=== System Info ==="
+likho "Platform:", platform()
+likho "Date:", taareekh()
+likho "Time:", waqt()
+
+likho ""
+likho "📁 File I/O complete!"

@@ -1,0 +1,83 @@
+# ============================================
+# Rampyaaryan Example 10 - Star Patterns
+# ============================================
+
+# Right triangle
+likho "=== Right Triangle ==="
+har i = 1; i <= 5; i = i + 1 {
+    maano line = ""
+    har j = 0; j < i; j = j + 1 {
+        line = line + "* "
+    }
+    likho line
+}
+
+# Inverted triangle
+likho ""
+likho "=== Inverted Triangle ==="
+har i = 5; i >= 1; i = i - 1 {
+    maano line = ""
+    har j = 0; j < i; j = j + 1 {
+        line = line + "* "
+    }
+    likho line
+}
+
+# Pyramid
+likho ""
+likho "=== Pyramid ==="
+maano rows = 5
+har i = 1; i <= rows; i = i + 1 {
+    maano line = ""
+    har s = 0; s < rows - i; s = s + 1 {
+        line = line + " "
+    }
+    har j = 0; j < 2 * i - 1; j = j + 1 {
+        line = line + "*"
+    }
+    likho line
+}
+
+# Diamond
+likho ""
+likho "=== Diamond ==="
+maano size = 5
+# Top half
+har i = 1; i <= size; i = i + 1 {
+    maano line = ""
+    har s = 0; s < size - i; s = s + 1 {
+        line = line + " "
+    }
+    har j = 0; j < 2 * i - 1; j = j + 1 {
+        line = line + "*"
+    }
+    likho line
+}
+# Bottom half
+har i = size - 1; i >= 1; i = i - 1 {
+    maano line = ""
+    har s = 0; s < size - i; s = s + 1 {
+        line = line + " "
+    }
+    har j = 0; j < 2 * i - 1; j = j + 1 {
+        line = line + "*"
+    }
+    likho line
+}
+
+# Number pyramid
+likho ""
+likho "=== Number Pyramid ==="
+har i = 1; i <= 5; i = i + 1 {
+    maano line = ""
+    har s = 0; s < 5 - i; s = s + 1 {
+        line = line + " "
+    }
+    har j = 1; j <= i; j = j + 1 {
+        line = line + shabd(j) + " "
+    }
+    likho line
+}
+
+likho ""
+likho "🎨 Sab patterns complete!"

@@ -1,0 +1,44 @@
+# ============================================
+# Rampyaaryan Example 09 - Number Guessing Game
+# ============================================
+
+likho "╔══════════════════════════════════╗"
+likho "║   🎮 Number Guessing Game!      ║"
+likho "║   Ek number socho 1-100 ke      ║"
+likho "║   beech mein!                    ║"
+likho "╚══════════════════════════════════╝"
+likho ""
+
+maano secret = yaadrchik(1, 100)
+maano attempts = 0
+maano max_attempts = 7
+maano guessed = jhooth
+
+likho "Aapke paas", max_attempts, "mauke hain!"
+likho ""
+
+jab tak attempts < max_attempts aur nahi guessed {
+    attempts = attempts + 1
+    maano remaining = max_attempts - attempts
+    maano input_str = pucho("Attempt " + shabd(attempts) + "/" + shabd(max_attempts) + " - Aapka guess: ")
+    maano guess = sankhya(input_str)
+
+    agar guess == secret {
+        likho ""
+        likho "🎉 SAHI JAWAB! Number", secret, "tha!"
+        likho "Aapne", attempts, "attempts mein guess kar liya!"
+        guessed = sach
+    } warna agar guess < secret {
+        likho "📈 Bahut CHHOTA! Bada number try karo.", remaining, "attempts bache."
+    } warna {
+        likho "📉 Bahut BADA! Chhota number try karo.", remaining, "attempts bache."
+    }
+}
+
+agar nahi guessed {
+    likho ""
+    likho "😔 Aap haar gaye! Sahi number", secret, "tha."
+}
+
+likho ""
+likho "Khelne ke liye shukriya! 🙏"

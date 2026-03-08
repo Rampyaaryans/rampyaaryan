@@ -1,0 +1,32 @@
+# Build artifacts
+build/
+bin/
+*.o
+*.exe
+*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile.cmake
+
+# Temp/test output
+err.txt
+errors.txt
+out.txt
+test_output.txt
+data.csv
+test.c

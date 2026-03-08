@@ -1,0 +1,95 @@
+# ============================================
+# Rampyaaryan Example 05 - Functions (Kaam)
+# ============================================
+
+# Basic function
+kaam namaste(naam) {
+    likho "🙏 Namaste,", naam, "ji!"
+}
+
+namaste("Rampyaaryan")
+namaste("Duniya")
+
+# Function with return
+likho ""
+kaam jodo(a, b) {
+    wapas do a + b
+}
+
+kaam ghataao(a, b) {
+    wapas do a - b
+}
+
+kaam guna(a, b) {
+    wapas do a * b
+}
+
+likho "5 + 3 =", jodo(5, 3)
+likho "10 - 4 =", ghataao(10, 4)
+likho "6 * 7 =", guna(6, 7)
+
+# Recursive factorial
+likho ""
+kaam factorial(n) {
+    agar n <= 1 {
+        wapas do 1
+    }
+    wapas do n * factorial(n - 1)
+}
+
+har i = 0; i <= 10; i = i + 1 {
+    likho i, "! =", factorial(i)
+}
+
+# Fibonacci
+likho ""
+likho "=== Fibonacci Series ==="
+kaam fibonacci(n) {
+    agar n <= 0 { wapas do 0 }
+    agar n == 1 { wapas do 1 }
+    wapas do fibonacci(n - 1) + fibonacci(n - 2)
+}
+
+har i = 0; i < 15; i = i + 1 {
+    likho "F(" + shabd(i) + ") =", fibonacci(i)
+}
+
+# Prime checker
+likho ""
+likho "=== Prime Numbers (1-50) ==="
+kaam prime_hai(num) {
+    agar num < 2 { wapas do jhooth }
+    agar num == 2 { wapas do sach }
+    agar num % 2 == 0 { wapas do jhooth }
+    maano i = 3
+    jab tak i * i <= num {
+        agar num % i == 0 { wapas do jhooth }
+        i = i + 2
+    }
+    wapas do sach
+}
+
+maano primes = ""
+har n = 1; n <= 50; n = n + 1 {
+    agar prime_hai(n) {
+        primes = primes + shabd(n) + " "
+    }
+}
+likho primes
+
+# Closure example
+likho ""
+likho "=== Closure ==="
+kaam counter_banao() {
+    maano count = 0
+    kaam badhao() {
+        count = count + 1
+        wapas do count
+    }
+    wapas do badhao
+}
+
+maano mera_counter = counter_banao()
+likho "Count:", mera_counter()
+likho "Count:", mera_counter()
+likho "Count:", mera_counter()

@@ -1,0 +1,86 @@
+# ============================================
+# Rampyaaryan Example 11 - String Magic
+# Advanced string operations showcase
+# ============================================
+
+likho "╔══════════════════════════════════╗"
+likho "║   🔤 String Magic in Rampyaaryan ║"
+likho "╚══════════════════════════════════╝"
+
+# String basics
+maano naam = "Rampyaaryan Programming Language"
+likho "Original:", naam
+likho "Lambai:", lambai(naam)
+likho "Uppercase:", bade_akshar(naam)
+likho "Lowercase:", chhote_akshar(naam)
+
+# Substring
+likho ""
+likho "=== Kato (Substring) ==="
+likho "Pehle 11 akshar:", kato(naam, 0, 11)
+likho "Aakhri 8 akshar:", kato(naam, -8)
+
+# Find and Replace
+likho ""
+likho "=== Dhundho aur Badlo ==="
+maano vakya = "Main Rampyaaryan seekh raha hoon"
+likho "Original:", vakya
+likho "'seekh' kahan hai:", dhundho(vakya, "seekh")
+likho "Replace:", badlo(vakya, "seekh raha", "sikh chuka")
+
+# Split and Join
+likho ""
+likho "=== Todo aur Jodo ==="
+maano csv = "Ram,Shyam,Mohan,Geeta,Sita"
+maano names = todo(csv, ",")
+likho "Split kiya:", names
+likho "Join kiya:", jodo_shabd(names, " | ")
+
+# String formatting
+likho ""
+likho "=== Format ==="
+maano umar = 21
+likho format("Mera naam {} hai aur umar {} saal hai!", "Rampyaaryan", umar)
+likho format("{} + {} = {}", 5, 3, 8)
+
+# Trim
+likho ""
+maano messy = "   bahut space hai   "
+likho "Pehle: [" + messy + "]"
+likho "Saaf: [" + saaf(messy) + "]"
+
+# StartsWith / EndsWith
+likho ""
+maano file = "program.ram"
+likho file, "'.ram' se khatam?", ant_se(file, ".ram")
+likho file, "'pro' se shuru?", shuru_se(file, "pro")
+
+# Repeat
+likho ""
+likho dohrao("⭐", 10)
+likho dohrao("Na ", 8) + "Batman!"
+
+# Character operations
+likho ""
+likho "=== Akshar Operations ==="
+maano word = "Namaste"
+har i = 0; i < lambai(word); i = i + 1 {
+    likho format("  akshar[{}] = '{}' (ASCII: {})", i, akshar(word, i), ascii_code(akshar(word, i)))
+}
+
+# Count occurrences
+likho ""
+maano text = "banana mein kitne 'a' hain?"
+likho format("'{}' mein 'a' = {} baar", text, gino(text, "a"))
+
+# Build a string char by char
+likho ""
+likho "=== ASCII Art Generator ==="
+maano alphabet = ""
+har i = 65; i <= 90; i = i + 1 {
+    alphabet = alphabet + ascii_se(i)
+}
+likho "A-Z:", alphabet
+
+likho ""
+likho "✅ String magic complete!"
