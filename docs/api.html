@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference — Rampyaaryan Documentation</title>
+  <meta name="description" content="Complete reference for all 145 built-in functions in the Rampyaaryan programming language.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Menu">&#9776;</button>
+<div class="overlay"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>&#x1F64F; Rampyaaryan</h1>
+    <div class="subtitle">Documentation v2.0</div>
+  </div>
+  <div class="search-box">
+    <input type="text" placeholder="Search docs...">
+  </div>
+  <nav class="sidebar-nav">
+    <div class="section-title">Getting Started</div>
+    <a href="index.html"><span class="nav-icon">&#x1F3E0;</span> Home</a>
+    <a href="getting-started.html"><span class="nav-icon">&#x1F680;</span> Getting Started</a>
+    <a href="tutorial.html"><span class="nav-icon">&#x1F393;</span> Tutorial</a>
+
+    <div class="section-title">Reference</div>
+    <a href="api.html" class="active"><span class="nav-icon">&#x1F4DA;</span> API Reference</a>
+    <a href="spec.html"><span class="nav-icon">&#x1F4DC;</span> Language Spec</a>
+    <a href="examples.html"><span class="nav-icon">&#x1F4BB;</span> Examples</a>
+
+    <div class="section-title">More</div>
+    <a href="howto.html"><span class="nav-icon">&#x1F4D6;</span> How-To Guide</a>
+    <a href="changelog.html"><span class="nav-icon">&#x1F4CB;</span> Changelog</a>
+    <a href="contributing.html"><span class="nav-icon">&#x1F91D;</span> Contributing</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+  </div>
+</aside>
+
+<main class="main-content">
+  <div class="content-wrapper">
+
+    <div class="page-header">
+      <a href="index.html">Docs</a> / <strong>API Reference</strong>
+    </div>
+
+    <h1>API Reference</h1>
+    <p class="lead">Complete reference for all <strong>145 built-in functions</strong> across 12 categories.</p>
+
+    <div class="toc">
+      <h3>Table of Contents</h3>
+      <ol>
+        <li><a href="#type-conversion">Type Conversion (6)</a></li>
+        <li><a href="#type-checking">Type Checking (10)</a></li>
+        <li><a href="#string-ops">String Operations (27)</a></li>
+        <li><a href="#list-ops">List Operations (23)</a></li>
+        <li><a href="#higher-order">Higher-Order Functions (7)</a></li>
+        <li><a href="#map-dict">Map/Dictionary Functions (9)</a></li>
+        <li><a href="#math">Math Functions (37)</a></li>
+        <li><a href="#base-conversion">Base Conversion (3)</a></li>
+        <li><a href="#file-io">File I/O (4)</a></li>
+        <li><a href="#system-utility">System &amp; Utility (11)</a></li>
+        <li><a href="#date-time">Date &amp; Time (7)</a></li>
+      </ol>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="type-conversion">Type Conversion <span class="badge badge-blue">6 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">prakar(value) &rarr; string</div>
+      <div class="fn-desc">Returns the type name of a value as a string.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">prakar</span>(<span class="num">42</span>)        <span class="cmt"># &rarr; "sankhya"</span>
+<span class="fn">prakar</span>(<span class="str">"hello"</span>)   <span class="cmt"># &rarr; "shabd"</span>
+<span class="fn">prakar</span>(<span class="kw">sach</span>)      <span class="cmt"># &rarr; "boolean"</span>
+<span class="fn">prakar</span>(<span class="kw">khali</span>)     <span class="cmt"># &rarr; "khali"</span>
+<span class="fn">prakar</span>([<span class="num">1</span>,<span class="num">2</span>])     <span class="cmt"># &rarr; "suchi"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">sankhya(value) &rarr; number</div>
+      <div class="fn-desc">Converts a value to a number. Strings are parsed.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">sankhya</span>(<span class="str">"42"</span>)     <span class="cmt"># &rarr; 42</span>
+<span class="fn">sankhya</span>(<span class="str">"3.14"</span>)   <span class="cmt"># &rarr; 3.14</span>
+<span class="fn">sankhya</span>(<span class="kw">sach</span>)     <span class="cmt"># &rarr; 1</span>
+<span class="fn">sankhya</span>(<span class="kw">jhooth</span>)   <span class="cmt"># &rarr; 0</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">dashmlav(value) &rarr; number</div>
+      <div class="fn-desc">Converts to a decimal/float number. Same as <code>sankhya()</code>.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">dashmlav</span>(<span class="str">"3.14"</span>)  <span class="cmt"># &rarr; 3.14</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">shabd(value) &rarr; string</div>
+      <div class="fn-desc">Converts any value to its string representation.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">shabd</span>(<span class="num">42</span>)         <span class="cmt"># &rarr; "42"</span>
+<span class="fn">shabd</span>(<span class="num">3.14</span>)       <span class="cmt"># &rarr; "3.14"</span>
+<span class="fn">shabd</span>(<span class="kw">sach</span>)       <span class="cmt"># &rarr; "sach"</span>
+<span class="fn">shabd</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])   <span class="cmt"># &rarr; "[1, 2, 3]"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">purn(value) &rarr; number</div>
+      <div class="fn-desc">Converts to an integer (truncates decimals).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">purn</span>(<span class="num">3.99</span>)        <span class="cmt"># &rarr; 3</span>
+<span class="fn">purn</span>(<span class="str">"42"</span>)        <span class="cmt"># &rarr; 42</span>
+<span class="fn">purn</span>(<span class="num">-3.7</span>)       <span class="cmt"># &rarr; -3</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">bool_val(value) &rarr; boolean</div>
+      <div class="fn-desc">Converts any value to a boolean.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">bool_val</span>(<span class="num">0</span>)           <span class="cmt"># &rarr; jhooth</span>
+<span class="fn">bool_val</span>(<span class="num">1</span>)           <span class="cmt"># &rarr; sach</span>
+<span class="fn">bool_val</span>(<span class="str">""</span>)          <span class="cmt"># &rarr; jhooth</span>
+<span class="fn">bool_val</span>(<span class="str">"hello"</span>)     <span class="cmt"># &rarr; sach</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="type-checking">Type Checking <span class="badge badge-blue">10 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_sankhya(value) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if the value is a number.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_sankhya</span>(<span class="num">42</span>)      <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_sankhya</span>(<span class="str">"42"</span>)    <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_shabd(value) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if the value is a string.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_shabd</span>(<span class="str">"hello"</span>)   <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_shabd</span>(<span class="num">42</span>)        <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_suchi(value) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if the value is a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_suchi</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])   <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_suchi</span>(<span class="str">"hello"</span>)   <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_kaam(value) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if the value is a function.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">greet</span>() { <span class="kw">likho</span> <span class="str">"hi"</span> }
+<span class="fn">kya_kaam</span>(greet)      <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_kaam</span>(<span class="num">42</span>)         <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_bool(value) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if the value is a boolean.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_bool</span>(<span class="kw">sach</span>)       <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_bool</span>(<span class="num">42</span>)         <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_khali(value) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if the value is <code>khali</code> (null).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_khali</span>(<span class="kw">khali</span>)     <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_khali</span>(<span class="num">0</span>)         <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_purn(value) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if the value is an integer (whole number).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_purn</span>(<span class="num">42</span>)         <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_purn</span>(<span class="num">3.14</span>)       <span class="cmt"># &rarr; jhooth</span>
+<span class="fn">kya_purn</span>(<span class="num">5.0</span>)        <span class="cmt"># &rarr; sach</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_map(value) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if the value is a map/dictionary.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_map</span>({<span class="str">"a"</span>: <span class="num">1</span>})    <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_map</span>([<span class="num">1</span>,<span class="num">2</span>])       <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">typeof_val(value) &rarr; string</div>
+      <div class="fn-desc">Returns the type name (alias for <code>prakar</code>).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">typeof_val</span>(<span class="num">42</span>)       <span class="cmt"># &rarr; "sankhya"</span>
+<span class="fn">typeof_val</span>({<span class="str">"a"</span>:<span class="num">1</span>})  <span class="cmt"># &rarr; "map"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">print_type(value) &rarr; null</div>
+      <div class="fn-desc">Prints the type of a value to console.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">print_type</span>(<span class="num">42</span>)       <span class="cmt"># prints: sankhya</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="string-ops">String Operations <span class="badge badge-blue">27 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">lambai(value) &rarr; number</div>
+      <div class="fn-desc">Returns the length of a string or list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">lambai</span>(<span class="str">"hello"</span>)      <span class="cmt"># &rarr; 5</span>
+<span class="fn">lambai</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])      <span class="cmt"># &rarr; 3</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">bade_akshar(str) &rarr; string</div>
+      <div class="fn-desc">Converts string to UPPERCASE.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">bade_akshar</span>(<span class="str">"hello"</span>) <span class="cmt"># &rarr; "HELLO"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">chhote_akshar(str) &rarr; string</div>
+      <div class="fn-desc">Converts string to lowercase.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">chhote_akshar</span>(<span class="str">"HELLO"</span>) <span class="cmt"># &rarr; "hello"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kato(str, start, [end]) &rarr; string</div>
+      <div class="fn-desc">Extracts a substring. Supports negative indices.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kato</span>(<span class="str">"Namaste"</span>, <span class="num">0</span>, <span class="num">3</span>)   <span class="cmt"># &rarr; "Nam"</span>
+<span class="fn">kato</span>(<span class="str">"Namaste"</span>, <span class="num">-4</span>)     <span class="cmt"># &rarr; "aste"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">dhundho(str, substr) &rarr; number</div>
+      <div class="fn-desc">Finds the first occurrence of <code>substr</code>. Returns -1 if not found.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">dhundho</span>(<span class="str">"hello world"</span>, <span class="str">"world"</span>)  <span class="cmt"># &rarr; 6</span>
+<span class="fn">dhundho</span>(<span class="str">"hello world"</span>, <span class="str">"xyz"</span>)    <span class="cmt"># &rarr; -1</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">badlo(str, old, new) &rarr; string</div>
+      <div class="fn-desc">Replaces ALL occurrences of <code>old</code> with <code>new</code>.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">badlo</span>(<span class="str">"hello world"</span>, <span class="str">"world"</span>, <span class="str">"duniya"</span>)  <span class="cmt"># &rarr; "hello duniya"</span>
+<span class="fn">badlo</span>(<span class="str">"aaa"</span>, <span class="str">"a"</span>, <span class="str">"b"</span>)                    <span class="cmt"># &rarr; "bbb"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">todo(str, [separator]) &rarr; list</div>
+      <div class="fn-desc">Splits a string into a list. Default separator: space.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">todo</span>(<span class="str">"a,b,c"</span>, <span class="str">","</span>)      <span class="cmt"># &rarr; ["a", "b", "c"]</span>
+<span class="fn">todo</span>(<span class="str">"hello world"</span>)     <span class="cmt"># &rarr; ["hello", "world"]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">saaf(str) &rarr; string</div>
+      <div class="fn-desc">Removes whitespace from both ends of a string.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">saaf</span>(<span class="str">"  hello  "</span>)       <span class="cmt"># &rarr; "hello"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">shuru_se(str, prefix) &rarr; boolean</div>
+      <div class="fn-desc">Checks if string starts with the given prefix.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">shuru_se</span>(<span class="str">"hello"</span>, <span class="str">"hel"</span>)   <span class="cmt"># &rarr; sach</span>
+<span class="fn">shuru_se</span>(<span class="str">"hello"</span>, <span class="str">"xyz"</span>)   <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ant_se(str, suffix) &rarr; boolean</div>
+      <div class="fn-desc">Checks if string ends with the given suffix.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">ant_se</span>(<span class="str">"file.ram"</span>, <span class="str">".ram"</span>)  <span class="cmt"># &rarr; sach</span>
+<span class="fn">ant_se</span>(<span class="str">"file.txt"</span>, <span class="str">".ram"</span>)  <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">dohrao(str, count) &rarr; string</div>
+      <div class="fn-desc">Repeats a string <code>count</code> times.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">dohrao</span>(<span class="str">"ha"</span>, <span class="num">3</span>)          <span class="cmt"># &rarr; "hahaha"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">akshar(str, index) &rarr; string</div>
+      <div class="fn-desc">Returns the character at the given index. Supports negative indices.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">akshar</span>(<span class="str">"hello"</span>, <span class="num">0</span>)       <span class="cmt"># &rarr; "h"</span>
+<span class="fn">akshar</span>(<span class="str">"hello"</span>, <span class="num">-1</span>)      <span class="cmt"># &rarr; "o"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ascii_code(char) &rarr; number</div>
+      <div class="fn-desc">Returns the ASCII code of the first character.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">ascii_code</span>(<span class="str">"A"</span>)          <span class="cmt"># &rarr; 65</span>
+<span class="fn">ascii_code</span>(<span class="str">"0"</span>)          <span class="cmt"># &rarr; 48</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ascii_se(code) &rarr; string</div>
+      <div class="fn-desc">Returns the character for an ASCII code.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">ascii_se</span>(<span class="num">65</span>)             <span class="cmt"># &rarr; "A"</span>
+<span class="fn">ascii_se</span>(<span class="num">48</span>)             <span class="cmt"># &rarr; "0"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">jodo_shabd(list, [separator]) &rarr; string</div>
+      <div class="fn-desc">Joins list elements into a string with a separator.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">jodo_shabd</span>([<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>], <span class="str">","</span>)  <span class="cmt"># &rarr; "a,b,c"</span>
+<span class="fn">jodo_shabd</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="str">" + "</span>)   <span class="cmt"># &rarr; "1 + 2 + 3"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">format(template, args...) &rarr; string</div>
+      <div class="fn-desc">String formatting with <code>{}</code> placeholders.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">format</span>(<span class="str">"{} + {} = {}"</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">5</span>)     <span class="cmt"># &rarr; "2 + 3 = 5"</span>
+<span class="fn">format</span>(<span class="str">"Hi, {}!"</span>, <span class="str">"Ram"</span>)            <span class="cmt"># &rarr; "Hi, Ram!"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">gino(str, substr) &rarr; number</div>
+      <div class="fn-desc">Counts non-overlapping occurrences of <code>substr</code> in <code>str</code>.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">gino</span>(<span class="str">"banana"</span>, <span class="str">"a"</span>)     <span class="cmt"># &rarr; 3</span>
+<span class="fn">gino</span>(<span class="str">"hello"</span>, <span class="str">"ll"</span>)     <span class="cmt"># &rarr; 1</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">title_case(str) &rarr; string</div>
+      <div class="fn-desc">Converts string to Title Case.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">title_case</span>(<span class="str">"hello world"</span>)   <span class="cmt"># &rarr; "Hello World"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">capitalize(str) &rarr; string</div>
+      <div class="fn-desc">Capitalizes the first character of the string.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">capitalize</span>(<span class="str">"hello"</span>)          <span class="cmt"># &rarr; "Hello"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">swapcase(str) &rarr; string</div>
+      <div class="fn-desc">Swaps the case of each character.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">swapcase</span>(<span class="str">"Hello World"</span>)     <span class="cmt"># &rarr; "hELLO wORLD"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">center(str, width, [fillchar]) &rarr; string</div>
+      <div class="fn-desc">Centers a string in a field of given width with optional fill character.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">center</span>(<span class="str">"hi"</span>, <span class="num">10</span>)            <span class="cmt"># &rarr; "    hi    "</span>
+<span class="fn">center</span>(<span class="str">"hi"</span>, <span class="num">10</span>, <span class="str">"*"</span>)       <span class="cmt"># &rarr; "****hi****"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">pad_left(str, width, [fillchar]) &rarr; string</div>
+      <div class="fn-desc">Left-pads a string to the given width.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">pad_left</span>(<span class="str">"42"</span>, <span class="num">5</span>, <span class="str">"0"</span>)     <span class="cmt"># &rarr; "00042"</span>
+<span class="fn">pad_left</span>(<span class="str">"hi"</span>, <span class="num">8</span>)          <span class="cmt"># &rarr; "      hi"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">pad_right(str, width, [fillchar]) &rarr; string</div>
+      <div class="fn-desc">Right-pads a string to the given width.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">pad_right</span>(<span class="str">"hi"</span>, <span class="num">8</span>)         <span class="cmt"># &rarr; "hi      "</span>
+<span class="fn">pad_right</span>(<span class="str">"42"</span>, <span class="num">5</span>, <span class="str">"0"</span>)    <span class="cmt"># &rarr; "42000"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_ank(str) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if all characters are digits.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_ank</span>(<span class="str">"12345"</span>)    <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_ank</span>(<span class="str">"12a45"</span>)    <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_akshar(str) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if all characters are alphabetic.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_akshar</span>(<span class="str">"hello"</span>)  <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_akshar</span>(<span class="str">"hello1"</span>) <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_alnum(str) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if all characters are alphanumeric.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_alnum</span>(<span class="str">"hello123"</span>) <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_alnum</span>(<span class="str">"hello!"</span>)   <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_space(str) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if all characters are whitespace.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_space</span>(<span class="str">"   "</span>)     <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_space</span>(<span class="str">" hi "</span>)    <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="list-ops">List Operations <span class="badge badge-blue">23 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">joodo(list, item) &rarr; list</div>
+      <div class="fn-desc">Appends an item to the end of a list. Modifies in-place.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> l = [<span class="num">1</span>, <span class="num">2</span>]
+<span class="fn">joodo</span>(l, <span class="num">3</span>)              <span class="cmt"># l &rarr; [1, 2, 3]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">nikalo(list, [index]) &rarr; value</div>
+      <div class="fn-desc">Removes and returns the item at index. Default: last item.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> l = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="fn">nikalo</span>(l)                <span class="cmt"># &rarr; 3, l &rarr; [1, 2]</span>
+<span class="fn">nikalo</span>(l, <span class="num">0</span>)             <span class="cmt"># &rarr; 1, l &rarr; [2]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ulta(value) &rarr; list|string</div>
+      <div class="fn-desc">Reverses a list or string.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">ulta</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])          <span class="cmt"># &rarr; [3, 2, 1]</span>
+<span class="fn">ulta</span>(<span class="str">"hello"</span>)            <span class="cmt"># &rarr; "olleh"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kram(list) &rarr; list</div>
+      <div class="fn-desc">Sorts a list in-place (numbers ascending, strings alphabetical).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kram</span>([<span class="num">3</span>, <span class="num">1</span>, <span class="num">2</span>])          <span class="cmt"># &rarr; [1, 2, 3]</span>
+<span class="fn">kram</span>([<span class="str">"c"</span>, <span class="str">"a"</span>, <span class="str">"b"</span>])    <span class="cmt"># &rarr; ["a", "b", "c"]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">suchi(args...) &rarr; list</div>
+      <div class="fn-desc">Creates a new list from the given arguments.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">suchi</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)           <span class="cmt"># &rarr; [1, 2, 3]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">range_(start_or_end, [end], [step]) &rarr; list</div>
+      <div class="fn-desc">Creates a list of numbers in a range.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">range_</span>(<span class="num">5</span>)                <span class="cmt"># &rarr; [0, 1, 2, 3, 4]</span>
+<span class="fn">range_</span>(<span class="num">1</span>, <span class="num">6</span>)             <span class="cmt"># &rarr; [1, 2, 3, 4, 5]</span>
+<span class="fn">range_</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>)         <span class="cmt"># &rarr; [0, 2, 4, 6, 8]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">shamil(collection, value) &rarr; boolean</div>
+      <div class="fn-desc">Checks if a value exists in a list or substring in a string.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">shamil</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], <span class="num">2</span>)       <span class="cmt"># &rarr; sach</span>
+<span class="fn">shamil</span>(<span class="str">"hello"</span>, <span class="str">"ell"</span>)   <span class="cmt"># &rarr; sach</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">katao(list, [start], [end]) &rarr; list</div>
+      <div class="fn-desc">Returns a slice of the list. Supports negative indices.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">katao</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>], <span class="num">1</span>, <span class="num">3</span>) <span class="cmt"># &rarr; [2, 3]</span>
+<span class="fn">katao</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>], <span class="num">-2</span>)   <span class="cmt"># &rarr; [4, 5]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">pahla(list) &rarr; value</div>
+      <div class="fn-desc">Returns the first element of a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">pahla</span>([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>])      <span class="cmt"># &rarr; 10</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">aakhri(list) &rarr; value</div>
+      <div class="fn-desc">Returns the last element of a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">aakhri</span>([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>])     <span class="cmt"># &rarr; 30</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">milao(list1, list2) &rarr; list</div>
+      <div class="fn-desc">Concatenates two lists into a new list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">milao</span>([<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>,<span class="num">4</span>])      <span class="cmt"># &rarr; [1, 2, 3, 4]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">index_of(list, value) &rarr; number</div>
+      <div class="fn-desc">Returns the index of the first occurrence, or -1 if not found.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">index_of</span>([<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>], <span class="num">20</span>) <span class="cmt"># &rarr; 1</span>
+<span class="fn">index_of</span>([<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>], <span class="num">99</span>) <span class="cmt"># &rarr; -1</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">anokha(list) &rarr; list</div>
+      <div class="fn-desc">Returns a new list with duplicate elements removed.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">anokha</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">3</span>])     <span class="cmt"># &rarr; [1, 2, 3]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">daalo(list, index, value) &rarr; list</div>
+      <div class="fn-desc">Inserts a value at the specified index. Modifies in-place.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> l = [<span class="num">1</span>, <span class="num">3</span>]
+<span class="fn">daalo</span>(l, <span class="num">1</span>, <span class="num">2</span>)           <span class="cmt"># l &rarr; [1, 2, 3]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">jod(list) &rarr; number</div>
+      <div class="fn-desc">Returns the sum of all numbers in a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">jod</span>([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>])        <span class="cmt"># &rarr; 60</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">sabse_bada(list) &rarr; number</div>
+      <div class="fn-desc">Returns the maximum number in a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">sabse_bada</span>([<span class="num">3</span>, <span class="num">7</span>, <span class="num">1</span>, <span class="num">9</span>]) <span class="cmt"># &rarr; 9</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">sabse_chhota(list) &rarr; number</div>
+      <div class="fn-desc">Returns the minimum number in a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">sabse_chhota</span>([<span class="num">3</span>, <span class="num">7</span>, <span class="num">1</span>, <span class="num">9</span>]) <span class="cmt"># &rarr; 1</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ausat(list) &rarr; number</div>
+      <div class="fn-desc">Returns the average (mean) of numbers in a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">ausat</span>([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>])      <span class="cmt"># &rarr; 20</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">flatten(list) &rarr; list</div>
+      <div class="fn-desc">Flattens a nested list into a single-level list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">flatten</span>([[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,[<span class="num">4</span>,<span class="num">5</span>]]])  <span class="cmt"># &rarr; [1, 2, 3, 4, 5]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">tukda(list, size) &rarr; list</div>
+      <div class="fn-desc">Splits a list into chunks of the given size.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">tukda</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>], <span class="num">2</span>)      <span class="cmt"># &rarr; [[1,2],[3,4],[5]]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ghuma(list, n) &rarr; list</div>
+      <div class="fn-desc">Rotates a list by n positions.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">ghuma</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>], <span class="num">2</span>)      <span class="cmt"># &rarr; [3,4,5,1,2]</span>
+<span class="fn">ghuma</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>], <span class="num">-1</span>)     <span class="cmt"># &rarr; [5,1,2,3,4]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">copy_suchi(list) &rarr; list</div>
+      <div class="fn-desc">Creates a shallow copy of a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> a = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]
+<span class="kw">maano</span> b = <span class="fn">copy_suchi</span>(a)    <span class="cmt"># b is independent copy</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">khali_karo(list) &rarr; list</div>
+      <div class="fn-desc">Removes all elements from a list in-place.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> l = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]
+<span class="fn">khali_karo</span>(l)              <span class="cmt"># l &rarr; []</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="higher-order">Higher-Order Functions <span class="badge badge-blue">7 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">naksha(list, function) &rarr; list</div>
+      <div class="fn-desc">Applies a function to each element and returns a new list (map).</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">double</span>(x) { <span class="kw">wapas do</span> x <span class="op">*</span> <span class="num">2</span> }
+<span class="fn">naksha</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], double)     <span class="cmt"># &rarr; [2, 4, 6]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">chhaano(list, function) &rarr; list</div>
+      <div class="fn-desc">Filters elements where the function returns truthy (filter).</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">is_even</span>(x) { <span class="kw">wapas do</span> x <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span> }
+<span class="fn">chhaano</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>], is_even) <span class="cmt"># &rarr; [2, 4]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ikkatha(list, function, initial) &rarr; value</div>
+      <div class="fn-desc">Reduces a list to a single value using a function (reduce/fold).</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">add</span>(a, b) { <span class="kw">wapas do</span> a <span class="op">+</span> b }
+<span class="fn">ikkatha</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>], add, <span class="num">0</span>)  <span class="cmt"># &rarr; 10</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">sab(list) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if all elements in the list are truthy.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">sab</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])       <span class="cmt"># &rarr; sach</span>
+<span class="fn">sab</span>([<span class="num">1</span>, <span class="num">0</span>, <span class="num">3</span>])       <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">koi(list) &rarr; boolean</div>
+      <div class="fn-desc">Returns <code>sach</code> if any element in the list is truthy.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">koi</span>([<span class="num">0</span>, <span class="num">0</span>, <span class="num">1</span>])       <span class="cmt"># &rarr; sach</span>
+<span class="fn">koi</span>([<span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>])       <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">jodi_banao(list1, list2) &rarr; list</div>
+      <div class="fn-desc">Combines two lists into a list of pairs (zip).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">jodi_banao</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], [<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>])  <span class="cmt"># &rarr; [[1,"a"],[2,"b"],[3,"c"]]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ginati_banao(list) &rarr; list</div>
+      <div class="fn-desc">Returns a list of [index, value] pairs (enumerate).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">ginati_banao</span>([<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>])  <span class="cmt"># &rarr; [[0,"a"],[1,"b"],[2,"c"]]</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="map-dict">Map/Dictionary Functions <span class="badge badge-blue">9 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">shabdkosh() &rarr; map</div>
+      <div class="fn-desc">Creates a new empty map/dictionary. Maps can also be created with literal syntax <code>{key: value}</code>.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> m = <span class="fn">shabdkosh</span>()
+<span class="kw">maano</span> m2 = {<span class="str">"naam"</span>: <span class="str">"Aryan"</span>, <span class="str">"umar"</span>: <span class="num">20</span>}</code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">chabi(map) &rarr; list</div>
+      <div class="fn-desc">Returns a list of all keys in the map.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> m = {<span class="str">"a"</span>: <span class="num">1</span>, <span class="str">"b"</span>: <span class="num">2</span>}
+<span class="fn">chabi</span>(m)                    <span class="cmt"># &rarr; ["a", "b"]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">mulya(map) &rarr; list</div>
+      <div class="fn-desc">Returns a list of all values in the map.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> m = {<span class="str">"a"</span>: <span class="num">1</span>, <span class="str">"b"</span>: <span class="num">2</span>}
+<span class="fn">mulya</span>(m)                    <span class="cmt"># &rarr; [1, 2]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">jodi(map) &rarr; list</div>
+      <div class="fn-desc">Returns a list of [key, value] pairs.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> m = {<span class="str">"a"</span>: <span class="num">1</span>, <span class="str">"b"</span>: <span class="num">2</span>}
+<span class="fn">jodi</span>(m)                     <span class="cmt"># &rarr; [["a", 1], ["b", 2]]</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">map_hai(map, key) &rarr; boolean</div>
+      <div class="fn-desc">Checks if a key exists in the map.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> m = {<span class="str">"naam"</span>: <span class="str">"Aryan"</span>}
+<span class="fn">map_hai</span>(m, <span class="str">"naam"</span>)          <span class="cmt"># &rarr; sach</span>
+<span class="fn">map_hai</span>(m, <span class="str">"umar"</span>)          <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">map_get(map, key, default) &rarr; value</div>
+      <div class="fn-desc">Gets a value by key, returning default if not found.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> m = {<span class="str">"a"</span>: <span class="num">1</span>}
+<span class="fn">map_get</span>(m, <span class="str">"a"</span>, <span class="num">0</span>)          <span class="cmt"># &rarr; 1</span>
+<span class="fn">map_get</span>(m, <span class="str">"b"</span>, <span class="num">0</span>)          <span class="cmt"># &rarr; 0</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">map_hatao(map, key) &rarr; value</div>
+      <div class="fn-desc">Removes a key from the map and returns its value.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> m = {<span class="str">"a"</span>: <span class="num">1</span>, <span class="str">"b"</span>: <span class="num">2</span>}
+<span class="fn">map_hatao</span>(m, <span class="str">"a"</span>)           <span class="cmt"># &rarr; 1, m is now {"b": 2}</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">map_milao(map1, map2) &rarr; map</div>
+      <div class="fn-desc">Merges two maps into a new map. Keys from map2 overwrite map1.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">map_milao</span>({<span class="str">"a"</span>:<span class="num">1</span>}, {<span class="str">"b"</span>:<span class="num">2</span>}) <span class="cmt"># &rarr; {"a": 1, "b": 2}</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">map_lambai(map) &rarr; number</div>
+      <div class="fn-desc">Returns the number of key-value pairs in the map.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">map_lambai</span>({<span class="str">"a"</span>:<span class="num">1</span>, <span class="str">"b"</span>:<span class="num">2</span>})  <span class="cmt"># &rarr; 2</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="math">Math Functions <span class="badge badge-blue">37 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">abs_val(x) &rarr; number</div>
+      <div class="fn-desc">Absolute value.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">abs_val</span>(<span class="num">-42</span>)             <span class="cmt"># &rarr; 42</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">gol(x) &rarr; number</div>
+      <div class="fn-desc">Round to nearest integer.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">gol</span>(<span class="num">3.7</span>)                 <span class="cmt"># &rarr; 4</span>
+<span class="fn">gol</span>(<span class="num">3.2</span>)                 <span class="cmt"># &rarr; 3</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">upar(x) &rarr; number</div>
+      <div class="fn-desc">Ceiling &mdash; round up.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">upar</span>(<span class="num">3.1</span>)                <span class="cmt"># &rarr; 4</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">neeche(x) &rarr; number</div>
+      <div class="fn-desc">Floor &mdash; round down.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">neeche</span>(<span class="num">3.9</span>)              <span class="cmt"># &rarr; 3</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">sqrt_val(x) &rarr; number</div>
+      <div class="fn-desc">Square root.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">sqrt_val</span>(<span class="num">144</span>)            <span class="cmt"># &rarr; 12</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">bada(a, b) &rarr; number</div>
+      <div class="fn-desc">Returns the larger of two numbers.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">bada</span>(<span class="num">5</span>, <span class="num">10</span>)              <span class="cmt"># &rarr; 10</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">chhota(a, b) &rarr; number</div>
+      <div class="fn-desc">Returns the smaller of two numbers.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">chhota</span>(<span class="num">5</span>, <span class="num">10</span>)            <span class="cmt"># &rarr; 5</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">sin_val(x) &rarr; number</div>
+      <div class="fn-desc">Sine (input in radians).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">sin_val</span>(<span class="fn">PI</span>() <span class="op">/</span> <span class="num">2</span>)        <span class="cmt"># &rarr; 1</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">cos_val(x) &rarr; number</div>
+      <div class="fn-desc">Cosine (input in radians).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">cos_val</span>(<span class="num">0</span>)               <span class="cmt"># &rarr; 1</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">tan_val(x) &rarr; number</div>
+      <div class="fn-desc">Tangent (input in radians).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">tan_val</span>(<span class="num">0</span>)               <span class="cmt"># &rarr; 0</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">asin_val(x) &rarr; number</div>
+      <div class="fn-desc">Inverse sine (arc sine). Returns radians.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">asin_val</span>(<span class="num">1</span>)              <span class="cmt"># &rarr; 1.5708 (PI/2)</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">acos_val(x) &rarr; number</div>
+      <div class="fn-desc">Inverse cosine (arc cosine). Returns radians.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">acos_val</span>(<span class="num">1</span>)              <span class="cmt"># &rarr; 0</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">atan_val(x) &rarr; number</div>
+      <div class="fn-desc">Inverse tangent (arc tangent). Returns radians.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">atan_val</span>(<span class="num">1</span>)              <span class="cmt"># &rarr; 0.7854 (PI/4)</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">log_val(x) &rarr; number</div>
+      <div class="fn-desc">Natural logarithm (ln).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">log_val</span>(<span class="fn">E</span>())             <span class="cmt"># &rarr; 1</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">log10_val(x) &rarr; number</div>
+      <div class="fn-desc">Base-10 logarithm.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">log10_val</span>(<span class="num">1000</span>)          <span class="cmt"># &rarr; 3</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">log2_val(x) &rarr; number</div>
+      <div class="fn-desc">Base-2 logarithm.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">log2_val</span>(<span class="num">1024</span>)           <span class="cmt"># &rarr; 10</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">exp_val(x) &rarr; number</div>
+      <div class="fn-desc">Exponential function (e^x).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">exp_val</span>(<span class="num">1</span>)               <span class="cmt"># &rarr; 2.71828...</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">power_val(base, exp) &rarr; number</div>
+      <div class="fn-desc">Power function.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">power_val</span>(<span class="num">2</span>, <span class="num">10</span>)         <span class="cmt"># &rarr; 1024</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">PI() &rarr; number</div>
+      <div class="fn-desc">Returns the value of Pi (3.14159...).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">PI</span>()                     <span class="cmt"># &rarr; 3.141592653589793</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">E() &rarr; number</div>
+      <div class="fn-desc">Returns Euler's number (2.71828...).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">E</span>()                      <span class="cmt"># &rarr; 2.718281828459045</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">gcd(a, b) &rarr; number</div>
+      <div class="fn-desc">Greatest Common Divisor.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">gcd</span>(<span class="num">48</span>, <span class="num">18</span>)              <span class="cmt"># &rarr; 6</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">lcm(a, b) &rarr; number</div>
+      <div class="fn-desc">Least Common Multiple.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">lcm</span>(<span class="num">12</span>, <span class="num">8</span>)               <span class="cmt"># &rarr; 24</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">sign(x) &rarr; number</div>
+      <div class="fn-desc">Returns -1, 0, or 1 based on the sign of x.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">sign</span>(<span class="num">-42</span>)                <span class="cmt"># &rarr; -1</span>
+<span class="fn">sign</span>(<span class="num">0</span>)                  <span class="cmt"># &rarr; 0</span>
+<span class="fn">sign</span>(<span class="num">99</span>)                 <span class="cmt"># &rarr; 1</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">clamp(value, min, max) &rarr; number</div>
+      <div class="fn-desc">Clamps a value between min and max.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">clamp</span>(<span class="num">150</span>, <span class="num">0</span>, <span class="num">100</span>)       <span class="cmt"># &rarr; 100</span>
+<span class="fn">clamp</span>(<span class="num">-5</span>, <span class="num">0</span>, <span class="num">100</span>)        <span class="cmt"># &rarr; 0</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">degrees(radians) &rarr; number</div>
+      <div class="fn-desc">Converts radians to degrees.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">degrees</span>(<span class="fn">PI</span>())            <span class="cmt"># &rarr; 180</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">radians(degrees) &rarr; number</div>
+      <div class="fn-desc">Converts degrees to radians.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">radians</span>(<span class="num">180</span>)             <span class="cmt"># &rarr; 3.14159...</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">factorial(n) &rarr; number</div>
+      <div class="fn-desc">Returns the factorial of n (n!).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">factorial</span>(<span class="num">5</span>)             <span class="cmt"># &rarr; 120</span>
+<span class="fn">factorial</span>(<span class="num">10</span>)            <span class="cmt"># &rarr; 3628800</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">kya_prime(n) &rarr; boolean</div>
+      <div class="fn-desc">Checks if a number is prime.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">kya_prime</span>(<span class="num">7</span>)             <span class="cmt"># &rarr; sach</span>
+<span class="fn">kya_prime</span>(<span class="num">10</span>)            <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">fib(n) &rarr; number</div>
+      <div class="fn-desc">Returns the nth Fibonacci number.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">fib</span>(<span class="num">10</span>)                  <span class="cmt"># &rarr; 55</span>
+<span class="fn">fib</span>(<span class="num">20</span>)                  <span class="cmt"># &rarr; 6765</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">hypot_val(a, b) &rarr; number</div>
+      <div class="fn-desc">Returns the hypotenuse: sqrt(a&sup2; + b&sup2;).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">hypot_val</span>(<span class="num">3</span>, <span class="num">4</span>)          <span class="cmt"># &rarr; 5</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">is_nan(x) &rarr; boolean</div>
+      <div class="fn-desc">Checks if a value is NaN (Not a Number).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">is_nan</span>(<span class="num">42</span>)               <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">is_inf(x) &rarr; boolean</div>
+      <div class="fn-desc">Checks if a value is infinity.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">is_inf</span>(<span class="fn">INF</span>())             <span class="cmt"># &rarr; sach</span>
+<span class="fn">is_inf</span>(<span class="num">42</span>)               <span class="cmt"># &rarr; jhooth</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">INF() &rarr; number</div>
+      <div class="fn-desc">Returns positive infinity.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">INF</span>()                    <span class="cmt"># &rarr; infinity</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">NAN_VAL() &rarr; number</div>
+      <div class="fn-desc">Returns NaN (Not a Number).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">NAN_VAL</span>()                <span class="cmt"># &rarr; NaN</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">random_choice(list) &rarr; value</div>
+      <div class="fn-desc">Returns a random element from a list.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">random_choice</span>([<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>]) <span class="cmt"># &rarr; random element</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">random_shuffle(list) &rarr; list</div>
+      <div class="fn-desc">Shuffles a list randomly in-place.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> l = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+<span class="fn">random_shuffle</span>(l)            <span class="cmt"># l is now shuffled</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">random_int(min, max) &rarr; number</div>
+      <div class="fn-desc">Returns a random integer between min and max (inclusive).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">random_int</span>(<span class="num">1</span>, <span class="num">100</span>)           <span class="cmt"># &rarr; random integer 1-100</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="base-conversion">Base Conversion <span class="badge badge-blue">3 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">hex_shabd(n) &rarr; string</div>
+      <div class="fn-desc">Converts a number to its hexadecimal string representation.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">hex_shabd</span>(<span class="num">255</span>)               <span class="cmt"># &rarr; "ff"</span>
+<span class="fn">hex_shabd</span>(<span class="num">16</span>)                <span class="cmt"># &rarr; "10"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">oct_shabd(n) &rarr; string</div>
+      <div class="fn-desc">Converts a number to its octal string representation.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">oct_shabd</span>(<span class="num">8</span>)                 <span class="cmt"># &rarr; "10"</span>
+<span class="fn">oct_shabd</span>(<span class="num">255</span>)               <span class="cmt"># &rarr; "377"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">bin_shabd(n) &rarr; string</div>
+      <div class="fn-desc">Converts a number to its binary string representation.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">bin_shabd</span>(<span class="num">10</span>)                <span class="cmt"># &rarr; "1010"</span>
+<span class="fn">bin_shabd</span>(<span class="num">255</span>)               <span class="cmt"># &rarr; "11111111"</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="file-io">File I/O <span class="badge badge-blue">4 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">padho_file(path) &rarr; string</div>
+      <div class="fn-desc">Reads the entire contents of a file.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> data = <span class="fn">padho_file</span>(<span class="str">"input.txt"</span>)</code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">likho_file(path, content) &rarr; boolean</div>
+      <div class="fn-desc">Writes content to a file (creates or overwrites).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">likho_file</span>(<span class="str">"output.txt"</span>, <span class="str">"Hello!\n"</span>)</code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">joodo_file(path, content) &rarr; boolean</div>
+      <div class="fn-desc">Appends content to a file.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">joodo_file</span>(<span class="str">"log.txt"</span>, <span class="str">"New entry\n"</span>)</code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">file_hai(path) &rarr; boolean</div>
+      <div class="fn-desc">Checks if a file exists.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">agar</span> <span class="fn">file_hai</span>(<span class="str">"config.txt"</span>) {
+    <span class="kw">likho</span> <span class="str">"Config found!"</span>
+}</code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="system-utility">System &amp; Utility <span class="badge badge-blue">11 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">samay() &rarr; number</div>
+      <div class="fn-desc">Returns CPU time since program start (seconds).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">samay</span>()                  <span class="cmt"># &rarr; 0.0023</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ghadi() &rarr; number</div>
+      <div class="fn-desc">Returns high-resolution wall clock time (seconds). Best for benchmarking.</div>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> start = <span class="fn">ghadi</span>()
+<span class="cmt"># ... some work ...</span>
+<span class="kw">likho</span> <span class="str">"Took:"</span>, <span class="fn">ghadi</span>() <span class="op">-</span> start, <span class="str">"sec"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ruko_samay(ms) &rarr; null</div>
+      <div class="fn-desc">Pauses execution for the specified milliseconds.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">ruko_samay</span>(<span class="num">1000</span>)         <span class="cmt"># Sleep 1 second</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">yaadrchik([min, max]) &rarr; number</div>
+      <div class="fn-desc">Random number. No args: 0-1 float. Two args: integer in range.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">yaadrchik</span>()              <span class="cmt"># &rarr; 0.7234... (float)</span>
+<span class="fn">yaadrchik</span>(<span class="num">1</span>, <span class="num">100</span>)        <span class="cmt"># &rarr; 42 (integer)</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">platform() &rarr; string</div>
+      <div class="fn-desc">Returns the operating system name.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">platform</span>()               <span class="cmt"># &rarr; "windows" / "linux" / "macos"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">taareekh() &rarr; string</div>
+      <div class="fn-desc">Returns today's date as "YYYY-MM-DD".</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">taareekh</span>()               <span class="cmt"># &rarr; "2026-03-08"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">waqt() &rarr; string</div>
+      <div class="fn-desc">Returns the current time as "HH:MM:SS".</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">waqt</span>()                   <span class="cmt"># &rarr; "14:30:45"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">timestamp() &rarr; number</div>
+      <div class="fn-desc">Returns the current Unix timestamp (seconds since 1970).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">timestamp</span>()              <span class="cmt"># &rarr; 1772812345</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">env_var(name) &rarr; string|null</div>
+      <div class="fn-desc">Returns the value of an environment variable, or <code>khali</code> if not set.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">env_var</span>(<span class="str">"HOME"</span>)          <span class="cmt"># &rarr; "/home/user"</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">hash_val(value) &rarr; number</div>
+      <div class="fn-desc">Returns a hash code for a string or number.</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">hash_val</span>(<span class="str">"hello"</span>)        <span class="cmt"># &rarr; numeric hash</span></code></pre>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">bahar([code]) &rarr; (exits)</div>
+      <div class="fn-desc">Exits the program with the given exit code (default: 0).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">bahar</span>()                  <span class="cmt"># Exit normally</span>
+<span class="fn">bahar</span>(<span class="num">1</span>)                 <span class="cmt"># Exit with error code 1</span></code></pre>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2 id="date-time">Date &amp; Time <span class="badge badge-blue">7 functions</span></h2>
+    <!-- ============================================================ -->
+
+    <div class="fn-entry">
+      <div class="fn-signature">din() &rarr; number</div>
+      <div class="fn-desc">Returns the current day of the month (1-31).</div>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">mahina() &rarr; number</div>
+      <div class="fn-desc">Returns the current month (1-12).</div>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">saal() &rarr; number</div>
+      <div class="fn-desc">Returns the current year.</div>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">ghanta() &rarr; number</div>
+      <div class="fn-desc">Returns the current hour (0-23).</div>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">minute() &rarr; number</div>
+      <div class="fn-desc">Returns the current minute (0-59).</div>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">second() &rarr; number</div>
+      <div class="fn-desc">Returns the current second (0-59).</div>
+    </div>
+
+    <div class="fn-entry">
+      <div class="fn-signature">hafta_din() &rarr; number</div>
+      <div class="fn-desc">Returns the day of the week (0=Sunday, 6=Saturday).</div>
+<pre data-lang="rampyaaryan"><code><span class="fn">hafta_din</span>()              <span class="cmt"># &rarr; 0 (Sunday) ... 6 (Saturday)</span></code></pre>
+    </div>
+
+    <div class="callout callout-info">
+      <strong>Total: 145 built-in functions</strong> across 12 categories. All functions are available immediately &mdash; no imports required.
+    </div>
+
+    <!-- Prev/Next -->
+    <div class="page-nav">
+      <a href="tutorial.html">
+        <div class="nav-label">&larr; Previous</div>
+        <div class="nav-title">Tutorial</div>
+      </a>
+      <a href="spec.html" style="text-align:right">
+        <div class="nav-label">Next &rarr;</div>
+        <div class="nav-title">Language Spec</div>
+      </a>
+    </div>
+
+    <div class="page-footer">
+      Made with &#x2764;&#xFE0F; for India &#x1F1EE;&#x1F1F3; &mdash;
+      <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+    </div>
+
+  </div>
+</main>
+
+<button class="back-to-top" aria-label="Back to top">&#x2191;</button>
+<script src="script.js"></script>
+</body>
+</html>

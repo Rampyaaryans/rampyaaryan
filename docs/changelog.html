@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog — Rampyaaryan Documentation</title>
+  <meta name="description" content="Version history and release notes for Rampyaaryan.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Menu">&#9776;</button>
+<div class="overlay"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>&#x1F64F; Rampyaaryan</h1>
+    <div class="subtitle">Documentation v2.0</div>
+  </div>
+  <div class="search-box">
+    <input type="text" placeholder="Search docs...">
+  </div>
+  <nav class="sidebar-nav">
+    <div class="section-title">Getting Started</div>
+    <a href="index.html"><span class="nav-icon">&#x1F3E0;</span> Home</a>
+    <a href="getting-started.html"><span class="nav-icon">&#x1F680;</span> Getting Started</a>
+    <a href="tutorial.html"><span class="nav-icon">&#x1F393;</span> Tutorial</a>
+
+    <div class="section-title">Reference</div>
+    <a href="api.html"><span class="nav-icon">&#x1F4DA;</span> API Reference</a>
+    <a href="spec.html"><span class="nav-icon">&#x1F4DC;</span> Language Spec</a>
+    <a href="examples.html"><span class="nav-icon">&#x1F4BB;</span> Examples</a>
+
+    <div class="section-title">More</div>
+    <a href="howto.html"><span class="nav-icon">&#x1F4D6;</span> How-To Guide</a>
+    <a href="changelog.html" class="active"><span class="nav-icon">&#x1F4CB;</span> Changelog</a>
+    <a href="contributing.html"><span class="nav-icon">&#x1F91D;</span> Contributing</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+  </div>
+</aside>
+
+<main class="main-content">
+  <div class="content-wrapper">
+
+    <div class="page-header">
+      <a href="index.html">Docs</a> / <strong>Changelog</strong>
+    </div>
+
+    <h1>Changelog</h1>
+    <p class="lead">All notable changes to Rampyaaryan are documented here.</p>
+
+    <!-- v2.0.0 -->
+    <h2 id="v200">v2.0.0 <span style="font-weight:400;color:#888;font-size:0.7em;">— 2025-07-12</span></h2>
+
+    <h3>New Data Types</h3>
+    <ul>
+      <li><strong>Map/Dictionary type</strong> (<code>shabdkosh</code>) with <code>{key: value}</code> literal syntax</li>
+      <li>Map bracket access (<code>m["key"]</code>) and assignment (<code>m["key"] = val</code>)</li>
+      <li>9 map functions: <code>shabdkosh</code>, <code>chabi</code>, <code>mulya</code>, <code>jodi</code>, <code>map_hai</code>, <code>map_get</code>, <code>map_hatao</code>, <code>map_milao</code>, <code>map_lambai</code></li>
+      <li><code>kya_map(x)</code> type checking function</li>
+    </ul>
+
+    <h3>Bitwise Operators</h3>
+    <ul>
+      <li>AND <code>&amp;</code>, OR <code>|</code>, XOR <code>^</code>, NOT <code>~</code>, Left Shift <code>&lt;&lt;</code>, Right Shift <code>&gt;&gt;</code></li>
+      <li>Base conversion: <code>hex_shabd(n)</code>, <code>oct_shabd(n)</code>, <code>bin_shabd(n)</code></li>
+    </ul>
+
+    <h3>Higher-Order Functions (7)</h3>
+    <ul>
+      <li><code>naksha(list, fn)</code> — map</li>
+      <li><code>chhaano(list, fn)</code> — filter</li>
+      <li><code>ikkatha(list, fn, init)</code> — reduce/fold</li>
+      <li><code>sab(list)</code> / <code>koi(list)</code> — all/any</li>
+      <li><code>jodi_banao(a, b)</code> — zip</li>
+      <li><code>ginati_banao(list)</code> — enumerate</li>
+    </ul>
+
+    <h3>New String Functions (10)</h3>
+    <ul>
+      <li><code>title_case(s)</code>, <code>capitalize(s)</code>, <code>swapcase(s)</code> — case variants</li>
+      <li><code>center(s, width, [char])</code> — center padding</li>
+      <li><code>pad_left(s, width, [char])</code>, <code>pad_right(s, width, [char])</code> — padding</li>
+      <li><code>kya_ank(s)</code>, <code>kya_akshar(s)</code>, <code>kya_alnum(s)</code>, <code>kya_space(s)</code> — string checks</li>
+    </ul>
+
+    <h3>New Math Functions (12)</h3>
+    <ul>
+      <li><code>factorial(n)</code>, <code>kya_prime(n)</code>, <code>fib(n)</code> — number theory</li>
+      <li><code>hypot_val(a, b)</code>, <code>log2_val(x)</code> — math</li>
+      <li><code>is_nan(x)</code>, <code>is_inf(x)</code>, <code>INF()</code>, <code>NAN_VAL()</code> — special values</li>
+      <li><code>random_choice(list)</code>, <code>random_shuffle(list)</code>, <code>random_int(min, max)</code> — random</li>
+    </ul>
+
+    <h3>New List Functions (5)</h3>
+    <ul>
+      <li><code>flatten(list)</code> — flatten nested lists</li>
+      <li><code>tukda(list, size)</code> — chunk into groups</li>
+      <li><code>ghuma(list, n)</code> — rotate</li>
+      <li><code>copy_suchi(list)</code> — shallow copy</li>
+      <li><code>khali_karo(list)</code> — clear all elements</li>
+    </ul>
+
+    <h3>Date &amp; Time Functions (7)</h3>
+    <ul>
+      <li><code>din()</code>, <code>mahina()</code>, <code>saal()</code> — day, month, year</li>
+      <li><code>ghanta()</code>, <code>minute()</code>, <code>second()</code> — hour, minute, second</li>
+      <li><code>hafta_din()</code> — day of week</li>
+    </ul>
+
+    <h3>Utility Functions</h3>
+    <ul>
+      <li><code>typeof_val(x)</code>, <code>bool_val(x)</code>, <code>print_type(x)</code>, <code>likho_line()</code></li>
+    </ul>
+
+    <h3>Examples &amp; Documentation</h3>
+    <ul>
+      <li>5 new example programs (16&ndash;20): shabdkosh, bitwise, higher-order, mini-database, feature showcase</li>
+      <li>Total built-in functions: 30+ &rarr; <strong>145</strong></li>
+      <li>Total examples: 10 &rarr; <strong>20</strong></li>
+      <li>Complete documentation website on GitHub Pages</li>
+    </ul>
+
+    <hr>
+
+    <!-- v1.0.0 -->
+    <h2 id="v100">v1.0.0 <span style="font-weight:400;color:#888;font-size:0.7em;">— 2025-01-01</span></h2>
+    <p><strong>Initial release</strong> of Rampyaaryan — the world's first Hinglish programming language.</p>
+    <ul>
+      <li>Complete Hinglish keyword set (<code>maano</code>, <code>likho</code>, <code>pucho</code>, <code>agar</code>, <code>warna</code>, <code>jab tak</code>, <code>har</code>, <code>kaam</code>, <code>wapas do</code>, <code>ruko</code>, <code>agla</code>)</li>
+      <li>Bytecode compiler with Pratt parser</li>
+      <li>Stack-based Virtual Machine</li>
+      <li>Mark-sweep Garbage Collector</li>
+      <li>String interning with FNV-1a hashing</li>
+      <li>Closure and upvalue support</li>
+      <li>Dynamic lists with indexing</li>
+      <li>30+ built-in functions (type, string, list, math, utility)</li>
+      <li>Interactive REPL with multiline support</li>
+      <li>ASCII art splash screen and animations</li>
+      <li>Colored terminal output (ANSI + Windows)</li>
+      <li>Error messages in Hinglish</li>
+      <li>10 example programs</li>
+      <li>Cross-platform support (Windows, Linux, macOS)</li>
+      <li>Makefile and CMake build system</li>
+      <li>MIT License</li>
+    </ul>
+
+    <!-- Prev/Next -->
+    <div class="page-nav">
+      <a href="howto.html">
+        <div class="nav-label">&larr; Previous</div>
+        <div class="nav-title">How-To Guide</div>
+      </a>
+      <a href="contributing.html" style="text-align:right">
+        <div class="nav-label">Next &rarr;</div>
+        <div class="nav-title">Contributing</div>
+      </a>
+    </div>
+
+    <div class="page-footer">
+      Made with &#x2764;&#xFE0F; for India &#x1F1EE;&#x1F1F3; &mdash;
+      <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+    </div>
+
+  </div>
+</main>
+
+<button class="back-to-top" aria-label="Back to top">&#x2191;</button>
+<script src="script.js"></script>
+</body>
+</html>

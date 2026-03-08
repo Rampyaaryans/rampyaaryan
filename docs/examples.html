@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examples — Rampyaaryan Documentation</title>
+  <meta name="description" content="20 example programs demonstrating the Rampyaaryan Hinglish programming language.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Menu">&#9776;</button>
+<div class="overlay"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>&#x1F64F; Rampyaaryan</h1>
+    <div class="subtitle">Documentation v2.0</div>
+  </div>
+  <div class="search-box">
+    <input type="text" placeholder="Search docs...">
+  </div>
+  <nav class="sidebar-nav">
+    <div class="section-title">Getting Started</div>
+    <a href="index.html"><span class="nav-icon">&#x1F3E0;</span> Home</a>
+    <a href="getting-started.html"><span class="nav-icon">&#x1F680;</span> Getting Started</a>
+    <a href="tutorial.html"><span class="nav-icon">&#x1F393;</span> Tutorial</a>
+
+    <div class="section-title">Reference</div>
+    <a href="api.html"><span class="nav-icon">&#x1F4DA;</span> API Reference</a>
+    <a href="spec.html"><span class="nav-icon">&#x1F4DC;</span> Language Spec</a>
+    <a href="examples.html" class="active"><span class="nav-icon">&#x1F4BB;</span> Examples</a>
+
+    <div class="section-title">More</div>
+    <a href="howto.html"><span class="nav-icon">&#x1F4D6;</span> How-To Guide</a>
+    <a href="changelog.html"><span class="nav-icon">&#x1F4CB;</span> Changelog</a>
+    <a href="contributing.html"><span class="nav-icon">&#x1F91D;</span> Contributing</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+  </div>
+</aside>
+
+<main class="main-content">
+  <div class="content-wrapper">
+
+    <div class="page-header">
+      <a href="index.html">Docs</a> / <strong>Examples</strong>
+    </div>
+
+    <h1>Example Programs</h1>
+    <p class="lead">20 ready-to-run programs covering everything from basics to advanced features. Each file is in the <code>examples/</code> directory.</p>
+
+    <div class="callout callout-tip">
+      <strong>Run any example:</strong> <code>rampyaaryan examples/01_namaste_duniya.ram</code>
+    </div>
+
+    <div class="toc">
+      <h3>All Examples</h3>
+      <ol>
+        <li><a href="#ex01">Namaste Duniya</a> &mdash; Hello World</li>
+        <li><a href="#ex02">Variables</a> &mdash; Data types &amp; variables</li>
+        <li><a href="#ex03">Conditions</a> &mdash; If/else logic</li>
+        <li><a href="#ex04">Loops</a> &mdash; While &amp; for loops</li>
+        <li><a href="#ex05">Functions</a> &mdash; Functions &amp; recursion</li>
+        <li><a href="#ex06">Lists</a> &mdash; Dynamic arrays</li>
+        <li><a href="#ex07">Calculator</a> &mdash; Interactive calculator</li>
+        <li><a href="#ex08">Sorting</a> &mdash; Sorting algorithms</li>
+        <li><a href="#ex09">Number Game</a> &mdash; Guessing game</li>
+        <li><a href="#ex10">Patterns</a> &mdash; Star patterns &amp; art</li>
+        <li><a href="#ex11">String Magic</a> &mdash; String operations</li>
+        <li><a href="#ex12">Math &amp; Science</a> &mdash; Math functions</li>
+        <li><a href="#ex13">File I/O</a> &mdash; Reading &amp; writing files</li>
+        <li><a href="#ex14">Advanced Lists</a> &mdash; Higher-order ops</li>
+        <li><a href="#ex15">Type System</a> &mdash; Type checking &amp; conversion</li>
+        <li><a href="#ex16">Shabdkosh</a> &mdash; Maps &amp; dictionaries</li>
+        <li><a href="#ex17">Bitwise</a> &mdash; Bitwise operations</li>
+        <li><a href="#ex18">Higher-Order</a> &mdash; Map, filter, reduce</li>
+        <li><a href="#ex19">Mini Database</a> &mdash; CRUD with maps</li>
+        <li><a href="#ex20">Feature Showcase</a> &mdash; Everything combined</li>
+      </ol>
+    </div>
+
+    <!-- Example 01 -->
+    <h2 id="ex01">01 &mdash; Namaste Duniya</h2>
+    <p>The classic first program. Every journey starts here.</p>
+    <p><code>examples/01_namaste_duniya.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">likho</span> <span class="str">"Namaste Duniya!"</span>
+<span class="kw">likho</span> <span class="str">"Rampyaaryan mein aapka swagat hai!"</span>
+<span class="kw">likho</span> <span class="str">""</span>
+<span class="kw">likho</span> <span class="str">"Yeh pehla program hai - bahut simple!"</span></code></pre>
+
+    <!-- Example 02 -->
+    <h2 id="ex02">02 &mdash; Variables</h2>
+    <p>Learn about all 7 data types and variable declarations.</p>
+    <p><code>examples/02_variables.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> naam = <span class="str">"Aryan"</span>
+<span class="kw">maano</span> umar = <span class="num">21</span>
+<span class="kw">maano</span> pi = <span class="num">3.14159</span>
+<span class="kw">maano</span> active = <span class="kw">sach</span>
+<span class="kw">maano</span> kuch = <span class="kw">khali</span>
+<span class="kw">maano</span> fruits = [<span class="str">"seb"</span>, <span class="str">"kela"</span>, <span class="str">"aam"</span>]
+
+<span class="kw">likho</span> <span class="str">"Naam:"</span>, naam
+<span class="kw">likho</span> <span class="str">"Umar:"</span>, umar
+<span class="kw">likho</span> <span class="str">"Type:"</span>, <span class="fn">prakar</span>(naam)</code></pre>
+
+    <!-- Example 03 -->
+    <h2 id="ex03">03 &mdash; Conditions</h2>
+    <p>Conditional logic with <code>agar</code>, <code>warna agar</code>, and <code>warna</code>.</p>
+    <p><code>examples/03_conditions.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> umar = <span class="num">18</span>
+
+<span class="kw">agar</span> umar <span class="op">&gt;=</span> <span class="num">18</span> {
+    <span class="kw">likho</span> <span class="str">"Vote de sakte ho!"</span>
+} <span class="kw">warna agar</span> umar <span class="op">&gt;=</span> <span class="num">13</span> {
+    <span class="kw">likho</span> <span class="str">"Teenager ho!"</span>
+} <span class="kw">warna</span> {
+    <span class="kw">likho</span> <span class="str">"Bachche ho!"</span>
+}</code></pre>
+
+    <!-- Example 04 -->
+    <h2 id="ex04">04 &mdash; Loops</h2>
+    <p>While loops (<code>jab tak</code>) and for loops (<code>har</code>) with break/continue.</p>
+    <p><code>examples/04_loops.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="cmt"># Countdown</span>
+<span class="kw">maano</span> i = <span class="num">5</span>
+<span class="kw">jab tak</span> i <span class="op">&gt;</span> <span class="num">0</span> {
+    <span class="kw">likho</span> i
+    i = i <span class="op">-</span> <span class="num">1</span>
+}
+<span class="kw">likho</span> <span class="str">"LAUNCH!"</span>
+
+<span class="cmt"># Multiplication table</span>
+<span class="kw">har</span> i = <span class="num">1</span>; i <span class="op">&lt;=</span> <span class="num">10</span>; i = i <span class="op">+</span> <span class="num">1</span> {
+    <span class="kw">likho</span> <span class="fn">format</span>(<span class="str">"7 x {} = {}"</span>, i, <span class="num">7</span> <span class="op">*</span> i)
+}</code></pre>
+
+    <!-- Example 05 -->
+    <h2 id="ex05">05 &mdash; Functions</h2>
+    <p>Functions, recursion, closures, and first-class functions.</p>
+    <p><code>examples/05_functions.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">factorial</span>(n) {
+    <span class="kw">agar</span> n <span class="op">&lt;=</span> <span class="num">1</span> { <span class="kw">wapas do</span> <span class="num">1</span> }
+    <span class="kw">wapas do</span> n <span class="op">*</span> <span class="fn">factorial</span>(n <span class="op">-</span> <span class="num">1</span>)
+}
+
+<span class="kw">likho</span> <span class="fn">factorial</span>(<span class="num">10</span>)    <span class="cmt"># 3628800</span>
+
+<span class="cmt"># Closure example</span>
+<span class="kw">kaam</span> <span class="fn">counter</span>() {
+    <span class="kw">maano</span> count = <span class="num">0</span>
+    <span class="kw">kaam</span> <span class="fn">increment</span>() {
+        count = count <span class="op">+</span> <span class="num">1</span>
+        <span class="kw">wapas do</span> count
+    }
+    <span class="kw">wapas do</span> increment
+}
+
+<span class="kw">maano</span> c = <span class="fn">counter</span>()
+<span class="kw">likho</span> <span class="fn">c</span>(), <span class="fn">c</span>(), <span class="fn">c</span>()    <span class="cmt"># 1 2 3</span></code></pre>
+
+    <!-- Example 06 -->
+    <h2 id="ex06">06 &mdash; Lists</h2>
+    <p>Dynamic arrays with sorting, slicing, and statistics.</p>
+    <p><code>examples/06_lists.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> nums = [<span class="num">42</span>, <span class="num">17</span>, <span class="num">89</span>, <span class="num">3</span>, <span class="num">56</span>]
+
+<span class="fn">joodo</span>(nums, <span class="num">100</span>)          <span class="cmt"># Append</span>
+<span class="fn">kram</span>(nums)                 <span class="cmt"># Sort</span>
+<span class="kw">likho</span> <span class="str">"Sorted:"</span>, nums
+<span class="kw">likho</span> <span class="str">"Sum:"</span>, <span class="fn">jod</span>(nums)
+<span class="kw">likho</span> <span class="str">"Avg:"</span>, <span class="fn">ausat</span>(nums)
+<span class="kw">likho</span> <span class="str">"Max:"</span>, <span class="fn">sabse_bada</span>(nums)
+<span class="kw">likho</span> <span class="str">"Min:"</span>, <span class="fn">sabse_chhota</span>(nums)</code></pre>
+
+    <!-- Example 07 -->
+    <h2 id="ex07">07 &mdash; Calculator</h2>
+    <p>Interactive calculator with a Hinglish menu UI supporting 7 operations.</p>
+    <p><code>examples/07_calculator.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">calculator</span>() {
+    <span class="kw">likho</span> <span class="str">"1. Jodo (+)  2. Ghataao (-)"</span>
+    <span class="kw">likho</span> <span class="str">"3. Guna (*)  4. Bhaag (/)"</span>
+    <span class="kw">likho</span> <span class="str">"5. Power     6. Modulo"</span>
+
+    <span class="kw">maano</span> n = <span class="fn">sankhya</span>(<span class="fn">pucho</span>(<span class="str">"Choose: "</span>))
+    <span class="kw">maano</span> a = <span class="fn">sankhya</span>(<span class="fn">pucho</span>(<span class="str">"Pehla number: "</span>))
+    <span class="kw">maano</span> b = <span class="fn">sankhya</span>(<span class="fn">pucho</span>(<span class="str">"Doosra number: "</span>))
+
+    <span class="kw">agar</span> n <span class="op">==</span> <span class="num">1</span> { <span class="kw">likho</span> a <span class="op">+</span> b }
+    <span class="kw">warna agar</span> n <span class="op">==</span> <span class="num">2</span> { <span class="kw">likho</span> a <span class="op">-</span> b }
+    <span class="kw">warna agar</span> n <span class="op">==</span> <span class="num">3</span> { <span class="kw">likho</span> a <span class="op">*</span> b }
+    <span class="kw">warna agar</span> n <span class="op">==</span> <span class="num">4</span> { <span class="kw">likho</span> a <span class="op">/</span> b }
+}
+<span class="fn">calculator</span>()</code></pre>
+
+    <!-- Example 08 -->
+    <h2 id="ex08">08 &mdash; Sorting</h2>
+    <p>Bubble sort and selection sort implemented in Rampyaaryan.</p>
+    <p><code>examples/08_sorting.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">bubble_sort</span>(arr) {
+    <span class="kw">maano</span> n = <span class="fn">lambai</span>(arr)
+    <span class="kw">har</span> i = <span class="num">0</span>; i <span class="op">&lt;</span> n; i = i <span class="op">+</span> <span class="num">1</span> {
+        <span class="kw">har</span> j = <span class="num">0</span>; j <span class="op">&lt;</span> n <span class="op">-</span> i <span class="op">-</span> <span class="num">1</span>; j = j <span class="op">+</span> <span class="num">1</span> {
+            <span class="kw">agar</span> arr[j] <span class="op">&gt;</span> arr[j <span class="op">+</span> <span class="num">1</span>] {
+                <span class="kw">maano</span> temp = arr[j]
+                arr[j] = arr[j <span class="op">+</span> <span class="num">1</span>]
+                arr[j <span class="op">+</span> <span class="num">1</span>] = temp
+            }
+        }
+    }
+    <span class="kw">wapas do</span> arr
+}
+
+<span class="kw">maano</span> data = [<span class="num">64</span>, <span class="num">34</span>, <span class="num">25</span>, <span class="num">12</span>, <span class="num">22</span>, <span class="num">11</span>, <span class="num">90</span>]
+<span class="kw">likho</span> <span class="str">"Sorted:"</span>, <span class="fn">bubble_sort</span>(data)</code></pre>
+
+    <!-- Example 09 -->
+    <h2 id="ex09">09 &mdash; Number Guessing Game</h2>
+    <p>Guess the random number in 7 attempts with hints.</p>
+    <p><code>examples/09_number_game.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> secret = <span class="fn">yaadrchik</span>(<span class="num">1</span>, <span class="num">100</span>)
+<span class="kw">maano</span> attempts = <span class="num">0</span>
+<span class="kw">maano</span> guessed = <span class="kw">jhooth</span>
+
+<span class="kw">jab tak</span> attempts <span class="op">&lt;</span> <span class="num">7</span> <span class="kw">aur</span> <span class="kw">nahi</span> guessed {
+    attempts = attempts <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">maano</span> guess = <span class="fn">sankhya</span>(<span class="fn">pucho</span>(<span class="str">"Guess: "</span>))
+
+    <span class="kw">agar</span> guess <span class="op">==</span> secret {
+        <span class="kw">likho</span> <span class="str">"SAHI JAWAB!"</span>, attempts, <span class="str">"mein!"</span>
+        guessed = <span class="kw">sach</span>
+    } <span class="kw">warna agar</span> guess <span class="op">&lt;</span> secret {
+        <span class="kw">likho</span> <span class="str">"Bada number try karo"</span>
+    } <span class="kw">warna</span> {
+        <span class="kw">likho</span> <span class="str">"Chhota number try karo"</span>
+    }
+}</code></pre>
+
+    <!-- Example 10 -->
+    <h2 id="ex10">10 &mdash; Patterns</h2>
+    <p>Star patterns and ASCII art using nested loops.</p>
+    <p><code>examples/10_patterns.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="cmt"># Right triangle</span>
+<span class="kw">har</span> i = <span class="num">1</span>; i <span class="op">&lt;=</span> <span class="num">5</span>; i = i <span class="op">+</span> <span class="num">1</span> {
+    <span class="kw">likho</span> <span class="fn">dohrao</span>(<span class="str">"* "</span>, i)
+}
+
+<span class="cmt"># Diamond</span>
+<span class="kw">har</span> i = <span class="num">1</span>; i <span class="op">&lt;=</span> <span class="num">5</span>; i = i <span class="op">+</span> <span class="num">1</span> {
+    <span class="kw">likho</span> <span class="fn">dohrao</span>(<span class="str">" "</span>, <span class="num">5</span> <span class="op">-</span> i) <span class="op">+</span> <span class="fn">dohrao</span>(<span class="str">"* "</span>, i)
+}</code></pre>
+
+    <!-- Example 11 -->
+    <h2 id="ex11">11 &mdash; String Magic</h2>
+    <p>All 27 string functions demonstrated with real examples.</p>
+    <p><code>examples/11_string_magic.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> s = <span class="str">"Rampyaaryan Language"</span>
+<span class="kw">likho</span> <span class="fn">bade_akshar</span>(s)            <span class="cmt"># RAMPYAARYAN LANGUAGE</span>
+<span class="kw">likho</span> <span class="fn">title_case</span>(<span class="str">"hello world"</span>)  <span class="cmt"># Hello World</span>
+<span class="kw">likho</span> <span class="fn">badlo</span>(s, <span class="str">"Language"</span>, <span class="str">"Bhasha"</span>)
+<span class="kw">likho</span> <span class="fn">center</span>(<span class="str">"STAR"</span>, <span class="num">20</span>, <span class="str">"="</span>)    <span class="cmt"># ========STAR========</span>
+<span class="kw">likho</span> <span class="fn">pad_left</span>(<span class="str">"42"</span>, <span class="num">8</span>, <span class="str">"0"</span>)    <span class="cmt"># 00000042</span>
+<span class="kw">likho</span> <span class="fn">kya_ank</span>(<span class="str">"12345"</span>)          <span class="cmt"># sach</span></code></pre>
+
+    <!-- Example 12 -->
+    <h2 id="ex12">12 &mdash; Math &amp; Science</h2>
+    <p>Trigonometry, logarithms, primes, Fibonacci, and more.</p>
+    <p><code>examples/12_math_science.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">likho</span> <span class="str">"PI ="</span>, <span class="fn">PI</span>()
+<span class="kw">likho</span> <span class="str">"E ="</span>, <span class="fn">E</span>()
+<span class="kw">likho</span> <span class="str">"sqrt(144) ="</span>, <span class="fn">sqrt_val</span>(<span class="num">144</span>)
+<span class="kw">likho</span> <span class="str">"10! ="</span>, <span class="fn">factorial</span>(<span class="num">10</span>)
+<span class="kw">likho</span> <span class="str">"fib(20) ="</span>, <span class="fn">fib</span>(<span class="num">20</span>)
+<span class="kw">likho</span> <span class="str">"Is 97 prime?"</span>, <span class="fn">kya_prime</span>(<span class="num">97</span>)
+<span class="kw">likho</span> <span class="str">"GCD(48,18) ="</span>, <span class="fn">gcd</span>(<span class="num">48</span>, <span class="num">18</span>)
+<span class="kw">likho</span> <span class="str">"sin(PI/2) ="</span>, <span class="fn">sin_val</span>(<span class="fn">PI</span>() <span class="op">/</span> <span class="num">2</span>)</code></pre>
+
+    <!-- Example 13 -->
+    <h2 id="ex13">13 &mdash; File I/O</h2>
+    <p>Read, write, and append files. Check if files exist.</p>
+    <p><code>examples/13_file_io.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="cmt"># Write a file</span>
+<span class="fn">likho_file</span>(<span class="str">"output.txt"</span>, <span class="str">"Hello World!\n"</span>)
+<span class="fn">joodo_file</span>(<span class="str">"output.txt"</span>, <span class="str">"Line 2\n"</span>)
+
+<span class="cmt"># Read it back</span>
+<span class="kw">maano</span> data = <span class="fn">padho_file</span>(<span class="str">"output.txt"</span>)
+<span class="kw">likho</span> data
+
+<span class="cmt"># Check existence</span>
+<span class="kw">agar</span> <span class="fn">file_hai</span>(<span class="str">"output.txt"</span>) {
+    <span class="kw">likho</span> <span class="str">"File found!"</span>
+}</code></pre>
+
+    <!-- Example 14 -->
+    <h2 id="ex14">14 &mdash; Advanced Lists</h2>
+    <p>Flatten, chunk, rotate, copy, and more list operations.</p>
+    <p><code>examples/14_advanced_lists.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">likho</span> <span class="fn">flatten</span>([[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,[<span class="num">4</span>,<span class="num">5</span>]]])  <span class="cmt"># [1,2,3,4,5]</span>
+<span class="kw">likho</span> <span class="fn">tukda</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>], <span class="num">2</span>)      <span class="cmt"># [[1,2],[3,4],[5]]</span>
+<span class="kw">likho</span> <span class="fn">ghuma</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>], <span class="num">2</span>)      <span class="cmt"># [3,4,5,1,2]</span>
+
+<span class="kw">maano</span> a = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]
+<span class="kw">maano</span> b = <span class="fn">copy_suchi</span>(a)
+<span class="fn">joodo</span>(b, <span class="num">4</span>)
+<span class="kw">likho</span> <span class="str">"a:"</span>, a     <span class="cmt"># [1,2,3] (unchanged)</span>
+<span class="kw">likho</span> <span class="str">"b:"</span>, b     <span class="cmt"># [1,2,3,4]</span></code></pre>
+
+    <!-- Example 15 -->
+    <h2 id="ex15">15 &mdash; Type System</h2>
+    <p>Type checking, type conversion, and runtime introspection.</p>
+    <p><code>examples/15_type_system.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">likho</span> <span class="fn">prakar</span>(<span class="num">42</span>)          <span class="cmt"># sankhya</span>
+<span class="kw">likho</span> <span class="fn">prakar</span>(<span class="str">"hello"</span>)     <span class="cmt"># shabd</span>
+<span class="kw">likho</span> <span class="fn">kya_purn</span>(<span class="num">42</span>)       <span class="cmt"># sach</span>
+<span class="kw">likho</span> <span class="fn">kya_purn</span>(<span class="num">3.14</span>)     <span class="cmt"># jhooth</span>
+<span class="kw">likho</span> <span class="fn">sankhya</span>(<span class="str">"42"</span>)      <span class="cmt"># 42</span>
+<span class="kw">likho</span> <span class="fn">shabd</span>(<span class="num">3.14</span>)        <span class="cmt"># "3.14"</span>
+<span class="kw">likho</span> <span class="fn">purn</span>(<span class="num">3.99</span>)         <span class="cmt"># 3</span>
+<span class="kw">likho</span> <span class="fn">bool_val</span>(<span class="num">0</span>)        <span class="cmt"># jhooth</span></code></pre>
+
+    <!-- Example 16 -->
+    <h2 id="ex16">16 &mdash; Shabdkosh (Maps)</h2>
+    <p>Dictionaries with literal syntax and all 9 map functions.</p>
+    <p><code>examples/16_shabdkosh.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> student = {<span class="str">"naam"</span>: <span class="str">"Aryan"</span>, <span class="str">"umar"</span>: <span class="num">20</span>}
+<span class="kw">likho</span> student[<span class="str">"naam"</span>]
+student[<span class="str">"grade"</span>] = <span class="str">"A"</span>
+
+<span class="kw">likho</span> <span class="fn">chabi</span>(student)       <span class="cmt"># keys</span>
+<span class="kw">likho</span> <span class="fn">mulya</span>(student)       <span class="cmt"># values</span>
+<span class="kw">likho</span> <span class="fn">map_lambai</span>(student)  <span class="cmt"># 3</span>
+<span class="kw">likho</span> <span class="fn">map_hai</span>(student, <span class="str">"naam"</span>)  <span class="cmt"># sach</span></code></pre>
+
+    <!-- Example 17 -->
+    <h2 id="ex17">17 &mdash; Bitwise Operations</h2>
+    <p>AND, OR, XOR, NOT, shifts, and base conversions.</p>
+    <p><code>examples/17_bitwise.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> a = <span class="num">12</span>    <span class="cmt"># 1100</span>
+<span class="kw">maano</span> b = <span class="num">10</span>    <span class="cmt"># 1010</span>
+
+<span class="kw">likho</span> <span class="str">"AND:"</span>, a <span class="op">&amp;</span> b    <span class="cmt"># 8</span>
+<span class="kw">likho</span> <span class="str">"OR:"</span>,  a <span class="op">|</span> b    <span class="cmt"># 14</span>
+<span class="kw">likho</span> <span class="str">"XOR:"</span>, a <span class="op">^</span> b    <span class="cmt"># 6</span>
+<span class="kw">likho</span> <span class="str">"NOT:"</span>, <span class="op">~</span>a        <span class="cmt"># -13</span>
+<span class="kw">likho</span> <span class="str">"Hex:"</span>, <span class="fn">hex_shabd</span>(<span class="num">255</span>)  <span class="cmt"># ff</span>
+<span class="kw">likho</span> <span class="str">"Bin:"</span>, <span class="fn">bin_shabd</span>(<span class="num">255</span>)  <span class="cmt"># 11111111</span></code></pre>
+
+    <!-- Example 18 -->
+    <h2 id="ex18">18 &mdash; Higher-Order Functions</h2>
+    <p>Map, filter, reduce, zip, enumerate, and more.</p>
+    <p><code>examples/18_higher_order.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">square</span>(x) { <span class="kw">wapas do</span> x <span class="op">*</span> x }
+<span class="kw">kaam</span> <span class="fn">is_even</span>(x) { <span class="kw">wapas do</span> x <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span> }
+<span class="kw">kaam</span> <span class="fn">add</span>(a, b) { <span class="kw">wapas do</span> a <span class="op">+</span> b }
+
+<span class="kw">maano</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+<span class="kw">likho</span> <span class="fn">naksha</span>(nums, square)          <span class="cmt"># [1,4,9,16,25]</span>
+<span class="kw">likho</span> <span class="fn">chhaano</span>(nums, is_even)        <span class="cmt"># [2,4]</span>
+<span class="kw">likho</span> <span class="fn">ikkatha</span>(nums, add, <span class="num">0</span>)         <span class="cmt"># 15</span>
+<span class="kw">likho</span> <span class="fn">jodi_banao</span>([<span class="num">1</span>,<span class="num">2</span>], [<span class="str">"a"</span>,<span class="str">"b"</span>]) <span class="cmt"># [[1,"a"],[2,"b"]]</span></code></pre>
+
+    <!-- Example 19 -->
+    <h2 id="ex19">19 &mdash; Mini Database</h2>
+    <p>CRUD operations using maps as records &mdash; add, search, delete, list.</p>
+    <p><code>examples/19_mini_database.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> db = []
+
+<span class="kw">kaam</span> <span class="fn">add_record</span>(naam, umar) {
+    <span class="kw">maano</span> record = {<span class="str">"naam"</span>: naam, <span class="str">"umar"</span>: umar}
+    <span class="fn">joodo</span>(db, record)
+    <span class="kw">likho</span> <span class="str">"Added:"</span>, naam
+}
+
+<span class="kw">kaam</span> <span class="fn">find_record</span>(naam) {
+    <span class="kw">har</span> i = <span class="num">0</span>; i <span class="op">&lt;</span> <span class="fn">lambai</span>(db); i = i <span class="op">+</span> <span class="num">1</span> {
+        <span class="kw">agar</span> db[i][<span class="str">"naam"</span>] <span class="op">==</span> naam {
+            <span class="kw">wapas do</span> db[i]
+        }
+    }
+    <span class="kw">wapas do</span> <span class="kw">khali</span>
+}
+
+<span class="fn">add_record</span>(<span class="str">"Aryan"</span>, <span class="num">20</span>)
+<span class="fn">add_record</span>(<span class="str">"Priya"</span>, <span class="num">22</span>)
+<span class="kw">likho</span> <span class="fn">find_record</span>(<span class="str">"Aryan"</span>)</code></pre>
+
+    <!-- Example 20 -->
+    <h2 id="ex20">20 &mdash; Feature Showcase</h2>
+    <p>A comprehensive demo that exercises every major language feature in one program.</p>
+    <p><code>examples/20_feature_showcase.ram</code></p>
+<pre data-lang="rampyaaryan"><code><span class="cmt"># Tests all data types</span>
+<span class="kw">kaam</span> <span class="fn">test_types</span>() {
+    <span class="kw">maano</span> num = <span class="num">42</span>
+    <span class="kw">maano</span> str = <span class="str">"Namaste"</span>
+    <span class="kw">maano</span> lst = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+    <span class="kw">maano</span> mp  = {<span class="str">"key"</span>: <span class="str">"value"</span>}
+    <span class="kw">likho</span> <span class="fn">typeof_val</span>(num), <span class="fn">typeof_val</span>(str)
+    <span class="kw">likho</span> <span class="fn">typeof_val</span>(lst), <span class="fn">typeof_val</span>(mp)
+}
+<span class="fn">test_types</span>()
+
+<span class="cmt"># Math showcase</span>
+<span class="kw">likho</span> <span class="str">"factorial(10):"</span>, <span class="fn">factorial</span>(<span class="num">10</span>)
+<span class="kw">likho</span> <span class="str">"fib(15):"</span>, <span class="fn">fib</span>(<span class="num">15</span>)
+<span class="kw">likho</span> <span class="str">"kya_prime(97):"</span>, <span class="fn">kya_prime</span>(<span class="num">97</span>)</code></pre>
+
+    <div class="callout callout-info">
+      <strong>All 20 examples</strong> are included in the <code>examples/</code> directory of the repository. Clone the repo and run them with <code>rampyaaryan &lt;filename&gt;.ram</code>.
+    </div>
+
+    <!-- Prev/Next -->
+    <div class="page-nav">
+      <a href="spec.html">
+        <div class="nav-label">&larr; Previous</div>
+        <div class="nav-title">Language Spec</div>
+      </a>
+      <a href="howto.html" style="text-align:right">
+        <div class="nav-label">Next &rarr;</div>
+        <div class="nav-title">How-To Guide</div>
+      </a>
+    </div>
+
+    <div class="page-footer">
+      Made with &#x2764;&#xFE0F; for India &#x1F1EE;&#x1F1F3; &mdash;
+      <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+    </div>
+
+  </div>
+</main>
+
+<button class="back-to-top" aria-label="Back to top">&#x2191;</button>
+<script src="script.js"></script>
+</body>
+</html>

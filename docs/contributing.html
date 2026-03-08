@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contributing — Rampyaaryan Documentation</title>
+  <meta name="description" content="How to contribute to Rampyaaryan — the Hinglish programming language.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Menu">&#9776;</button>
+<div class="overlay"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>&#x1F64F; Rampyaaryan</h1>
+    <div class="subtitle">Documentation v2.0</div>
+  </div>
+  <div class="search-box">
+    <input type="text" placeholder="Search docs...">
+  </div>
+  <nav class="sidebar-nav">
+    <div class="section-title">Getting Started</div>
+    <a href="index.html"><span class="nav-icon">&#x1F3E0;</span> Home</a>
+    <a href="getting-started.html"><span class="nav-icon">&#x1F680;</span> Getting Started</a>
+    <a href="tutorial.html"><span class="nav-icon">&#x1F393;</span> Tutorial</a>
+
+    <div class="section-title">Reference</div>
+    <a href="api.html"><span class="nav-icon">&#x1F4DA;</span> API Reference</a>
+    <a href="spec.html"><span class="nav-icon">&#x1F4DC;</span> Language Spec</a>
+    <a href="examples.html"><span class="nav-icon">&#x1F4BB;</span> Examples</a>
+
+    <div class="section-title">More</div>
+    <a href="howto.html"><span class="nav-icon">&#x1F4D6;</span> How-To Guide</a>
+    <a href="changelog.html"><span class="nav-icon">&#x1F4CB;</span> Changelog</a>
+    <a href="contributing.html" class="active"><span class="nav-icon">&#x1F91D;</span> Contributing</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+  </div>
+</aside>
+
+<main class="main-content">
+  <div class="content-wrapper">
+
+    <div class="page-header">
+      <a href="index.html">Docs</a> / <strong>Contributing</strong>
+    </div>
+
+    <h1>Contributing to Rampyaaryan</h1>
+    <p class="lead">Rampyaaryan mein contribute karne ke liye shukriya! Here's how you can help.</p>
+
+    <h2 id="quickstart">Quick Start</h2>
+
+    <h3>1. Fork &amp; Clone</h3>
+<pre data-lang="bash"><code>git clone https://github.com/YOUR_USERNAME/rampyaaryan.git
+cd rampyaaryan</code></pre>
+
+    <h3>2. Build</h3>
+<pre data-lang="bash"><code>make</code></pre>
+
+    <h3>3. Test</h3>
+<pre data-lang="bash"><code>./bin/rampyaaryan examples/01_namaste_duniya.ram</code></pre>
+
+    <h3>4. Make Changes</h3>
+    <ul>
+      <li>New features &rarr; <code>src/</code> directory</li>
+      <li>New examples &rarr; <code>examples/</code> directory</li>
+      <li>Bug fixes &rarr; Open an issue first</li>
+    </ul>
+
+    <h3>5. Submit a Pull Request</h3>
+    <ol>
+      <li>Create a branch: <code>git checkout -b feature/my-feature</code></li>
+      <li>Commit: <code>git commit -m "Added: my feature"</code></li>
+      <li>Push: <code>git push origin feature/my-feature</code></li>
+      <li>Open a Pull Request on GitHub</li>
+    </ol>
+
+    <h2 id="codestyle">Code Style</h2>
+    <ul>
+      <li><strong>C99 standard</strong></li>
+      <li><strong>4-space indentation</strong></li>
+      <li><strong>Meaningful variable names</strong></li>
+      <li><strong>Comments:</strong> English for code, Hinglish for user-facing strings</li>
+    </ul>
+
+    <h2 id="areas">Areas for Contribution</h2>
+
+    <table>
+      <thead><tr><th>Area</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>More built-in functions</td><td>Open</td></tr>
+        <tr><td>HashMap/Dictionary type</td><td>&#x2705; Done</td></tr>
+        <tr><td>Module/import system</td><td>Open</td></tr>
+        <tr><td>Error recovery improvements</td><td>Open</td></tr>
+        <tr><td>More examples</td><td>Open</td></tr>
+        <tr><td>VS Code syntax highlighting extension</td><td>Open</td></tr>
+        <tr><td>Online playground (WASM)</td><td>Open</td></tr>
+        <tr><td>Standard library in <code>.ram</code> files</td><td>Open</td></tr>
+        <tr><td>Performance benchmarks</td><td>Open</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="issues">Reporting Issues</h2>
+    <p>Use <a href="https://github.com/Rampyaaryans/rampyaaryan/issues">GitHub Issues</a>. Include:</p>
+    <ol>
+      <li>Rampyaaryan version (<code>rampyaaryan --version</code>)</li>
+      <li>OS and compiler version</li>
+      <li>Minimal <code>.ram</code> code to reproduce</li>
+      <li>Expected vs actual output</li>
+    </ol>
+
+    <h2 id="license">License</h2>
+    <p>By contributing, you agree that your contributions will be licensed under the <strong>MIT License</strong>.</p>
+
+    <!-- Prev/Next -->
+    <div class="page-nav">
+      <a href="changelog.html">
+        <div class="nav-label">&larr; Previous</div>
+        <div class="nav-title">Changelog</div>
+      </a>
+      <a href="index.html" style="text-align:right">
+        <div class="nav-label">Back to &rarr;</div>
+        <div class="nav-title">Home</div>
+      </a>
+    </div>
+
+    <div class="page-footer">
+      Made with &#x2764;&#xFE0F; for India &#x1F1EE;&#x1F1F3; &mdash;
+      <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+    </div>
+
+  </div>
+</main>
+
+<button class="back-to-top" aria-label="Back to top">&#x2191;</button>
+<script src="script.js"></script>
+</body>
+</html>

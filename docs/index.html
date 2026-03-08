@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rampyaaryan — India's First Hinglish Programming Language</title>
+  <meta name="description" content="Write code in the language you think in. Rampyaaryan is a Hinglish programming language compiled to native bytecode with 145 built-in functions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Menu">&#9776;</button>
+<div class="overlay"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>&#x1F64F; Rampyaaryan</h1>
+    <div class="subtitle">Documentation v2.0</div>
+  </div>
+  <div class="search-box">
+    <input type="text" placeholder="Search docs...">
+  </div>
+  <nav class="sidebar-nav">
+    <div class="section-title">Getting Started</div>
+    <a href="index.html" class="active"><span class="nav-icon">&#x1F3E0;</span> Home</a>
+    <a href="getting-started.html"><span class="nav-icon">&#x1F680;</span> Getting Started</a>
+    <a href="tutorial.html"><span class="nav-icon">&#x1F393;</span> Tutorial</a>
+
+    <div class="section-title">Reference</div>
+    <a href="api.html"><span class="nav-icon">&#x1F4DA;</span> API Reference</a>
+    <a href="spec.html"><span class="nav-icon">&#x1F4DC;</span> Language Spec</a>
+    <a href="examples.html"><span class="nav-icon">&#x1F4BB;</span> Examples</a>
+
+    <div class="section-title">More</div>
+    <a href="howto.html"><span class="nav-icon">&#x1F4D6;</span> How-To Guide</a>
+    <a href="changelog.html"><span class="nav-icon">&#x1F4CB;</span> Changelog</a>
+    <a href="contributing.html"><span class="nav-icon">&#x1F91D;</span> Contributing</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+  </div>
+</aside>
+
+<main class="main-content">
+  <div class="content-wrapper">
+
+    <div class="hero">
+      <h1>&#x1F64F; Rampyaaryan</h1>
+      <p class="tagline">India's First Hinglish Programming Language</p>
+      <div class="badges">
+        <span class="badge badge-red">v2.0.0</span>
+        <span class="badge badge-blue">Pure C99</span>
+        <span class="badge badge-green">Cross-Platform</span>
+        <span class="badge badge-orange">145 Functions</span>
+        <span class="badge badge-purple">MIT License</span>
+      </div>
+      <p>Write code in the language you think in. No Python. No Node.js. No dependencies. Just one native binary.</p>
+      <div class="hero-code">
+<pre data-lang="rampyaaryan"><code><span class="kw">likho</span> <span class="str">"&#x1F64F; Namaste Duniya!"</span>
+
+<span class="kw">maano</span> naam = <span class="fn">poocho</span>(<span class="str">"Aapka naam: "</span>)
+<span class="kw">likho</span> <span class="str">"Swagat hai, "</span> <span class="op">+</span> naam <span class="op">+</span> <span class="str">" ji!"</span>
+
+<span class="kw">kaam</span> <span class="fn">factorial</span>(n) {
+    <span class="kw">agar</span> n <span class="op">&lt;=</span> <span class="num">1</span> { <span class="kw">wapas do</span> <span class="num">1</span> }
+    <span class="kw">wapas do</span> n <span class="op">*</span> <span class="fn">factorial</span>(n <span class="op">-</span> <span class="num">1</span>)
+}
+
+<span class="kw">likho</span> <span class="fn">format</span>(<span class="str">"10! = {}"</span>, <span class="fn">factorial</span>(<span class="num">10</span>))</code></pre>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <h2>Features</h2>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="feature-icon">&#x1F3D7;</div>
+        <h4>Pure C (C99)</h4>
+        <p>Compiles to a single native binary. Zero runtime dependencies. Blazing fast.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F1EE;&#x1F1F3;</div>
+        <h4>Hinglish Syntax</h4>
+        <p>Keywords in Hindi-English &mdash; <code>maano</code>, <code>likho</code>, <code>agar</code>, <code>kaam</code>. Think in Hindi, code in Hindi.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x2699;</div>
+        <h4>Bytecode VM</h4>
+        <p>Stack-based virtual machine with 44 opcodes. Pratt parser compiles source to efficient bytecode.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F9F9;</div>
+        <h4>Garbage Collector</h4>
+        <p>Tri-color mark-sweep GC with automatic heap management. No manual memory management.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F517;</div>
+        <h4>Closures &amp; First-Class Functions</h4>
+        <p>Full lexical scoping with upvalue capture. Pass functions as arguments.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F4CB;</div>
+        <h4>Dynamic Lists</h4>
+        <p>Built-in arrays with 23 operations: sort, slice, search, statistics, flatten, chunk, rotate.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F4D6;</div>
+        <h4>Dictionaries / Maps</h4>
+        <p>Key-value <code>{key: value}</code> syntax with 9 map functions for data modeling.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F524;</div>
+        <h4>Rich String Library</h4>
+        <p>27 string functions: split, join, format, replace, trim, title_case, pad, and more.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F9EE;</div>
+        <h4>Math &amp; Science</h4>
+        <p>37 functions: trigonometry, logarithms, factorial, prime checking, Fibonacci, random ops.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F504;</div>
+        <h4>Higher-Order Functions</h4>
+        <p><code>naksha</code> (map), <code>chhaano</code> (filter), <code>ikkatha</code> (reduce), zip, enumerate, and more.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F4C1;</div>
+        <h4>File I/O</h4>
+        <p>Read, write, append files. Check file existence. Build real applications.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">&#x1F4BB;</div>
+        <h4>Interactive REPL</h4>
+        <p>Multiline editing, syntax colors, command history, helpful error messages in Hinglish.</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Quick Start -->
+    <h2>Quick Start</h2>
+    <div class="callout callout-info">
+      <strong>Prerequisites:</strong> A C compiler (GCC, Clang, or MSVC). That's it.
+    </div>
+
+<pre data-lang="bash"><code><span class="cmt"># Clone the repository</span>
+git clone https://github.com/Rampyaaryans/rampyaaryan.git
+cd rampyaaryan
+
+<span class="cmt"># Build (pick one)</span>
+make                                <span class="cmt"># GNU Make</span>
+gcc -O2 -o rampyaaryan src/*.c -lm  <span class="cmt"># Direct GCC</span>
+
+<span class="cmt"># Run a program</span>
+./rampyaaryan examples/01_namaste_duniya.ram
+
+<span class="cmt"># Or start the REPL</span>
+./rampyaaryan</code></pre>
+
+    <div class="callout callout-tip">
+      <strong>Tip:</strong> Check the <a href="getting-started.html">Getting Started</a> page for platform-specific instructions (Windows, Linux, macOS).
+    </div>
+
+    <hr>
+
+    <!-- What You Can Build -->
+    <h2>What You Can Build</h2>
+<pre data-lang="rampyaaryan"><code><span class="cmt"># A mini student database using maps and lists</span>
+<span class="kw">maano</span> students = []
+
+<span class="kw">kaam</span> <span class="fn">add_student</span>(naam, marks, city) {
+    <span class="kw">maano</span> s = {<span class="str">"naam"</span>: naam, <span class="str">"marks"</span>: marks, <span class="str">"city"</span>: city}
+    <span class="fn">joodo</span>(students, s)
+}
+
+<span class="fn">add_student</span>(<span class="str">"Arjun"</span>, <span class="num">92</span>, <span class="str">"Delhi"</span>)
+<span class="fn">add_student</span>(<span class="str">"Priya"</span>, <span class="num">88</span>, <span class="str">"Mumbai"</span>)
+<span class="fn">add_student</span>(<span class="str">"Rahul"</span>, <span class="num">95</span>, <span class="str">"Pune"</span>)
+
+<span class="cmt"># Filter toppers using higher-order functions</span>
+<span class="kw">kaam</span> <span class="fn">is_topper</span>(s) { <span class="kw">wapas do</span> s[<span class="str">"marks"</span>] <span class="op">&gt;=</span> <span class="num">90</span> }
+<span class="kw">maano</span> toppers = <span class="fn">chhaano</span>(students, is_topper)
+<span class="kw">likho</span> <span class="fn">format</span>(<span class="str">"Toppers: {}"</span>, toppers)</code></pre>
+
+    <hr>
+
+    <!-- Documentation Cards -->
+    <h2>Documentation</h2>
+    <div class="card-grid">
+      <a class="card" href="getting-started.html">
+        <div class="card-icon">&#x1F680;</div>
+        <h3>Getting Started</h3>
+        <p>Installation, building from source, running your first program, REPL commands.</p>
+      </a>
+      <a class="card" href="tutorial.html">
+        <div class="card-icon">&#x1F393;</div>
+        <h3>Tutorial</h3>
+        <p>19 lessons from "Namaste Duniya" to closures, maps, bitwise ops, and practical projects.</p>
+      </a>
+      <a class="card" href="api.html">
+        <div class="card-icon">&#x1F4DA;</div>
+        <h3>API Reference</h3>
+        <p>Complete documentation for all 145 built-in functions across 12 categories.</p>
+      </a>
+      <a class="card" href="spec.html">
+        <div class="card-icon">&#x1F4DC;</div>
+        <h3>Language Specification</h3>
+        <p>Formal grammar, data types, operator precedence, truthiness rules, runtime architecture.</p>
+      </a>
+      <a class="card" href="examples.html">
+        <div class="card-icon">&#x1F4BB;</div>
+        <h3>Examples</h3>
+        <p>20 ready-to-run programs: hello world, sorting, math, databases, pattern matching, and more.</p>
+      </a>
+      <a class="card" href="howto.html">
+        <div class="card-icon">&#x1F4D6;</div>
+        <h3>How-To Guide</h3>
+        <p>Complete cookbook: variables, loops, functions, lists, maps, file I/O, string ops, tips &amp; tricks.</p>
+      </a>
+    </div>
+
+    <hr>
+
+    <!-- Architecture -->
+    <h2>Architecture</h2>
+<pre><code>Source Code (.ram)
+       &#x2193;
+   &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+   &#x2502;  Lexer   &#x2502;  &#x2192; Tokens (Hinglish keywords)
+   &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
+        &#x2193;
+   &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+   &#x2502; Compiler  &#x2502;  &#x2192; Bytecode (Pratt parser + code gen)
+   &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
+        &#x2193;
+   &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+   &#x2502;    VM    &#x2502;  &#x2192; Execution (stack-based)
+   &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
+        &#x2193;
+   &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+   &#x2502;    GC    &#x2502;  &#x2192; Memory management (mark-sweep)
+   &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;</code></pre>
+
+    <table>
+      <thead><tr><th>Component</th><th>Technology</th></tr></thead>
+      <tbody>
+        <tr><td>Language</td><td>Pure C (C99 standard)</td></tr>
+        <tr><td>Parser</td><td>Pratt parser (precedence climbing)</td></tr>
+        <tr><td>VM</td><td>Stack-based bytecode virtual machine</td></tr>
+        <tr><td>GC</td><td>Tri-color mark-sweep garbage collector</td></tr>
+        <tr><td>Hashing</td><td>FNV-1a, open-addressing hash table</td></tr>
+        <tr><td>Strings</td><td>Interned for O(1) comparison</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <!-- Keyword Reference -->
+    <h2>Keyword Quick Reference</h2>
+    <table class="keyword-table">
+      <thead><tr><th>Rampyaaryan</th><th>English</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><code>maano</code></td><td>let / var</td><td>Variable declaration</td></tr>
+        <tr><td><code>likho</code></td><td>print</td><td>Output to console</td></tr>
+        <tr><td><code>poocho</code></td><td>input</td><td>Read from user</td></tr>
+        <tr><td><code>agar</code></td><td>if</td><td>Condition</td></tr>
+        <tr><td><code>warna agar</code></td><td>else if</td><td>Else-if branch</td></tr>
+        <tr><td><code>warna</code></td><td>else</td><td>Else branch</td></tr>
+        <tr><td><code>jab tak</code></td><td>while</td><td>While loop</td></tr>
+        <tr><td><code>har</code></td><td>for</td><td>For loop</td></tr>
+        <tr><td><code>kaam</code></td><td>function</td><td>Function definition</td></tr>
+        <tr><td><code>wapas do</code></td><td>return</td><td>Return value</td></tr>
+        <tr><td><code>ruko</code></td><td>break</td><td>Break loop</td></tr>
+        <tr><td><code>agla</code></td><td>continue</td><td>Skip iteration</td></tr>
+        <tr><td><code>sach</code></td><td>true</td><td>Boolean true</td></tr>
+        <tr><td><code>jhooth</code></td><td>false</td><td>Boolean false</td></tr>
+        <tr><td><code>khali</code></td><td>null</td><td>Null value</td></tr>
+        <tr><td><code>aur</code></td><td>and</td><td>Logical AND</td></tr>
+        <tr><td><code>ya</code></td><td>or</td><td>Logical OR</td></tr>
+        <tr><td><code>nahi</code></td><td>not</td><td>Logical NOT</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <!-- 145 Functions at a Glance -->
+    <h2>145 Built-in Functions at a Glance</h2>
+
+    <div class="card-grid">
+      <div class="card" style="cursor:default">
+        <h3>Type Conversion &amp; Checking <span class="category-count">16</span></h3>
+        <p><code>prakar</code> <code>sankhya</code> <code>shabd</code> <code>purn</code> <code>dashmlav</code> <code>bool_val</code> <code>kya_sankhya</code> <code>kya_shabd</code> <code>kya_suchi</code> <code>kya_kaam</code> <code>kya_bool</code> <code>kya_khali</code> <code>kya_purn</code> <code>kya_map</code> <code>typeof_val</code> <code>print_type</code></p>
+      </div>
+      <div class="card" style="cursor:default">
+        <h3>Strings <span class="category-count">27</span></h3>
+        <p><code>lambai</code> <code>bade_akshar</code> <code>chhote_akshar</code> <code>title_case</code> <code>capitalize</code> <code>swapcase</code> <code>kato</code> <code>dhundho</code> <code>badlo</code> <code>todo</code> <code>jodo_shabd</code> <code>saaf</code> <code>center</code> <code>pad_left</code> <code>pad_right</code> <code>shuru_se</code> <code>ant_se</code> <code>dohrao</code> <code>akshar</code> <code>ascii_code</code> <code>ascii_se</code> <code>format</code> <code>gino</code> <code>kya_ank</code> <code>kya_akshar</code> <code>kya_alnum</code> <code>kya_space</code></p>
+      </div>
+      <div class="card" style="cursor:default">
+        <h3>Lists <span class="category-count">23</span></h3>
+        <p><code>joodo</code> <code>nikalo</code> <code>kram</code> <code>ulta</code> <code>suchi</code> <code>range_</code> <code>shamil</code> <code>index_of</code> <code>katao</code> <code>pahla</code> <code>aakhri</code> <code>milao</code> <code>daalo</code> <code>anokha</code> <code>jod</code> <code>ausat</code> <code>sabse_bada</code> <code>sabse_chhota</code> <code>flatten</code> <code>tukda</code> <code>ghuma</code> <code>copy_suchi</code> <code>khali_karo</code></p>
+      </div>
+      <div class="card" style="cursor:default">
+        <h3>Math &amp; Science <span class="category-count">37</span></h3>
+        <p><code>abs_val</code> <code>gol</code> <code>upar</code> <code>neeche</code> <code>sqrt_val</code> <code>power_val</code> <code>bada</code> <code>chhota</code> <code>sin_val</code> <code>cos_val</code> <code>tan_val</code> <code>log_val</code> <code>PI</code> <code>E</code> <code>gcd</code> <code>lcm</code> <code>factorial</code> <code>kya_prime</code> <code>fib</code> <code>hypot_val</code> <code>random_int</code> and more&hellip;</p>
+      </div>
+      <div class="card" style="cursor:default">
+        <h3>Higher-Order <span class="category-count">7</span></h3>
+        <p><code>naksha</code> <code>chhaano</code> <code>ikkatha</code> <code>sab</code> <code>koi</code> <code>jodi_banao</code> <code>ginati_banao</code></p>
+      </div>
+      <div class="card" style="cursor:default">
+        <h3>Maps / Dicts <span class="category-count">9</span></h3>
+        <p><code>shabdkosh</code> <code>chabi</code> <code>mulya</code> <code>jodi</code> <code>map_hai</code> <code>map_get</code> <code>map_hatao</code> <code>map_milao</code> <code>map_lambai</code></p>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin-top:1rem;">
+      <a href="api.html" style="font-family:var(--font-heading); font-weight:600;">View Full API Reference &rarr;</a>
+    </p>
+
+    <hr>
+
+    <!-- Project Structure -->
+    <h2>Project Structure</h2>
+<pre><code>rampyaaryan/
+&#x251C;&#x2500;&#x2500; src/
+&#x2502;   &#x251C;&#x2500;&#x2500; common.h         &#x2014; Common includes &amp; config
+&#x2502;   &#x251C;&#x2500;&#x2500; memory.h/c       &#x2014; Memory allocator &amp; GC
+&#x2502;   &#x251C;&#x2500;&#x2500; value.h/c        &#x2014; Value types (number, bool, null, obj)
+&#x2502;   &#x251C;&#x2500;&#x2500; object.h/c       &#x2014; Heap objects (string, function, list, map)
+&#x2502;   &#x251C;&#x2500;&#x2500; table.h/c        &#x2014; Hash table implementation
+&#x2502;   &#x251C;&#x2500;&#x2500; chunk.h/c        &#x2014; Bytecode chunks
+&#x2502;   &#x251C;&#x2500;&#x2500; lexer.h/c        &#x2014; Tokenizer (Hinglish keywords)
+&#x2502;   &#x251C;&#x2500;&#x2500; compiler.h/c     &#x2014; Pratt parser + bytecode emitter
+&#x2502;   &#x251C;&#x2500;&#x2500; vm.h/c           &#x2014; Virtual Machine
+&#x2502;   &#x251C;&#x2500;&#x2500; native.h/c       &#x2014; Built-in functions (145)
+&#x2502;   &#x251C;&#x2500;&#x2500; debug.h/c        &#x2014; Bytecode disassembler
+&#x2502;   &#x251C;&#x2500;&#x2500; ascii_art.h/c    &#x2014; Terminal animations
+&#x2502;   &#x2514;&#x2500;&#x2500; main.c           &#x2014; CLI entry point &amp; REPL
+&#x251C;&#x2500;&#x2500; examples/            &#x2014; 20 example .ram programs
+&#x251C;&#x2500;&#x2500; docs/                &#x2014; Documentation website
+&#x251C;&#x2500;&#x2500; Makefile             &#x2014; GNU Make build
+&#x251C;&#x2500;&#x2500; CMakeLists.txt       &#x2014; CMake build
+&#x251C;&#x2500;&#x2500; LICENSE              &#x2014; MIT License
+&#x2514;&#x2500;&#x2500; README.md            &#x2014; Project overview</code></pre>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      Made with &#x2764;&#xFE0F; for India &#x1F1EE;&#x1F1F3; &mdash;
+      <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot;
+      MIT License
+    </div>
+
+  </div>
+</main>
+
+<button class="back-to-top" aria-label="Back to top">&#x2191;</button>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Specification — Rampyaaryan Documentation</title>
+  <meta name="description" content="Complete language specification for the Rampyaaryan Hinglish programming language.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Menu">&#9776;</button>
+<div class="overlay"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>&#x1F64F; Rampyaaryan</h1>
+    <div class="subtitle">Documentation v2.0</div>
+  </div>
+  <div class="search-box">
+    <input type="text" placeholder="Search docs...">
+  </div>
+  <nav class="sidebar-nav">
+    <div class="section-title">Getting Started</div>
+    <a href="index.html"><span class="nav-icon">&#x1F3E0;</span> Home</a>
+    <a href="getting-started.html"><span class="nav-icon">&#x1F680;</span> Getting Started</a>
+    <a href="tutorial.html"><span class="nav-icon">&#x1F393;</span> Tutorial</a>
+
+    <div class="section-title">Reference</div>
+    <a href="api.html"><span class="nav-icon">&#x1F4DA;</span> API Reference</a>
+    <a href="spec.html" class="active"><span class="nav-icon">&#x1F4DC;</span> Language Spec</a>
+    <a href="examples.html"><span class="nav-icon">&#x1F4BB;</span> Examples</a>
+
+    <div class="section-title">More</div>
+    <a href="howto.html"><span class="nav-icon">&#x1F4D6;</span> How-To Guide</a>
+    <a href="changelog.html"><span class="nav-icon">&#x1F4CB;</span> Changelog</a>
+    <a href="contributing.html"><span class="nav-icon">&#x1F91D;</span> Contributing</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+  </div>
+</aside>
+
+<main class="main-content">
+  <div class="content-wrapper">
+
+    <div class="page-header">
+      <a href="index.html">Docs</a> / <strong>Language Specification</strong>
+    </div>
+
+    <h1>Language Specification</h1>
+    <p class="lead">Formal specification of the Rampyaaryan language &mdash; Version 2.0.0</p>
+
+    <div class="toc">
+      <h3>Contents</h3>
+      <ol>
+        <li><a href="#lexical">Lexical Structure</a></li>
+        <li><a href="#data-types">Data Types</a></li>
+        <li><a href="#statements">Statements</a></li>
+        <li><a href="#expressions">Expressions</a></li>
+        <li><a href="#closures">Closures</a></li>
+        <li><a href="#truthiness">Truthiness</a></li>
+        <li><a href="#string-ops">String Operations</a></li>
+        <li><a href="#map-literals">Map Literals</a></li>
+        <li><a href="#bitwise">Bitwise Operations</a></li>
+        <li><a href="#runtime">Runtime Architecture</a></li>
+      </ol>
+    </div>
+
+    <!-- 1. Lexical Structure -->
+    <h2 id="lexical">1. Lexical Structure</h2>
+
+    <h3>1.1 Tokens</h3>
+    <table>
+      <thead><tr><th>Token Type</th><th>Pattern</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Identifiers</strong></td><td><code>[a-zA-Z_][a-zA-Z0-9_]*</code></td><td><code>naam</code>, <code>my_var</code>, <code>_x</code></td></tr>
+        <tr><td><strong>Numbers</strong></td><td>Integer or float</td><td><code>42</code>, <code>3.14</code>, <code>-7</code></td></tr>
+        <tr><td><strong>Strings</strong></td><td>Double-quoted with escapes</td><td><code>"hello"</code>, <code>"line\n"</code></td></tr>
+        <tr><td><strong>Comments</strong></td><td><code>#</code> or <code>//</code> (single-line)</td><td><code># yeh comment hai</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>1.2 Keywords</h3>
+    <table>
+      <thead><tr><th>Keyword</th><th>English Equivalent</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><code>maano</code></td><td>let / var</td><td>Variable declaration</td></tr>
+        <tr><td><code>likho</code></td><td>print</td><td>Print output</td></tr>
+        <tr><td><code>pucho</code></td><td>input</td><td>Read user input</td></tr>
+        <tr><td><code>agar</code></td><td>if</td><td>Conditional</td></tr>
+        <tr><td><code>warna</code></td><td>else</td><td>Else branch</td></tr>
+        <tr><td><code>warna agar</code></td><td>else if</td><td>Else-if branch</td></tr>
+        <tr><td><code>jab tak</code></td><td>while</td><td>While loop</td></tr>
+        <tr><td><code>har</code></td><td>for</td><td>For loop</td></tr>
+        <tr><td><code>kaam</code></td><td>function</td><td>Function definition</td></tr>
+        <tr><td><code>wapas do</code></td><td>return</td><td>Return from function</td></tr>
+        <tr><td><code>ruko</code></td><td>break</td><td>Break from loop</td></tr>
+        <tr><td><code>agla</code></td><td>continue</td><td>Skip to next iteration</td></tr>
+        <tr><td><code>sach</code></td><td>true</td><td>Boolean true</td></tr>
+        <tr><td><code>jhooth</code></td><td>false</td><td>Boolean false</td></tr>
+        <tr><td><code>khali</code></td><td>null</td><td>Null value</td></tr>
+        <tr><td><code>aur</code></td><td>and</td><td>Logical AND</td></tr>
+        <tr><td><code>ya</code></td><td>or</td><td>Logical OR</td></tr>
+        <tr><td><code>nahi</code></td><td>not</td><td>Logical NOT</td></tr>
+      </tbody>
+    </table>
+
+    <h3>1.3 Operators</h3>
+    <table>
+      <thead><tr><th>Category</th><th>Operators</th></tr></thead>
+      <tbody>
+        <tr><td>Arithmetic</td><td><code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>%</code> <code>**</code></td></tr>
+        <tr><td>Comparison</td><td><code>==</code> <code>!=</code> <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></td></tr>
+        <tr><td>Bitwise</td><td><code>&amp;</code> <code>|</code> <code>^</code> <code>~</code> <code>&lt;&lt;</code> <code>&gt;&gt;</code></td></tr>
+        <tr><td>Logical</td><td><code>aur</code> <code>ya</code> <code>nahi</code></td></tr>
+        <tr><td>Assignment</td><td><code>=</code> <code>+=</code> <code>-=</code> <code>*=</code> <code>/=</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>1.4 Escape Sequences</h3>
+    <table>
+      <thead><tr><th>Sequence</th><th>Character</th></tr></thead>
+      <tbody>
+        <tr><td><code>\n</code></td><td>Newline</td></tr>
+        <tr><td><code>\t</code></td><td>Tab</td></tr>
+        <tr><td><code>\\</code></td><td>Backslash</td></tr>
+        <tr><td><code>\"</code></td><td>Double quote</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 2. Data Types -->
+    <h2 id="data-types">2. Data Types</h2>
+
+    <table>
+      <thead><tr><th>Type</th><th>Hinglish Name</th><th>Examples</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>Number</td><td>sankhya</td><td><code>42</code>, <code>3.14</code>, <code>-7</code></td><td>64-bit IEEE 754 double</td></tr>
+        <tr><td>String</td><td>shabd</td><td><code>"hello"</code>, <code>"namaste"</code></td><td>Immutable, interned, UTF-8</td></tr>
+        <tr><td>Boolean</td><td>haan_na</td><td><code>sach</code>, <code>jhooth</code></td><td>True or false</td></tr>
+        <tr><td>Null</td><td>khali</td><td><code>khali</code></td><td>Absence of value</td></tr>
+        <tr><td>List</td><td>suchi</td><td><code>[1, 2, 3]</code></td><td>Dynamic array, mixed types</td></tr>
+        <tr><td>Function</td><td>kaam</td><td><code>kaam f(x) {...}</code></td><td>First-class, closures</td></tr>
+        <tr><td>Map/Dict</td><td>shabdkosh</td><td><code>{"key": "val"}</code></td><td>String-keyed hash map</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 3. Statements -->
+    <h2 id="statements">3. Statements</h2>
+
+    <h3>3.1 Variable Declaration</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> &lt;name&gt; = &lt;expression&gt;</code></pre>
+    <p>Declares and initializes a variable. Variables are dynamically typed.</p>
+
+    <h3>3.2 Print Statement</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">likho</span> &lt;expression&gt; [, &lt;expression&gt;]*</code></pre>
+    <p>Multiple expressions are printed space-separated with a trailing newline. A <code>;</code> separator prints without newline.</p>
+
+    <h3>3.3 If Statement</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">agar</span> &lt;condition&gt; {
+    &lt;statements&gt;
+} <span class="kw">warna agar</span> &lt;condition&gt; {
+    &lt;statements&gt;
+} <span class="kw">warna</span> {
+    &lt;statements&gt;
+}</code></pre>
+
+    <h3>3.4 While Loop</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">jab tak</span> &lt;condition&gt; {
+    &lt;statements&gt;
+}</code></pre>
+
+    <h3>3.5 For Loop</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">har</span> &lt;init&gt;; &lt;condition&gt;; &lt;update&gt; {
+    &lt;statements&gt;
+}</code></pre>
+
+    <h3>3.6 Function Declaration</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> &lt;name&gt;(&lt;params&gt;) {
+    &lt;statements&gt;
+    <span class="kw">wapas do</span> &lt;expression&gt;
+}</code></pre>
+
+    <h3>3.7 Break &amp; Continue</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">ruko</span>      <span class="cmt"># break out of loop</span>
+<span class="kw">agla</span>      <span class="cmt"># skip to next iteration</span></code></pre>
+
+    <!-- 4. Expressions -->
+    <h2 id="expressions">4. Expressions</h2>
+
+    <h3>4.1 Operator Precedence (low to high)</h3>
+    <table>
+      <thead><tr><th>Level</th><th>Operators</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>ya</code></td><td>Logical OR</td></tr>
+        <tr><td>2</td><td><code>aur</code></td><td>Logical AND</td></tr>
+        <tr><td>3</td><td><code>|</code></td><td>Bitwise OR</td></tr>
+        <tr><td>4</td><td><code>^</code></td><td>Bitwise XOR</td></tr>
+        <tr><td>5</td><td><code>&amp;</code></td><td>Bitwise AND</td></tr>
+        <tr><td>6</td><td><code>== !=</code></td><td>Equality</td></tr>
+        <tr><td>7</td><td><code>&gt; &lt; &gt;= &lt;=</code></td><td>Comparison</td></tr>
+        <tr><td>8</td><td><code>&lt;&lt; &gt;&gt;</code></td><td>Bit shifts</td></tr>
+        <tr><td>9</td><td><code>+ -</code></td><td>Addition / subtraction</td></tr>
+        <tr><td>10</td><td><code>* / %</code></td><td>Multiplication / division</td></tr>
+        <tr><td>11</td><td><code>**</code></td><td>Exponentiation</td></tr>
+        <tr><td>12</td><td><code>~ nahi -</code></td><td>Unary: bitwise NOT, logical NOT, negate</td></tr>
+        <tr><td>13</td><td><code>() [] .</code></td><td>Call, index, member access</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.2 Function Calls</h3>
+<pre data-lang="rampyaaryan"><code>&lt;function&gt;(&lt;args&gt;)</code></pre>
+
+    <h3>4.3 List Indexing</h3>
+<pre data-lang="rampyaaryan"><code>&lt;list&gt;[&lt;index&gt;]          <span class="cmt"># read</span>
+&lt;list&gt;[&lt;index&gt;] = &lt;value&gt; <span class="cmt"># write</span></code></pre>
+
+    <h3>4.4 Input Expression</h3>
+<pre data-lang="rampyaaryan"><code><span class="fn">pucho</span>(&lt;prompt&gt;)</code></pre>
+
+    <!-- 5. Closures -->
+    <h2 id="closures">5. Closures</h2>
+    <p>Functions capture variables from enclosing scopes. This enables powerful patterns like counters, iterators, and factory functions.</p>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">counter</span>() {
+    <span class="kw">maano</span> n = <span class="num">0</span>
+    <span class="kw">kaam</span> <span class="fn">badhao</span>() {
+        n = n <span class="op">+</span> <span class="num">1</span>
+        <span class="kw">wapas do</span> n
+    }
+    <span class="kw">wapas do</span> badhao
+}
+
+<span class="kw">maano</span> c = <span class="fn">counter</span>()
+<span class="kw">likho</span> <span class="fn">c</span>()    <span class="cmt"># 1</span>
+<span class="kw">likho</span> <span class="fn">c</span>()    <span class="cmt"># 2</span>
+<span class="kw">likho</span> <span class="fn">c</span>()    <span class="cmt"># 3</span></code></pre>
+
+    <div class="callout callout-info">
+      <strong>How it works:</strong> The inner function <code>badhao</code> captures the variable <code>n</code> from the outer function via an "upvalue". The VM uses a dedicated upvalue mechanism (similar to Lua/clox) to track captured variables even after the enclosing function returns.
+    </div>
+
+    <!-- 6. Truthiness -->
+    <h2 id="truthiness">6. Truthiness</h2>
+    <table>
+      <thead><tr><th>Value</th><th>Truthy?</th></tr></thead>
+      <tbody>
+        <tr><td><code>jhooth</code></td><td>Falsy</td></tr>
+        <tr><td><code>khali</code></td><td>Falsy</td></tr>
+        <tr><td><code>0</code></td><td>Falsy</td></tr>
+        <tr><td><code>""</code> (empty string)</td><td>Falsy</td></tr>
+        <tr><td><code>[]</code> (empty list)</td><td>Falsy</td></tr>
+        <tr><td>Everything else</td><td>Truthy</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 7. String Operations -->
+    <h2 id="string-ops">7. String Operations</h2>
+    <table>
+      <thead><tr><th>Operation</th><th>Syntax</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Concatenation</td><td><code>"a" + "b"</code></td><td><code>"ab"</code></td></tr>
+        <tr><td>Repetition</td><td><code>"ha" * 3</code></td><td><code>"hahaha"</code></td></tr>
+        <tr><td>Indexing</td><td><code>"hello"[0]</code></td><td><code>"h"</code></td></tr>
+        <tr><td>Length</td><td><code>lambai("hello")</code></td><td><code>5</code></td></tr>
+      </tbody>
+    </table>
+
+    <!-- 8. Map Literals -->
+    <h2 id="map-literals">8. Map Literals</h2>
+    <p>Maps can be created with literal syntax. Keys must be strings. Values can be any type.</p>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> m = {<span class="str">"key1"</span>: value1, <span class="str">"key2"</span>: value2}
+
+m[<span class="str">"key"</span>]              <span class="cmt"># read</span>
+m[<span class="str">"new_key"</span>] = value  <span class="cmt"># write</span></code></pre>
+
+    <!-- 9. Bitwise -->
+    <h2 id="bitwise">9. Bitwise Operations</h2>
+    <p>Bitwise operators work on integer values:</p>
+<pre data-lang="rampyaaryan"><code>a <span class="op">&amp;</span> b       <span class="cmt"># AND</span>
+a <span class="op">|</span> b       <span class="cmt"># OR</span>
+a <span class="op">^</span> b       <span class="cmt"># XOR</span>
+<span class="op">~</span>a          <span class="cmt"># NOT (complement)</span>
+a <span class="op">&lt;&lt;</span> n      <span class="cmt"># Left shift</span>
+a <span class="op">&gt;&gt;</span> n      <span class="cmt"># Right shift</span></code></pre>
+
+    <!-- 10. Runtime Architecture -->
+    <h2 id="runtime">10. Runtime Architecture</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h4>Compilation</h4>
+        <p>Single-pass Pratt parser compiles source code into bytecode. No AST is generated &mdash; the parser emits bytecode directly.</p>
+      </div>
+      <div class="card">
+        <h4>Execution</h4>
+        <p>Stack-based virtual machine interprets bytecode using a dispatch loop with computed gotos (where available).</p>
+      </div>
+      <div class="card">
+        <h4>Memory</h4>
+        <p>Mark-sweep garbage collector with automatic memory management. Objects are tracked in a linked list.</p>
+      </div>
+      <div class="card">
+        <h4>Strings</h4>
+        <p>All strings are interned using FNV-1a hashing. String equality is O(1) pointer comparison.</p>
+      </div>
+      <div class="card">
+        <h4>Variables</h4>
+        <p>Global variables use a hash table. Local variables use dedicated stack slots for maximum performance.</p>
+      </div>
+      <div class="card">
+        <h4>Functions</h4>
+        <p>First-class closures with upvalue tracking. Supports recursion, higher-order functions, and currying.</p>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <strong>Implementation note:</strong> Rampyaaryan is implemented in ~4000 lines of portable C99 with zero external dependencies. It compiles with any C99-compliant compiler (GCC, Clang, MSVC).
+    </div>
+
+    <!-- Prev/Next -->
+    <div class="page-nav">
+      <a href="api.html">
+        <div class="nav-label">&larr; Previous</div>
+        <div class="nav-title">API Reference</div>
+      </a>
+      <a href="examples.html" style="text-align:right">
+        <div class="nav-label">Next &rarr;</div>
+        <div class="nav-title">Examples</div>
+      </a>
+    </div>
+
+    <div class="page-footer">
+      Made with &#x2764;&#xFE0F; for India &#x1F1EE;&#x1F1F3; &mdash;
+      <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+    </div>
+
+  </div>
+</main>
+
+<button class="back-to-top" aria-label="Back to top">&#x2191;</button>
+<script src="script.js"></script>
+</body>
+</html>

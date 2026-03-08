@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started — Rampyaaryan Documentation</title>
+  <meta name="description" content="Install Rampyaaryan, build from source, and run your first Hinglish program.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" aria-label="Menu">&#9776;</button>
+<div class="overlay"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>&#x1F64F; Rampyaaryan</h1>
+    <div class="subtitle">Documentation v2.0</div>
+  </div>
+  <div class="search-box"><input type="text" placeholder="Search docs..."></div>
+  <nav class="sidebar-nav">
+    <div class="section-title">Getting Started</div>
+    <a href="index.html"><span class="nav-icon">&#x1F3E0;</span> Home</a>
+    <a href="getting-started.html" class="active"><span class="nav-icon">&#x1F680;</span> Getting Started</a>
+    <a href="tutorial.html"><span class="nav-icon">&#x1F393;</span> Tutorial</a>
+    <div class="section-title">Reference</div>
+    <a href="api.html"><span class="nav-icon">&#x1F4DA;</span> API Reference</a>
+    <a href="spec.html"><span class="nav-icon">&#x1F4DC;</span> Language Spec</a>
+    <a href="examples.html"><span class="nav-icon">&#x1F4BB;</span> Examples</a>
+    <div class="section-title">More</div>
+    <a href="howto.html"><span class="nav-icon">&#x1F4D6;</span> How-To Guide</a>
+    <a href="changelog.html"><span class="nav-icon">&#x1F4CB;</span> Changelog</a>
+    <a href="contributing.html"><span class="nav-icon">&#x1F91D;</span> Contributing</a>
+  </nav>
+  <div class="sidebar-footer"><a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License</div>
+</aside>
+
+<main class="main-content">
+  <div class="content-wrapper">
+
+    <div class="page-header">
+      <a href="index.html">Docs</a> <span>/</span> <span>Getting Started</span>
+    </div>
+
+    <h1>Getting Started</h1>
+    <p>Get Rampyaaryan running on your machine in under 5 minutes. Choose the installation method that suits your platform.</p>
+
+    <!-- Installation -->
+    <h2 id="installation">Installation</h2>
+
+    <h3 id="windows">Windows</h3>
+<pre data-lang="powershell"><code><span class="cmt"># Option 1: Download pre-built binary from Releases</span>
+<span class="cmt"># https://github.com/Rampyaaryans/rampyaaryan/releases</span>
+
+<span class="cmt"># Option 2: Build from source (MinGW/MSYS2)</span>
+git clone https://github.com/Rampyaaryans/rampyaaryan.git
+cd rampyaaryan
+gcc -O2 -o rampyaaryan.exe src\memory.c src\value.c src\object.c src\table.c src\chunk.c src\lexer.c src\compiler.c src\vm.c src\native.c src\debug.c src\ascii_art.c src\main.c -lm</code></pre>
+
+    <h3 id="linux">Linux</h3>
+<pre data-lang="bash"><code><span class="cmt"># Option 1: Download binary</span>
+curl -L https://github.com/Rampyaaryans/rampyaaryan/releases/latest/download/rampyaaryan-linux-x64 -o rampyaaryan
+chmod +x rampyaaryan
+sudo mv rampyaaryan /usr/local/bin/
+
+<span class="cmt"># Option 2: Build from source</span>
+git clone https://github.com/Rampyaaryans/rampyaaryan.git
+cd rampyaaryan
+make
+sudo make install</code></pre>
+
+    <h3 id="macos">macOS</h3>
+<pre data-lang="bash"><code>curl -L https://github.com/Rampyaaryans/rampyaaryan/releases/latest/download/rampyaaryan-macos-x64 -o rampyaaryan
+chmod +x rampyaaryan
+sudo mv rampyaaryan /usr/local/bin/</code></pre>
+
+    <h3 id="cmake">Using CMake</h3>
+<pre data-lang="bash"><code>git clone https://github.com/Rampyaaryans/rampyaaryan.git
+cd rampyaaryan
+mkdir build && cd build
+cmake ..
+cmake --build .</code></pre>
+
+    <h3 id="verify">Verify Installation</h3>
+<pre data-lang="bash"><code>rampyaaryan --version
+<span class="cmt"># Output: Rampyaaryan v2.0.0 (bytecode VM, built ...)</span></code></pre>
+
+    <hr>
+
+    <!-- First Program -->
+    <h2 id="first-program">Your First Program</h2>
+
+    <p>Create a file called <code>namaste.ram</code>:</p>
+<pre data-lang="rampyaaryan"><code><span class="kw">likho</span> <span class="str">"&#x1F64F; Namaste Duniya!"</span>
+<span class="kw">likho</span> <span class="str">"Mera naam Rampyaaryan hai!"</span></code></pre>
+
+    <p>Run it:</p>
+<pre data-lang="bash"><code>rampyaaryan namaste.ram</code></pre>
+
+    <p>Output:</p>
+<pre><code>&#x1F64F; Namaste Duniya!
+Mera naam Rampyaaryan hai!</code></pre>
+
+    <div class="callout callout-tip">
+      <strong>Congratulations!</strong> You just ran your first Rampyaaryan program. Now try adding some variables and math.
+    </div>
+
+    <hr>
+
+    <!-- Interactive REPL -->
+    <h2 id="repl">Interactive REPL</h2>
+    <p>Start Rampyaaryan without any file to enter the interactive REPL (Read-Eval-Print Loop):</p>
+<pre data-lang="bash"><code>rampyaaryan</code></pre>
+
+    <p>Type expressions and see results immediately:</p>
+<pre><code>rpy&gt; likho 2 + 3
+5
+rpy&gt; maano naam = "Aryan"
+rpy&gt; likho "Hello, " + naam
+Hello, Aryan
+rpy&gt; likho factorial(10)
+3628800</code></pre>
+
+    <h3>REPL Commands</h3>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>.help</code></td><td>Show all keywords and built-in functions</td></tr>
+        <tr><td><code>.clear</code></td><td>Clear screen</td></tr>
+        <tr><td><code>.memory</code></td><td>Show memory usage statistics</td></tr>
+        <tr><td><code>.version</code></td><td>Show version information</td></tr>
+        <tr><td><code>.exit</code></td><td>Quit REPL</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <!-- Language Basics -->
+    <h2 id="basics">Language Basics</h2>
+
+    <h3>Variables</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> naam = <span class="str">"Rampyaaryan"</span>     <span class="cmt"># string</span>
+<span class="kw">maano</span> umar = <span class="num">25</span>               <span class="cmt"># number</span>
+<span class="kw">maano</span> active = <span class="kw">sach</span>           <span class="cmt"># boolean (true)</span>
+<span class="kw">maano</span> data = <span class="kw">khali</span>            <span class="cmt"># null</span>
+<span class="kw">maano</span> fruits = [<span class="str">"seb"</span>, <span class="str">"kela"</span>]  <span class="cmt"># list</span>
+<span class="kw">maano</span> info = {<span class="str">"key"</span>: <span class="str">"val"</span>}   <span class="cmt"># map</span></code></pre>
+
+    <h3>Data Types</h3>
+    <table>
+      <thead><tr><th>Type</th><th>Hindi Name</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td>Number</td><td>sankhya</td><td><code>42</code>, <code>3.14</code>, <code>-7</code></td></tr>
+        <tr><td>String</td><td>shabd</td><td><code>"hello"</code>, <code>"namaste"</code></td></tr>
+        <tr><td>Boolean</td><td>bool</td><td><code>sach</code> (true), <code>jhooth</code> (false)</td></tr>
+        <tr><td>Null</td><td>khali</td><td><code>khali</code></td></tr>
+        <tr><td>List</td><td>suchi</td><td><code>[1, 2, 3]</code></td></tr>
+        <tr><td>Function</td><td>kaam</td><td><code>kaam add(a, b) { ... }</code></td></tr>
+        <tr><td>Map/Dict</td><td>shabdkosh</td><td><code>{"key": "value"}</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Print &amp; Input</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">likho</span> <span class="str">"Namaste!"</span>                <span class="cmt"># print</span>
+<span class="kw">likho</span> <span class="str">"Sum:"</span>, <span class="num">2</span> <span class="op">+</span> <span class="num">3</span>             <span class="cmt"># multiple values</span>
+
+<span class="kw">maano</span> naam = <span class="fn">poocho</span>(<span class="str">"Name: "</span>)  <span class="cmt"># read input</span>
+<span class="kw">maano</span> umar = <span class="fn">sankhya</span>(<span class="fn">poocho</span>(<span class="str">"Umar: "</span>))</code></pre>
+
+    <h3>Conditions</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">agar</span> umar <span class="op">&gt;=</span> <span class="num">18</span> {
+    <span class="kw">likho</span> <span class="str">"Vote de sakte ho"</span>
+} <span class="kw">warna agar</span> umar <span class="op">&gt;=</span> <span class="num">13</span> {
+    <span class="kw">likho</span> <span class="str">"Teenager ho"</span>
+} <span class="kw">warna</span> {
+    <span class="kw">likho</span> <span class="str">"Chote ho"</span>
+}</code></pre>
+
+    <h3>Loops</h3>
+<pre data-lang="rampyaaryan"><code><span class="cmt"># While loop</span>
+<span class="kw">maano</span> i = <span class="num">0</span>
+<span class="kw">jab tak</span> i <span class="op">&lt;</span> <span class="num">5</span> {
+    <span class="kw">likho</span> i
+    i = i <span class="op">+</span> <span class="num">1</span>
+}
+
+<span class="cmt"># For loop</span>
+<span class="kw">har</span> i = <span class="num">1</span>; i <span class="op">&lt;=</span> <span class="num">10</span>; i = i <span class="op">+</span> <span class="num">1</span> {
+    <span class="kw">likho</span> i
+}</code></pre>
+
+    <h3>Functions</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">kaam</span> <span class="fn">factorial</span>(n) {
+    <span class="kw">agar</span> n <span class="op">&lt;=</span> <span class="num">1</span> { <span class="kw">wapas do</span> <span class="num">1</span> }
+    <span class="kw">wapas do</span> n <span class="op">*</span> <span class="fn">factorial</span>(n <span class="op">-</span> <span class="num">1</span>)
+}
+
+<span class="kw">likho</span> <span class="fn">factorial</span>(<span class="num">10</span>)   <span class="cmt"># 3628800</span></code></pre>
+
+    <h3>Lists</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> fruits = [<span class="str">"seb"</span>, <span class="str">"kela"</span>, <span class="str">"aam"</span>]
+<span class="fn">joodo</span>(fruits, <span class="str">"santara"</span>)     <span class="cmt"># append</span>
+<span class="kw">likho</span> fruits[<span class="num">0</span>]               <span class="cmt"># "seb"</span>
+<span class="kw">likho</span> <span class="fn">lambai</span>(fruits)          <span class="cmt"># 4</span></code></pre>
+
+    <h3>Maps / Dictionaries</h3>
+<pre data-lang="rampyaaryan"><code><span class="kw">maano</span> student = {<span class="str">"naam"</span>: <span class="str">"Aryan"</span>, <span class="str">"umar"</span>: <span class="num">20</span>}
+<span class="kw">likho</span> student[<span class="str">"naam"</span>]         <span class="cmt"># "Aryan"</span>
+<span class="kw">likho</span> <span class="fn">chabi</span>(student)          <span class="cmt"># ["naam", "umar"]</span></code></pre>
+
+    <hr>
+
+    <!-- Next Steps -->
+    <h2 id="next">Next Steps</h2>
+    <div class="card-grid">
+      <a class="card" href="tutorial.html">
+        <div class="card-icon">&#x1F393;</div>
+        <h3>Full Tutorial</h3>
+        <p>19 lessons from basics to advanced topics with hands-on projects.</p>
+      </a>
+      <a class="card" href="api.html">
+        <div class="card-icon">&#x1F4DA;</div>
+        <h3>API Reference</h3>
+        <p>Complete docs for all 145 built-in functions.</p>
+      </a>
+      <a class="card" href="examples.html">
+        <div class="card-icon">&#x1F4BB;</div>
+        <h3>Examples</h3>
+        <p>20 ready-to-run .ram programs to learn from.</p>
+      </a>
+    </div>
+
+    <!-- Prev/Next -->
+    <div class="page-nav">
+      <a href="index.html">
+        <div class="nav-label">&larr; Previous</div>
+        <div class="nav-title">Home</div>
+      </a>
+      <a href="tutorial.html" style="text-align:right">
+        <div class="nav-label">Next &rarr;</div>
+        <div class="nav-title">Tutorial</div>
+      </a>
+    </div>
+
+    <div class="page-footer">
+      Made with &#x2764;&#xFE0F; for India &#x1F1EE;&#x1F1F3; &mdash;
+      <a href="https://github.com/Rampyaaryans/rampyaaryan">GitHub</a> &middot; MIT License
+    </div>
+
+  </div>
+</main>
+
+<button class="back-to-top" aria-label="Back to top">&#x2191;</button>
+<script src="script.js"></script>
+</body>
+</html>
