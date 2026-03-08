@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.0 (2026-03-08)
+- **New Icon**: Golden R logo for marketplace and .ram file icon
+- **Fixed icon theme**: Only overrides .ram files, no longer replaces all default file/folder icons
+- **README**: Added instructions for selecting the Rampyaaryan File Icons theme
+
 ## 3.0.0 (2026-03-08)
 - **WebNeko Cat Panel**: Replaced emoji-based cat with a full animated canvas Neko (webneko.net style) in a WebView panel — sits, runs, sleeps, scratches, yawns, washes, and chases mouse
 - **Removed all emojis**: Cleaner, more professional UI throughout commands, themes, and status bar
