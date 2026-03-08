@@ -1,0 +1,41 @@
+/* ===== DESTRUCTURING TEST ===== */
+
+/* 1. Basic list destructuring */
+likho("=== 1. Basic List Destructuring ===")
+maano [a, b, c] = [10, 20, 30]
+likho(a)
+likho(b)
+likho(c)
+
+/* 2. From function return */
+likho("=== 2. From Function Return ===")
+kaam get_point() {
+    wapas do [3, 7]
+}
+maano [x, y] = get_point()
+likho(x)
+likho(y)
+
+/* 3. Swap variables */
+likho("=== 3. Swap Variables ===")
+maano p = 100
+maano q = 200
+maano [p, q] = [q, p]
+likho(p)
+likho(q)
+
+/* 4. Nested in scope */
+likho("=== 4. In Scope ===")
+{
+    maano [m, n] = [42, 99]
+    likho(m)
+    likho(n)
+}
+
+/* 5. With expressions */
+likho("=== 5. With Expressions ===")
+maano [d, e] = [1 + 2, 4 * 5]
+likho(d)
+likho(e)
+
+likho("=== ALL DESTRUCTURING TESTS PASSED ===")

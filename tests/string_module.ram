@@ -1,0 +1,13 @@
+/* string_module.ram - String utility module */
+
+kaam greet(name) {
+    wapas do "Namaste, " + name + "!"
+}
+
+kaam repeat_str(s, n) {
+    maano out = ""
+    har i se 0 tak n - 1 {
+        out = out + s
+    }
+    wapas do out
+}

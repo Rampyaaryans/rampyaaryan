@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include "value.h"
+#include "table.h"
 
 /* Forward declarations */
 typedef struct VM VM;
@@ -26,6 +27,9 @@ typedef enum {
     OBJ_UPVALUE,
     OBJ_LIST,
     OBJ_MAP,
+    OBJ_CLASS,
+    OBJ_INSTANCE,
+    OBJ_BOUND_METHOD,
 } ObjType;
 
 /* ============================================================================
@@ -47,6 +51,9 @@ struct Obj {
 #define IS_CLOSURE(value)   isObjType(value, OBJ_CLOSURE)
 #define IS_LIST(value)      isObjType(value, OBJ_LIST)
 #define IS_MAP(value)       isObjType(value, OBJ_MAP)
+#define IS_CLASS(value)     isObjType(value, OBJ_CLASS)
+#define IS_INSTANCE(value)  isObjType(value, OBJ_INSTANCE)
+#define IS_BOUND_METHOD(value) isObjType(value, OBJ_BOUND_METHOD)
 
 static inline bool isObjType(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
@@ -76,6 +83,8 @@ ObjString* repeatString(VM* vm, ObjString* str, int times);
 struct ObjFunction {
     Obj obj;
     int arity;
+    int minArity;
+    bool isVariadic;
     int upvalueCount;
     Chunk* chunk;
     ObjString* name;
@@ -169,6 +178,46 @@ bool mapDelete(ObjMap* map, Value key);
 bool mapHasKey(ObjMap* map, Value key);
 int mapLength(ObjMap* map);
 uint32_t hashValue(Value value);
+
+/* ============================================================================
+ *  CLASS OBJECT
+ * ============================================================================ */
+typedef struct ObjClass {
+    Obj obj;
+    ObjString* name;
+    Table methods;
+    struct ObjClass* superclass;
+} ObjClass;
+
+#define AS_CLASS(value)     ((ObjClass*)AS_OBJ(value))
+
+ObjClass* newClass(VM* vm, ObjString* name);
+
+/* ============================================================================
+ *  INSTANCE OBJECT
+ * ============================================================================ */
+typedef struct {
+    Obj obj;
+    ObjClass* klass;
+    Table fields;
+} ObjInstance;
+
+#define AS_INSTANCE(value)  ((ObjInstance*)AS_OBJ(value))
+
+ObjInstance* newInstance(VM* vm, ObjClass* klass);
+
+/* ============================================================================
+ *  BOUND METHOD
+ * ============================================================================ */
+typedef struct {
+    Obj obj;
+    Value receiver;
+    ObjClosure* method;
+} ObjBoundMethod;
+
+#define AS_BOUND_METHOD(value) ((ObjBoundMethod*)AS_OBJ(value))
+
+ObjBoundMethod* newBoundMethod(VM* vm, Value receiver, ObjClosure* method);
 
 /* ============================================================================
  *  OBJECT UTILITIES

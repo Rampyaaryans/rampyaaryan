@@ -1,0 +1,32 @@
+/* Test default parameters */
+likho("=== Default Parameters Test ===")
+
+/* Basic default */
+kaam greet(naam, greeting = "Namaste") {
+    likho(greeting + " " + naam + "!")
+}
+greet("Aryan")
+greet("Aryan", "Hello")
+
+/* Multiple defaults */
+kaam make_point(x, y = 0, z = 0) {
+    likho("Point: " + shabd(x) + "," + shabd(y) + "," + shabd(z))
+}
+make_point(1)
+make_point(1, 2)
+make_point(1, 2, 3)
+
+/* Default with expressions */
+kaam power(base, exp = 2) {
+    maano result = 1
+    maano i = 0
+    jab tak (i < exp) {
+        result = result * base
+        i = i + 1
+    }
+    wapas do result
+}
+likho(power(5))
+likho(power(2, 10))
+
+likho("=== Default Parameters PASSED ===")

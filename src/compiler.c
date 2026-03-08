@@ -80,6 +80,8 @@ typedef struct {
  * ============================================================================ */
 typedef enum {
     TYPE_FUNCTION,
+    TYPE_METHOD,
+    TYPE_INITIALIZER,
     TYPE_SCRIPT,
 } FunctionType;
 
@@ -104,6 +106,16 @@ typedef struct CompilerState {
  *  GLOBAL COMPILER POINTER (for GC)
  * ============================================================================ */
 static CompilerState* currentCompilerState = NULL;
+
+/* ============================================================================
+ *  CLASS COMPILER STATE
+ * ============================================================================ */
+typedef struct ClassCompiler {
+    struct ClassCompiler* enclosing;
+    bool hasSuperclass;
+} ClassCompiler;
+
+static ClassCompiler* currentClass = NULL;
 
 /* ============================================================================
  *  ERROR REPORTING
@@ -202,7 +214,11 @@ static void emitBytes(Parser* parser, uint8_t byte1, uint8_t byte2) {
 }
 
 static void emitReturn(Parser* parser) {
-    emitByte(parser, OP_NULL);
+    if (currentCS(parser)->type == TYPE_INITIALIZER) {
+        emitBytes(parser, OP_GET_LOCAL, 0); /* return 'yeh' */
+    } else {
+        emitByte(parser, OP_NULL);
+    }
     emitByte(parser, OP_RETURN);
 }
 
@@ -232,17 +248,49 @@ static void emitLoop(Parser* parser, int loopStart) {
     emitByte(parser, offset & 0xff);
 }
 
-static uint8_t makeConstant(Parser* parser, Value value) {
+static int makeConstant(Parser* parser, Value value) {
     int constant = addConstant(currentChunk(parser), value);
-    if (constant > UINT8_MAX) {
+    if (constant > 65535) {
         error(parser, "Ek chunk mein bahut saare constants hain.");
         return 0;
     }
-    return (uint8_t)constant;
+    return constant;
 }
 
 static void emitConstant(Parser* parser, Value value) {
-    emitBytes(parser, OP_CONSTANT, makeConstant(parser, value));
+    int constant = makeConstant(parser, value);
+    if (constant <= UINT8_MAX) {
+        emitBytes(parser, OP_CONSTANT, (uint8_t)constant);
+    } else {
+        emitByte(parser, OP_CONSTANT_LONG);
+        emitByte(parser, (uint8_t)(constant & 0xff));
+        emitByte(parser, (uint8_t)((constant >> 8) & 0xff));
+    }
+}
+
+/* Emit an opcode that takes a constant index operand, auto-selecting
+   short (1-byte) or long (2-byte little-endian) variant. */
+static void emitConstantOp(Parser* parser, uint8_t shortOp, uint8_t longOp, int constant) {
+    if (constant <= UINT8_MAX) {
+        emitBytes(parser, shortOp, (uint8_t)constant);
+    } else {
+        emitByte(parser, longOp);
+        emitByte(parser, (uint8_t)(constant & 0xff));
+        emitByte(parser, (uint8_t)((constant >> 8) & 0xff));
+    }
+}
+
+/* Emit an invoke-style opcode (constant + argCount), auto-selecting variant. */
+static void emitInvokeOp(Parser* parser, uint8_t shortOp, uint8_t longOp, int constant, uint8_t argCount) {
+    if (constant <= UINT8_MAX) {
+        emitBytes(parser, shortOp, (uint8_t)constant);
+        emitByte(parser, argCount);
+    } else {
+        emitByte(parser, longOp);
+        emitByte(parser, (uint8_t)(constant & 0xff));
+        emitByte(parser, (uint8_t)((constant >> 8) & 0xff));
+        emitByte(parser, argCount);
+    }
 }
 
 /* ============================================================================
@@ -266,12 +314,17 @@ static void initCompilerState(Parser* parser, CompilerState* cs, FunctionType ty
             parser->previous.start, parser->previous.length);
     }
 
-    /* Slot 0 is for the function itself */
+    /* Slot 0 is for the function itself (or 'yeh' for methods) */
     Local* local = &cs->locals[cs->localCount++];
     local->depth = 0;
     local->isCaptured = false;
-    local->name.start = "";
-    local->name.length = 0;
+    if (type == TYPE_METHOD || type == TYPE_INITIALIZER) {
+        local->name.start = "yeh";
+        local->name.length = 3;
+    } else {
+        local->name.start = "";
+        local->name.length = 0;
+    }
 }
 
 static ObjFunction* endCompiler(Parser* parser) {
@@ -397,7 +450,7 @@ static void declareVariable(Parser* parser) {
     addLocal(parser, *name);
 }
 
-static uint8_t identifierConstant(Parser* parser, Token* name) {
+static int identifierConstant(Parser* parser, Token* name) {
     return makeConstant(parser, OBJ_VAL(
         copyString(parser->vm, name->start, name->length)));
 }
@@ -408,7 +461,7 @@ static void markInitialized(Parser* parser) {
     cs->locals[cs->localCount - 1].depth = cs->scopeDepth;
 }
 
-static uint8_t parseVariable(Parser* parser, const char* errorMessage) {
+static int parseVariable(Parser* parser, const char* errorMessage) {
     consume(parser, TOKEN_IDENTIFIER, errorMessage);
 
     declareVariable(parser);
@@ -417,12 +470,18 @@ static uint8_t parseVariable(Parser* parser, const char* errorMessage) {
     return identifierConstant(parser, &parser->previous);
 }
 
-static void defineVariable(Parser* parser, uint8_t global) {
+static void defineVariable(Parser* parser, int global) {
     if (currentCS(parser)->scopeDepth > 0) {
         markInitialized(parser);
         return;
     }
-    emitBytes(parser, OP_DEFINE_GLOBAL, global);
+    if (global <= UINT8_MAX) {
+        emitBytes(parser, OP_DEFINE_GLOBAL, (uint8_t)global);
+    } else {
+        emitByte(parser, OP_DEFINE_GLOBAL_LONG);
+        emitByte(parser, (uint8_t)(global & 0xff));
+        emitByte(parser, (uint8_t)((global >> 8) & 0xff));
+    }
 }
 
 /* ============================================================================
@@ -434,6 +493,10 @@ static void declaration(Parser* parser);
 static ParseRule* getRule(RamTokenType type);
 static void parsePrecedence(Parser* parser, Precedence precedence);
 static void block(Parser* parser);
+static void function(Parser* parser, FunctionType type);
+static void forInLoop(Parser* parser, Token varName);
+static Token syntheticToken(const char* text);
+static void importStatement(Parser* parser);
 
 /* ============================================================================
  *  EXPRESSION PARSERS
@@ -486,6 +549,118 @@ static void stringLiteral(Parser* parser, bool canAssign) {
     ObjString* str = copyString(parser->vm, buffer, destLen);
     free(buffer);
     emitConstant(parser, OBJ_VAL(str));
+}
+
+static void tripleStringLiteral(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+    /* Skip surrounding triple quotes (""" or ''') */
+    const char* src = parser->previous.start + 3;
+    int srcLen = parser->previous.length - 6;
+
+    char* buffer = (char*)malloc(srcLen + 1);
+    int destLen;
+    processEscapes(src, srcLen, buffer, &destLen);
+    buffer[destLen] = '\0';
+
+    ObjString* str = copyString(parser->vm, buffer, destLen);
+    free(buffer);
+    emitConstant(parser, OBJ_VAL(str));
+}
+
+/* Helper: emit the text part of an interpolation token. */
+static void emitInterpSegment(Parser* parser) {
+    const char* src = parser->previous.start;
+    int len = parser->previous.length;
+
+    /* INTERP_START token includes the opening " at the start */
+    if (parser->previous.type == TOKEN_INTERP_START) {
+        src++; len--;
+    }
+    /* INTERP_END token includes the closing " at the end */
+    if (parser->previous.type == TOKEN_INTERP_END) {
+        len--;
+    }
+    /* INTERP_MID has no quotes to strip */
+
+    if (len > 0) {
+        char* buffer = (char*)malloc(len + 1);
+        int destLen;
+        processEscapes(src, len, buffer, &destLen);
+        buffer[destLen] = '\0';
+        ObjString* str = copyString(parser->vm, buffer, destLen);
+        free(buffer);
+        emitConstant(parser, OBJ_VAL(str));
+    } else {
+        emitConstant(parser, OBJ_VAL(copyString(parser->vm, "", 0)));
+    }
+}
+
+/* String interpolation: "text ${expr} more ${expr2} end" */
+static void interpolation(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+
+    /* Emit the prefix string segment */
+    emitInterpSegment(parser);
+
+    /* Parse the interpolated expression */
+    expression(parser);
+    /* Convert to string via shabd()-like concatenation: add to prefix */
+    emitByte(parser, OP_ADD);
+
+    /* Continue consuming middle segments and expressions */
+    while (parser->current.type == TOKEN_INTERP_MID) {
+        advanceParser(parser);
+        emitInterpSegment(parser);
+        emitByte(parser, OP_ADD);
+        expression(parser);
+        emitByte(parser, OP_ADD);
+    }
+
+    /* Final segment */
+    consume(parser, TOKEN_INTERP_END, "String interpolation band nahi hui.");
+    emitInterpSegment(parser);
+    emitByte(parser, OP_ADD);
+}
+
+/* --- TERNARY: condition ? trueExpr : falseExpr --- */
+static void ternary(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+    /* condition already on stack, ? already consumed */
+    int thenJump = emitJump(parser, OP_JUMP_IF_FALSE);
+    emitByte(parser, OP_POP); /* pop condition */
+    parsePrecedence(parser, PREC_ASSIGNMENT); /* true branch */
+    int elseJump = emitJump(parser, OP_JUMP);
+    patchJump(parser, thenJump);
+    emitByte(parser, OP_POP); /* pop condition */
+    consume(parser, TOKEN_COLON, "':' lagao ternary '?' ke baad.");
+    parsePrecedence(parser, PREC_ASSIGNMENT); /* false branch */
+    patchJump(parser, elseJump);
+}
+
+/* --- NULL COALESCING (??) --- */
+static void nullCoalesce(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+    /* Left side already on stack, ?? consumed */
+    /* If left is NOT null, keep it; else use right side */
+    emitByte(parser, OP_DUP);
+    emitByte(parser, OP_NULL);
+    emitByte(parser, OP_EQUAL);
+    int skipJump = emitJump(parser, OP_JUMP_IF_FALSE);
+    emitByte(parser, OP_POP); /* pop true (is null) */
+    emitByte(parser, OP_POP); /* pop the null value */
+    parsePrecedence(parser, PREC_OR); /* parse right side */
+    int doneJump = emitJump(parser, OP_JUMP);
+    patchJump(parser, skipJump);
+    emitByte(parser, OP_POP); /* pop false (not null) */
+    patchJump(parser, doneJump);
+}
+
+/* --- IN OPERATOR (mein) --- */
+static void inOperator(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+    /* Left side (needle) already on stack, 'mein' consumed */
+    parsePrecedence(parser, PREC_COMPARISON + 1); /* parse collection */
+    emitByte(parser, OP_IN);
 }
 
 /* --- GROUPING --- */
@@ -550,43 +725,74 @@ static void literal(Parser* parser, bool canAssign) {
 }
 
 /* --- VARIABLE (get/set) --- */
+static void emitVarOp(Parser* parser, uint8_t shortOp, uint8_t longOp, int arg) {
+    if (arg <= UINT8_MAX) {
+        emitBytes(parser, shortOp, (uint8_t)arg);
+    } else {
+        emitByte(parser, longOp);
+        emitByte(parser, (uint8_t)(arg & 0xff));
+        emitByte(parser, (uint8_t)((arg >> 8) & 0xff));
+    }
+}
+
 static void namedVariable(Parser* parser, Token name, bool canAssign) {
     uint8_t getOp, setOp;
+    uint8_t getLongOp, setLongOp;
     int arg = resolveLocal(parser, currentCS(parser), &name);
 
     if (arg != -1) {
         getOp = OP_GET_LOCAL;
         setOp = OP_SET_LOCAL;
+        getLongOp = OP_GET_LOCAL;
+        setLongOp = OP_SET_LOCAL;
     } else if ((arg = resolveUpvalue(parser, currentCS(parser), &name)) != -1) {
         getOp = OP_GET_UPVALUE;
         setOp = OP_SET_UPVALUE;
+        getLongOp = OP_GET_UPVALUE;
+        setLongOp = OP_SET_UPVALUE;
     } else {
         arg = identifierConstant(parser, &name);
         getOp = OP_GET_GLOBAL;
         setOp = OP_SET_GLOBAL;
+        getLongOp = OP_GET_GLOBAL_LONG;
+        setLongOp = OP_SET_GLOBAL_LONG;
     }
 
     if (canAssign && matchToken(parser, TOKEN_EQUAL)) {
         expression(parser);
-        emitBytes(parser, setOp, (uint8_t)arg);
+        emitVarOp(parser, setOp, setLongOp, arg);
     } else if (canAssign && (check(parser, TOKEN_PLUS_EQUAL) ||
                check(parser, TOKEN_MINUS_EQUAL) ||
                check(parser, TOKEN_STAR_EQUAL) ||
-               check(parser, TOKEN_SLASH_EQUAL))) {
+               check(parser, TOKEN_SLASH_EQUAL) ||
+               check(parser, TOKEN_PERCENT_EQUAL) ||
+               check(parser, TOKEN_STAR_STAR_EQUAL) ||
+               check(parser, TOKEN_AMPERSAND_EQUAL) ||
+               check(parser, TOKEN_PIPE_EQUAL) ||
+               check(parser, TOKEN_CARET_EQUAL) ||
+               check(parser, TOKEN_LESS_LESS_EQUAL) ||
+               check(parser, TOKEN_GREATER_GREATER_EQUAL))) {
         RamTokenType opType = parser->current.type;
         advanceParser(parser);
-        emitBytes(parser, getOp, (uint8_t)arg);
+        emitVarOp(parser, getOp, getLongOp, arg);
         expression(parser);
         switch (opType) {
-            case TOKEN_PLUS_EQUAL:  emitByte(parser, OP_ADD); break;
-            case TOKEN_MINUS_EQUAL: emitByte(parser, OP_SUBTRACT); break;
-            case TOKEN_STAR_EQUAL:  emitByte(parser, OP_MULTIPLY); break;
-            case TOKEN_SLASH_EQUAL: emitByte(parser, OP_DIVIDE); break;
+            case TOKEN_PLUS_EQUAL:      emitByte(parser, OP_ADD); break;
+            case TOKEN_MINUS_EQUAL:     emitByte(parser, OP_SUBTRACT); break;
+            case TOKEN_STAR_EQUAL:      emitByte(parser, OP_MULTIPLY); break;
+            case TOKEN_SLASH_EQUAL:     emitByte(parser, OP_DIVIDE); break;
+            case TOKEN_PERCENT_EQUAL:   emitByte(parser, OP_MODULO); break;
+            case TOKEN_STAR_STAR_EQUAL: emitByte(parser, OP_POWER); break;
+            case TOKEN_AMPERSAND_EQUAL: emitByte(parser, OP_BIT_AND); break;
+            case TOKEN_PIPE_EQUAL:      emitByte(parser, OP_BIT_OR); break;
+            case TOKEN_CARET_EQUAL:     emitByte(parser, OP_BIT_XOR); break;
+            case TOKEN_LESS_LESS_EQUAL: emitByte(parser, OP_SHIFT_LEFT); break;
+            case TOKEN_GREATER_GREATER_EQUAL: emitByte(parser, OP_SHIFT_RIGHT); break;
             default: break;
         }
-        emitBytes(parser, setOp, (uint8_t)arg);
+        emitVarOp(parser, setOp, setLongOp, arg);
     } else {
-        emitBytes(parser, getOp, (uint8_t)arg);
+        emitVarOp(parser, getOp, getLongOp, arg);
     }
 }
 
@@ -640,6 +846,123 @@ static void call(Parser* parser, bool canAssign) {
 /* --- LIST LITERAL --- */
 static void listLiteral(Parser* parser, bool canAssign) {
     UNUSED(canAssign);
+
+    /* Check for list comprehension: [har x mein list : expr] */
+    if (check(parser, TOKEN_HAR)) {
+        /* List comprehension */
+        advanceParser(parser); /* consume 'har' */
+
+        beginScope(parser);
+
+        /* Create empty result list */
+        emitBytes(parser, OP_LIST_NEW, (uint8_t)0);
+        /* Store result list as hidden local */
+        Token resultToken = syntheticToken("__natija");
+        addLocal(parser, resultToken);
+        markInitialized(parser);
+        int resultSlot = currentCS(parser)->localCount - 1;
+
+        /* Parse: x mein iterable */
+        consume(parser, TOKEN_IDENTIFIER, "Loop variable ka naam do.");
+        Token varName = parser->previous;
+
+        consume(parser, TOKEN_MEIN, "'mein' lagao list comprehension mein.");
+
+        /* Evaluate iterable and store as hidden local */
+        expression(parser);
+        Token listTok = syntheticToken("__suchi");
+        addLocal(parser, listTok);
+        markInitialized(parser);
+        int listSlot = currentCS(parser)->localCount - 1;
+
+        /* Get length */
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)listSlot);
+        emitByte(parser, OP_LENGTH);
+        Token lenTok = syntheticToken("__lambai");
+        addLocal(parser, lenTok);
+        markInitialized(parser);
+        int lenSlot = currentCS(parser)->localCount - 1;
+
+        /* Index = 0 */
+        emitConstant(parser, NUMBER_VAL(0));
+        Token idxTok = syntheticToken("__ganana");
+        addLocal(parser, idxTok);
+        markInitialized(parser);
+        int idxSlot = currentCS(parser)->localCount - 1;
+
+        /* Declare loop variable */
+        addLocal(parser, varName);
+        emitByte(parser, OP_NULL);
+        markInitialized(parser);
+        int varSlot = currentCS(parser)->localCount - 1;
+
+        /* Loop start */
+        int loopStart = currentChunk(parser)->count;
+
+        /* Condition: idx < len */
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)idxSlot);
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)lenSlot);
+        emitByte(parser, OP_LESS);
+
+        int exitJump = emitJump(parser, OP_JUMP_IF_FALSE);
+        emitByte(parser, OP_POP);
+
+        /* Set x = list[idx] */
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)listSlot);
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)idxSlot);
+        emitByte(parser, OP_LIST_GET);
+        emitBytes(parser, OP_SET_LOCAL, (uint8_t)varSlot);
+        emitByte(parser, OP_POP);
+
+        /* Check for filter: agar condition */
+        int filterJump = -1;
+        bool hasFilter = false;
+        if (matchToken(parser, TOKEN_AGAR)) {
+            hasFilter = true;
+            expression(parser);
+            filterJump = emitJump(parser, OP_JUMP_IF_FALSE);
+            emitByte(parser, OP_POP);
+        }
+
+        /* Parse: : expr */
+        consume(parser, TOKEN_COLON, "':' lagao expression se pehle list comprehension mein.");
+        skipNewlines(parser);
+
+        /* Evaluate expression and append to result */
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)resultSlot);
+        expression(parser);
+        emitByte(parser, OP_LIST_APPEND);
+        emitByte(parser, OP_POP); /* pop list ref from OP_LIST_APPEND (it stays on stack via local) */
+
+        if (hasFilter) {
+            int skipJump = emitJump(parser, OP_JUMP);
+            patchJump(parser, filterJump);
+            emitByte(parser, OP_POP); /* pop false from filter */
+            patchJump(parser, skipJump);
+        }
+
+        /* Increment index */
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)idxSlot);
+        emitConstant(parser, NUMBER_VAL(1));
+        emitByte(parser, OP_ADD);
+        emitBytes(parser, OP_SET_LOCAL, (uint8_t)idxSlot);
+        emitByte(parser, OP_POP);
+
+        emitLoop(parser, loopStart);
+
+        patchJump(parser, exitJump);
+        emitByte(parser, OP_POP); /* pop false from condition */
+
+        /* Get result list back on stack */
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)resultSlot);
+
+        skipNewlines(parser);
+        consume(parser, TOKEN_RIGHT_BRACKET, "']' lagao list comprehension band karne ke liye.");
+
+        endScope(parser);
+        return;
+    }
+
     int itemCount = 0;
     if (!check(parser, TOKEN_RIGHT_BRACKET)) {
         do {
@@ -676,7 +999,37 @@ static void mapLiteral(Parser* parser, bool canAssign) {
 
 /* --- INDEX ACCESS --- */
 static void index_(Parser* parser, bool canAssign) {
+    /* Check for slice: obj[start:end] or obj[:end] or obj[start:] */
+    if (check(parser, TOKEN_COLON)) {
+        /* obj[:end] — start defaults to 0 */
+        emitConstant(parser, NUMBER_VAL(0));
+        advanceParser(parser); /* consume ':' */
+        if (check(parser, TOKEN_RIGHT_BRACKET)) {
+            /* obj[:] — end defaults to length (use large sentinel) */
+            emitConstant(parser, NUMBER_VAL(2147483647));
+        } else {
+            expression(parser);
+        }
+        consume(parser, TOKEN_RIGHT_BRACKET, "']' lagao slice ke baad.");
+        emitByte(parser, OP_SLICE);
+        return;
+    }
+
     expression(parser);
+
+    /* Check if this is a slice: obj[start:end] */
+    if (matchToken(parser, TOKEN_COLON)) {
+        if (check(parser, TOKEN_RIGHT_BRACKET)) {
+            /* obj[start:] — end defaults to length (use large sentinel) */
+            emitConstant(parser, NUMBER_VAL(2147483647));
+        } else {
+            expression(parser);
+        }
+        consume(parser, TOKEN_RIGHT_BRACKET, "']' lagao slice ke baad.");
+        emitByte(parser, OP_SLICE);
+        return;
+    }
+
     consume(parser, TOKEN_RIGHT_BRACKET, "']' lagao index ke baad.");
 
     if (canAssign && matchToken(parser, TOKEN_EQUAL)) {
@@ -700,6 +1053,119 @@ static void inputExpr(Parser* parser, bool canAssign) {
     emitByte(parser, OP_INPUT);
 }
 
+/* --- DOT (property access / method call) --- */
+static void dot(Parser* parser, bool canAssign) {
+    consume(parser, TOKEN_IDENTIFIER, "Property ka naam do '.' ke baad.");
+    int name = identifierConstant(parser, &parser->previous);
+
+    if (canAssign && matchToken(parser, TOKEN_EQUAL)) {
+        expression(parser);
+        emitConstantOp(parser, OP_SET_PROPERTY, OP_SET_PROPERTY_LONG, name);
+    } else if (matchToken(parser, TOKEN_LEFT_PAREN)) {
+        uint8_t argCount = argumentList(parser);
+        emitInvokeOp(parser, OP_INVOKE, OP_INVOKE_LONG, name, argCount);
+    } else {
+        emitConstantOp(parser, OP_GET_PROPERTY, OP_GET_PROPERTY_LONG, name);
+    }
+}
+
+/* --- YEH (this/self) --- */
+static void yeh_(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+    if (currentClass == NULL) {
+        error(parser, "'yeh' sirf kaksha ke methods mein use kar sakte ho.");
+        return;
+    }
+    variable(parser, false);
+}
+
+/* --- Synthetic Token helper --- */
+static Token syntheticToken(const char* text) {
+    Token token;
+    token.start = text;
+    token.length = (int)strlen(text);
+    token.line = 0;
+    token.column = 0;
+    return token;
+}
+
+/* --- SUPER --- */
+static void super_(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+    if (currentClass == NULL) {
+        error(parser, "'super' sirf kaksha ke andar use kar sakte ho.");
+        return;
+    }
+    if (!currentClass->hasSuperclass) {
+        error(parser, "'super' tab hi use kar sakte ho jab kaksha inherit kare.");
+        return;
+    }
+
+    consume(parser, TOKEN_DOT, "'.' lagao 'super' ke baad.");
+    consume(parser, TOKEN_IDENTIFIER, "Superclass method ka naam do.");
+    int name = identifierConstant(parser, &parser->previous);
+
+    namedVariable(parser, syntheticToken("yeh"), false);
+
+    if (matchToken(parser, TOKEN_LEFT_PAREN)) {
+        uint8_t argCount = argumentList(parser);
+        namedVariable(parser, syntheticToken("super"), false);
+        emitInvokeOp(parser, OP_SUPER_INVOKE, OP_SUPER_INVOKE_LONG, name, argCount);
+    } else {
+        namedVariable(parser, syntheticToken("super"), false);
+        emitConstantOp(parser, OP_GET_SUPER, OP_GET_SUPER_LONG, name);
+    }
+}
+
+/* --- LAMBDA (anonymous function expression) --- */
+static void lambdaExpression(Parser* parser, bool canAssign) {
+    UNUSED(canAssign);
+
+    CompilerState cs;
+    initCompilerState(parser, &cs, TYPE_FUNCTION);
+    cs.function->name = NULL; /* anonymous */
+    beginScope(parser);
+
+    consume(parser, TOKEN_LEFT_PAREN, "'(' lagao lambda parameters ke liye.");
+    if (!check(parser, TOKEN_RIGHT_PAREN)) {
+        do {
+            currentCS(parser)->function->arity++;
+            if (currentCS(parser)->function->arity > 255) {
+                errorAtCurrent(parser, "255 se zyada parameters nahi rakh sakte.");
+            }
+            int constant = parseVariable(parser, "Parameter ka naam do.");
+            defineVariable(parser, constant);
+        } while (matchToken(parser, TOKEN_COMMA));
+    }
+    consume(parser, TOKEN_RIGHT_PAREN, "')' lagao parameters ke baad.");
+
+    skipNewlines(parser);
+
+    if (matchToken(parser, TOKEN_ARROW)) {
+        /* Arrow body: kaam (x) => expr */
+        expression(parser);
+        emitByte(parser, OP_RETURN);
+    } else {
+        consume(parser, TOKEN_LEFT_BRACE, "'{' ya '=>' lagao lambda body ke liye.");
+        block(parser);
+    }
+
+    ObjFunction* fn = endCompiler(parser);
+    int closureConstant = makeConstant(parser, OBJ_VAL(fn));
+    if (closureConstant <= UINT8_MAX) {
+        emitBytes(parser, OP_CLOSURE, (uint8_t)closureConstant);
+    } else {
+        emitByte(parser, OP_CLOSURE_LONG);
+        emitByte(parser, (uint8_t)(closureConstant & 0xff));
+        emitByte(parser, (uint8_t)((closureConstant >> 8) & 0xff));
+    }
+
+    for (int i = 0; i < fn->upvalueCount; i++) {
+        emitByte(parser, cs.upvalues[i].isLocal ? 1 : 0);
+        emitByte(parser, cs.upvalues[i].index);
+    }
+}
+
 /* ============================================================================
  *  PARSE RULES TABLE (Pratt parser)
  * ============================================================================ */
@@ -711,7 +1177,8 @@ static ParseRule rules[] = {
     [TOKEN_LEFT_BRACKET]  = {listLiteral, index_, PREC_CALL},
     [TOKEN_RIGHT_BRACKET] = {NULL,     NULL,    PREC_NONE},
     [TOKEN_COMMA]         = {NULL,     NULL,    PREC_NONE},
-    [TOKEN_DOT]           = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_DOT]           = {NULL,     dot,     PREC_CALL},
+    [TOKEN_DOT_DOT_DOT]  = {NULL,     NULL,    PREC_NONE},
     [TOKEN_COLON]         = {NULL,     NULL,    PREC_NONE},
     [TOKEN_SEMICOLON]     = {NULL,     NULL,    PREC_NONE},
     [TOKEN_MINUS]         = {unary,    binary,  PREC_TERM},
@@ -721,11 +1188,16 @@ static ParseRule rules[] = {
     [TOKEN_PERCENT]       = {NULL,     binary,  PREC_FACTOR},
     [TOKEN_STAR_STAR]     = {NULL,     binary,  PREC_POWER},
     [TOKEN_AMPERSAND]     = {NULL,     binary,  PREC_BIT_AND},
+    [TOKEN_AMPERSAND_EQUAL] = {NULL,   NULL,    PREC_NONE},
     [TOKEN_PIPE]          = {NULL,     binary,  PREC_BIT_OR},
+    [TOKEN_PIPE_EQUAL]    = {NULL,     NULL,    PREC_NONE},
     [TOKEN_CARET]         = {NULL,     binary,  PREC_BIT_XOR},
+    [TOKEN_CARET_EQUAL]   = {NULL,     NULL,    PREC_NONE},
     [TOKEN_TILDE]         = {unary,    NULL,    PREC_NONE},
     [TOKEN_LESS_LESS]     = {NULL,     binary,  PREC_SHIFT},
+    [TOKEN_LESS_LESS_EQUAL] = {NULL,   NULL,    PREC_NONE},
     [TOKEN_GREATER_GREATER] = {NULL,   binary,  PREC_SHIFT},
+    [TOKEN_GREATER_GREATER_EQUAL] = {NULL, NULL, PREC_NONE},
     [TOKEN_BANG]          = {unary,    NULL,    PREC_NONE},
     [TOKEN_BANG_EQUAL]    = {NULL,     binary,  PREC_EQUALITY},
     [TOKEN_EQUAL]         = {NULL,     NULL,    PREC_NONE},
@@ -738,8 +1210,11 @@ static ParseRule rules[] = {
     [TOKEN_MINUS_EQUAL]   = {NULL,     NULL,    PREC_NONE},
     [TOKEN_STAR_EQUAL]    = {NULL,     NULL,    PREC_NONE},
     [TOKEN_SLASH_EQUAL]   = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_PERCENT_EQUAL] = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_STAR_STAR_EQUAL] = {NULL,     NULL,    PREC_NONE},
     [TOKEN_IDENTIFIER]    = {variable, NULL,    PREC_NONE},
     [TOKEN_STRING]        = {stringLiteral, NULL, PREC_NONE},
+    [TOKEN_TRIPLE_STRING] = {tripleStringLiteral, NULL, PREC_NONE},
     [TOKEN_NUMBER]        = {numberLiteral, NULL, PREC_NONE},
     [TOKEN_MAANO]         = {NULL,     NULL,    PREC_NONE},
     [TOKEN_LIKHO]         = {NULL,     NULL,    PREC_NONE},
@@ -751,7 +1226,7 @@ static ParseRule rules[] = {
     [TOKEN_HAR]           = {NULL,     NULL,    PREC_NONE},
     [TOKEN_SE]            = {NULL,     NULL,    PREC_NONE},
     [TOKEN_TAK]           = {NULL,     NULL,    PREC_NONE},
-    [TOKEN_KAAM]          = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_KAAM]          = {lambdaExpression, NULL, PREC_NONE},
     [TOKEN_WAPAS_DO]      = {NULL,     NULL,    PREC_NONE},
     [TOKEN_RUKO]          = {NULL,     NULL,    PREC_NONE},
     [TOKEN_AGLA]          = {NULL,     NULL,    PREC_NONE},
@@ -761,6 +1236,34 @@ static ParseRule rules[] = {
     [TOKEN_AUR]           = {NULL,     and_,    PREC_AND},
     [TOKEN_YA]            = {NULL,     or_,     PREC_OR},
     [TOKEN_NAHI]          = {unary,    NULL,    PREC_NONE},
+
+    /* New token entries */
+    [TOKEN_KOSHISH]       = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_PAKDO]         = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_AAKHIR]        = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_PHENKO]        = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_KAKSHA]        = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_NAYA]          = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_YEH]           = {yeh_,     NULL,    PREC_NONE},
+    [TOKEN_SUPER]         = {super_,   NULL,    PREC_NONE},
+    [TOKEN_MEIN]          = {NULL,     inOperator, PREC_COMPARISON},
+    [TOKEN_KARO]          = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_GANANA]        = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_PAKKA]         = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_SHAMIL_KARO]   = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_BAHAR_BHEJO]   = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_DEKHO]         = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_JAB]           = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_CHALAO]        = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_ARROW]         = {NULL,     NULL,    PREC_NONE},
+
+    [TOKEN_INTERP_START]  = {interpolation, NULL, PREC_NONE},
+    [TOKEN_INTERP_MID]    = {NULL,     NULL,    PREC_NONE},
+    [TOKEN_INTERP_END]    = {NULL,     NULL,    PREC_NONE},
+
+    [TOKEN_QUESTION]      = {NULL,     ternary, PREC_ASSIGNMENT},
+    [TOKEN_QUESTION_QUESTION] = {NULL, nullCoalesce, PREC_OR},
+
     [TOKEN_NEWLINE]       = {NULL,     NULL,    PREC_NONE},
     [TOKEN_ERROR]         = {NULL,     NULL,    PREC_NONE},
     [TOKEN_EOF]           = {NULL,     NULL,    PREC_NONE},
@@ -938,12 +1441,83 @@ static void whileStatement(Parser* parser) {
 
 /* --- FOR (har x se start tak end) --- */
 static void forStatement(Parser* parser) {
-    beginScope(parser);
+    consume(parser, TOKEN_IDENTIFIER, "Loop variable ka naam do 'har' ke baad.");
+    Token varName = parser->previous;
+
+    /* Check for for-in: har x mein list { ... } */
+    if (matchToken(parser, TOKEN_MEIN)) {
+        forInLoop(parser, varName);
+        return;
+    }
+
+    /* Range-based for: har i se start tak end { ... } */
+    if (matchToken(parser, TOKEN_SE)) {
+        beginScope(parser);
+
+        /* Declare loop variable using the saved varName */
+        expression(parser); /* start value — this goes on stack as the var's value */
+        addLocal(parser, varName);
+        markInitialized(parser);
+        int varSlot = currentCS(parser)->localCount - 1;
+
+        consume(parser, TOKEN_TAK, "'tak' lagao range ke liye.");
+        /* Evaluate end value and store as hidden local */
+        expression(parser);
+        Token endToken = syntheticToken("__ant");
+        addLocal(parser, endToken);
+        markInitialized(parser);
+        int endSlot = currentCS(parser)->localCount - 1;
+
+        CompilerState* cs = currentCS(parser);
+        int surroundingLoopStart = cs->loopStart;
+        int surroundingLoopDepth = cs->loopScopeDepth;
+        int surroundingBreakCount = cs->breakCount;
+
+        int loopStart = currentChunk(parser)->count;
+        cs->loopStart = loopStart;
+        cs->loopScopeDepth = cs->scopeDepth;
+        cs->breakCount = 0;
+
+        /* Condition: i <= end */
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)varSlot);
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)endSlot);
+        emitByte(parser, OP_LESS_EQUAL);
+
+        int exitJump = emitJump(parser, OP_JUMP_IF_FALSE);
+        emitByte(parser, OP_POP);
+
+        skipNewlines(parser);
+        consume(parser, TOKEN_LEFT_BRACE, "'{' lagao loop body ke liye.");
+        beginScope(parser);
+        block(parser);
+        endScope(parser);
+        skipNewlines(parser);
+
+        /* Increment: i = i + 1 */
+        emitBytes(parser, OP_GET_LOCAL, (uint8_t)varSlot);
+        emitConstant(parser, NUMBER_VAL(1));
+        emitByte(parser, OP_ADD);
+        emitBytes(parser, OP_SET_LOCAL, (uint8_t)varSlot);
+        emitByte(parser, OP_POP);
+
+        emitLoop(parser, loopStart);
+        patchJump(parser, exitJump);
+        emitByte(parser, OP_POP);
+
+        for (int i = 0; i < cs->breakCount; i++) {
+            patchJump(parser, cs->breakJumps[i]);
+        }
+
+        cs->loopStart = surroundingLoopStart;
+        cs->loopScopeDepth = surroundingLoopDepth;
+        cs->breakCount = surroundingBreakCount;
+
+        endScope(parser);
+        return;
+    }
 
     /* C-style for: har i = 1; i <= 10; i = i + 1 { ... } */
-
-    /* --- Initializer: variable declaration --- */
-    consume(parser, TOKEN_IDENTIFIER, "Loop variable ka naam do 'har' ke baad.");
+    beginScope(parser);
     declareVariable(parser);
     markInitialized(parser);
 
@@ -1011,31 +1585,437 @@ static void forStatement(Parser* parser) {
     endScope(parser);
 }
 
+/* --- FOR-IN (har x mein list) --- */
+static void forInLoop(Parser* parser, Token varName) {
+    beginScope(parser);
+
+    /* Evaluate list expression and store as hidden local */
+    expression(parser);
+    emitByte(parser, OP_ITER_PREP); /* maps → keys list */
+    Token listToken = syntheticToken("__suchi");
+    addLocal(parser, listToken);
+    markInitialized(parser);
+    int listSlot = currentCS(parser)->localCount - 1;
+
+    /* Get length and store as hidden local */
+    emitBytes(parser, OP_GET_LOCAL, (uint8_t)listSlot);
+    emitByte(parser, OP_LENGTH);
+    Token lenToken = syntheticToken("__lambai");
+    addLocal(parser, lenToken);
+    markInitialized(parser);
+    int lenSlot = currentCS(parser)->localCount - 1;
+
+    /* Push 0 as initial index */
+    emitConstant(parser, NUMBER_VAL(0));
+    Token idxToken = syntheticToken("__ganana");
+    addLocal(parser, idxToken);
+    markInitialized(parser);
+    int idxSlot = currentCS(parser)->localCount - 1;
+
+    /* Declare iteration variable */
+    addLocal(parser, varName);
+    emitByte(parser, OP_NULL);
+    markInitialized(parser);
+    int varSlot = currentCS(parser)->localCount - 1;
+
+    /* Loop tracking */
+    CompilerState* cs = currentCS(parser);
+    int surroundingLoopStart = cs->loopStart;
+    int surroundingLoopDepth = cs->loopScopeDepth;
+    int surroundingBreakCount = cs->breakCount;
+
+    int loopStart = currentChunk(parser)->count;
+    cs->loopStart = loopStart;
+    cs->loopScopeDepth = cs->scopeDepth;
+    cs->breakCount = 0;
+
+    /* Condition: __idx < __len */
+    emitBytes(parser, OP_GET_LOCAL, (uint8_t)idxSlot);
+    emitBytes(parser, OP_GET_LOCAL, (uint8_t)lenSlot);
+    emitByte(parser, OP_LESS);
+
+    int exitJump = emitJump(parser, OP_JUMP_IF_FALSE);
+    emitByte(parser, OP_POP);
+
+    /* Set x = __list[__idx] */
+    emitBytes(parser, OP_GET_LOCAL, (uint8_t)listSlot);
+    emitBytes(parser, OP_GET_LOCAL, (uint8_t)idxSlot);
+    emitByte(parser, OP_LIST_GET);
+    emitBytes(parser, OP_SET_LOCAL, (uint8_t)varSlot);
+    emitByte(parser, OP_POP);
+
+    /* Parse body */
+    skipNewlines(parser);
+    consume(parser, TOKEN_LEFT_BRACE, "'{' lagao loop body ke liye.");
+    beginScope(parser);
+    block(parser);
+    endScope(parser);
+    skipNewlines(parser);
+
+    /* Increment: __idx = __idx + 1 */
+    int incrementStart = currentChunk(parser)->count;
+    cs->loopStart = incrementStart;
+    emitBytes(parser, OP_GET_LOCAL, (uint8_t)idxSlot);
+    emitConstant(parser, NUMBER_VAL(1));
+    emitByte(parser, OP_ADD);
+    emitBytes(parser, OP_SET_LOCAL, (uint8_t)idxSlot);
+    emitByte(parser, OP_POP);
+
+    emitLoop(parser, loopStart);
+
+    patchJump(parser, exitJump);
+    emitByte(parser, OP_POP);
+
+    for (int i = 0; i < cs->breakCount; i++) {
+        patchJump(parser, cs->breakJumps[i]);
+    }
+
+    cs->loopStart = surroundingLoopStart;
+    cs->loopScopeDepth = surroundingLoopDepth;
+    cs->breakCount = surroundingBreakCount;
+
+    endScope(parser);
+}
+
+/* --- TRY-CATCH (koshish/pakdo/aakhir) --- */
+static void tryCatchStatement(Parser* parser) {
+    skipNewlines(parser);
+    consume(parser, TOKEN_LEFT_BRACE, "'{' lagao 'koshish' ke baad.");
+
+    /* OP_TRY with offset to catch block */
+    int tryJump = emitJump(parser, OP_TRY);
+
+    beginScope(parser);
+    block(parser);
+    endScope(parser);
+
+    /* No error - pop handler */
+    emitByte(parser, OP_TRY_END);
+    int successJump = emitJump(parser, OP_JUMP);
+
+    /* Catch block starts here */
+    patchJump(parser, tryJump);
+
+    skipNewlines(parser);
+
+    if (matchToken(parser, TOKEN_PAKDO)) {
+        /* Error value is on stack (pushed by OP_THROW in VM) */
+        beginScope(parser);
+
+        if (matchToken(parser, TOKEN_LEFT_PAREN)) {
+            consume(parser, TOKEN_IDENTIFIER, "Error variable ka naam do.");
+            addLocal(parser, parser->previous);
+            markInitialized(parser);
+            consume(parser, TOKEN_RIGHT_PAREN, "')' lagao.");
+        }
+
+        skipNewlines(parser);
+        consume(parser, TOKEN_LEFT_BRACE, "'{' lagao 'pakdo' ke baad.");
+        block(parser);
+
+        endScope(parser);
+    } else {
+        /* No catch clause - pop the error */
+        emitByte(parser, OP_POP);
+    }
+
+    patchJump(parser, successJump);
+
+    /* Optional finally */
+    skipNewlines(parser);
+    if (matchToken(parser, TOKEN_AAKHIR)) {
+        skipNewlines(parser);
+        consume(parser, TOKEN_LEFT_BRACE, "'{' lagao 'aakhir' ke baad.");
+        beginScope(parser);
+        block(parser);
+        endScope(parser);
+    }
+}
+
+/* --- THROW (phenko) --- */
+/* --- ASSERT (pakka) --- */
+static void assertStatement(Parser* parser) {
+    expression(parser);
+    int skipJump = emitJump(parser, OP_JUMP_IF_FALSE);
+    emitByte(parser, OP_POP); /* pop true */
+    int doneJump = emitJump(parser, OP_JUMP);
+    patchJump(parser, skipJump);
+    emitByte(parser, OP_POP); /* pop false */
+
+    /* Check for optional message */
+    if (matchToken(parser, TOKEN_COMMA)) {
+        expression(parser); /* push custom message */
+    } else {
+        int msgConst = makeConstant(parser, OBJ_VAL(
+            copyString(parser->vm, "Assertion failed!", 17)));
+        emitConstantOp(parser, OP_CONSTANT, OP_CONSTANT_LONG, msgConst);
+    }
+    emitByte(parser, OP_THROW);
+    patchJump(parser, doneJump);
+    consumeNewlineOrEnd(parser);
+}
+
+static void throwStatement(Parser* parser) {
+    expression(parser);
+    emitByte(parser, OP_THROW);
+    consumeNewlineOrEnd(parser);
+}
+
+/* --- DO-WHILE (karo { ... } jab tak condition) --- */
+static void doWhileStatement(Parser* parser) {
+    CompilerState* cs = currentCS(parser);
+    int surroundingLoopStart = cs->loopStart;
+    int surroundingLoopDepth = cs->loopScopeDepth;
+    int surroundingBreakCount = cs->breakCount;
+
+    int loopStart = currentChunk(parser)->count;
+    cs->loopStart = loopStart;
+    cs->loopScopeDepth = cs->scopeDepth;
+    cs->breakCount = 0;
+
+    /* Body */
+    skipNewlines(parser);
+    consume(parser, TOKEN_LEFT_BRACE, "'{' lagao 'karo' ke baad.");
+    beginScope(parser);
+    block(parser);
+    endScope(parser);
+    skipNewlines(parser);
+
+    /* Condition: jab tak */
+    consume(parser, TOKEN_JAB_TAK, "'jab tak' lagao 'karo' loop ke baad.");
+    expression(parser);
+
+    int exitJump = emitJump(parser, OP_JUMP_IF_FALSE);
+    emitByte(parser, OP_POP);
+    emitLoop(parser, loopStart);
+
+    patchJump(parser, exitJump);
+    emitByte(parser, OP_POP);
+
+    for (int i = 0; i < cs->breakCount; i++) {
+        patchJump(parser, cs->breakJumps[i]);
+    }
+
+    cs->loopStart = surroundingLoopStart;
+    cs->loopScopeDepth = surroundingLoopDepth;
+    cs->breakCount = surroundingBreakCount;
+
+    consumeNewlineOrEnd(parser);
+}
+
+/* --- SWITCH (dekho) --- */
+static void switchStatement(Parser* parser) {
+    expression(parser);
+    skipNewlines(parser);
+    consume(parser, TOKEN_LEFT_BRACE, "'{' lagao 'dekho' ke baad.");
+    skipNewlines(parser);
+
+    int endJumps[256];
+    int endJumpCount = 0;
+
+    while (!check(parser, TOKEN_RIGHT_BRACE) && !check(parser, TOKEN_EOF)) {
+        skipNewlines(parser);
+        if (check(parser, TOKEN_RIGHT_BRACE)) break;
+
+        if (matchToken(parser, TOKEN_JAB)) {
+            /* Case: jab value { body } */
+            emitByte(parser, OP_DUP);
+            expression(parser);
+            emitByte(parser, OP_EQUAL);
+
+            int skipJump = emitJump(parser, OP_JUMP_IF_FALSE);
+            emitByte(parser, OP_POP);
+
+            skipNewlines(parser);
+            consume(parser, TOKEN_LEFT_BRACE, "'{' lagao 'jab' case ke baad.");
+            beginScope(parser);
+            block(parser);
+            endScope(parser);
+            skipNewlines(parser);
+
+            if (endJumpCount < 256) {
+                endJumps[endJumpCount++] = emitJump(parser, OP_JUMP);
+            }
+
+            patchJump(parser, skipJump);
+            emitByte(parser, OP_POP);
+
+        } else if (matchToken(parser, TOKEN_CHALAO)) {
+            /* Default: chalao { body } */
+            skipNewlines(parser);
+            consume(parser, TOKEN_LEFT_BRACE, "'{' lagao 'chalao' ke baad.");
+            beginScope(parser);
+            block(parser);
+            endScope(parser);
+            skipNewlines(parser);
+
+            if (endJumpCount < 256) {
+                endJumps[endJumpCount++] = emitJump(parser, OP_JUMP);
+            }
+        } else {
+            error(parser, "'jab' ya 'chalao' expected tha 'dekho' block mein.");
+            break;
+        }
+    }
+
+    consume(parser, TOKEN_RIGHT_BRACE, "'}' lagao 'dekho' band karne ke liye.");
+
+    for (int i = 0; i < endJumpCount; i++) {
+        patchJump(parser, endJumps[i]);
+    }
+
+    emitByte(parser, OP_POP); /* Pop switch value */
+}
+
+/* --- CLASS METHOD --- */
+static void method(Parser* parser) {
+    consume(parser, TOKEN_IDENTIFIER, "Method ka naam do.");
+    int constant = identifierConstant(parser, &parser->previous);
+
+    FunctionType type = TYPE_METHOD;
+    if (parser->previous.length == 5 &&
+        memcmp(parser->previous.start, "shuru", 5) == 0) {
+        type = TYPE_INITIALIZER;
+    }
+
+    function(parser, type);
+    emitConstantOp(parser, OP_METHOD, OP_METHOD_LONG, constant);
+}
+
+/* --- CLASS DECLARATION (kaksha) --- */
+static void classDeclaration(Parser* parser) {
+    consume(parser, TOKEN_IDENTIFIER, "Kaksha ka naam do.");
+    Token className = parser->previous;
+    int nameConstant = identifierConstant(parser, &className);
+
+    declareVariable(parser);
+
+    emitConstantOp(parser, OP_CLASS, OP_CLASS_LONG, nameConstant);
+    defineVariable(parser, nameConstant);
+
+    ClassCompiler classCompiler;
+    classCompiler.hasSuperclass = false;
+    classCompiler.enclosing = currentClass;
+    currentClass = &classCompiler;
+
+    /* Inheritance: kaksha Child : Parent */
+    if (matchToken(parser, TOKEN_COLON)) {
+        consume(parser, TOKEN_IDENTIFIER, "Parent kaksha ka naam do.");
+        variable(parser, false);
+
+        if (identifiersEqual(&className, &parser->previous)) {
+            error(parser, "Ek kaksha apne aap se inherit nahi kar sakti.");
+        }
+
+        beginScope(parser);
+        addLocal(parser, syntheticToken("super"));
+        defineVariable(parser, 0);
+
+        namedVariable(parser, className, false);
+        emitByte(parser, OP_INHERIT);
+        classCompiler.hasSuperclass = true;
+    }
+
+    namedVariable(parser, className, false);
+    skipNewlines(parser);
+    consume(parser, TOKEN_LEFT_BRACE, "'{' lagao kaksha body ke liye.");
+    skipNewlines(parser);
+
+    while (!check(parser, TOKEN_RIGHT_BRACE) && !check(parser, TOKEN_EOF)) {
+        skipNewlines(parser);
+        if (check(parser, TOKEN_RIGHT_BRACE)) break;
+        method(parser);
+        skipNewlines(parser);
+    }
+
+    consume(parser, TOKEN_RIGHT_BRACE, "'}' lagao kaksha band karne ke liye.");
+    emitByte(parser, OP_POP);
+
+    if (classCompiler.hasSuperclass) {
+        endScope(parser);
+    }
+
+    currentClass = currentClass->enclosing;
+}
+
 /* --- FUNCTION (kaam) --- */
 static void function(Parser* parser, FunctionType type) {
     CompilerState cs;
     initCompilerState(parser, &cs, type);
     beginScope(parser);
 
+    bool seenDefault = false;
+    bool isVariadic = false;
+    int requiredCount = 0;
+
     consume(parser, TOKEN_LEFT_PAREN, "'(' lagao function parameters ke liye.");
     if (!check(parser, TOKEN_RIGHT_PAREN)) {
         do {
+            if (isVariadic) {
+                error(parser, "Rest parameter (...) ke baad aur parameter nahi aa sakta.");
+            }
+
+            /* Check for rest parameter: ...name */
+            if (matchToken(parser, TOKEN_DOT_DOT_DOT)) {
+                isVariadic = true;
+                currentCS(parser)->function->isVariadic = true;
+            }
+
             currentCS(parser)->function->arity++;
             if (currentCS(parser)->function->arity > 255) {
                 errorAtCurrent(parser, "255 se zyada parameters nahi rakh sakte.");
             }
-            uint8_t constant = parseVariable(parser, "Parameter ka naam do.");
+            int constant = parseVariable(parser, "Parameter ka naam do.");
             defineVariable(parser, constant);
+
+            if (!isVariadic && matchToken(parser, TOKEN_EQUAL)) {
+                seenDefault = true;
+                /* Emit: if param == khali then param = default_expr */
+                int slot = currentCS(parser)->localCount - 1;
+                emitBytes(parser, OP_GET_LOCAL, (uint8_t)slot);
+                emitByte(parser, OP_NULL);
+                emitByte(parser, OP_EQUAL);
+                int jumpOver = emitJump(parser, OP_JUMP_IF_FALSE);
+                emitByte(parser, OP_POP); /* pop true */
+                expression(parser);       /* parse default value expression */
+                emitBytes(parser, OP_SET_LOCAL, (uint8_t)slot);
+                emitByte(parser, OP_POP); /* pop set result */
+                int jumpDone = emitJump(parser, OP_JUMP);
+                patchJump(parser, jumpOver);
+                emitByte(parser, OP_POP); /* pop false */
+                patchJump(parser, jumpDone);
+            } else if (!isVariadic) {
+                if (seenDefault) {
+                    error(parser, "Default parameter ke baad non-default parameter nahi aa sakta.");
+                }
+                requiredCount++;
+            }
         } while (matchToken(parser, TOKEN_COMMA));
     }
     consume(parser, TOKEN_RIGHT_PAREN, "')' lagao parameters ke baad.");
+
+    if (isVariadic) {
+        currentCS(parser)->function->minArity = requiredCount;
+    } else if (!seenDefault) {
+        currentCS(parser)->function->minArity = currentCS(parser)->function->arity;
+    } else {
+        currentCS(parser)->function->minArity = requiredCount;
+    }
+
     skipNewlines(parser);
     consume(parser, TOKEN_LEFT_BRACE, "'{' lagao function body shuru karne ke liye.");
     block(parser);
     skipNewlines(parser);
 
     ObjFunction* fn = endCompiler(parser);
-    emitBytes(parser, OP_CLOSURE, makeConstant(parser, OBJ_VAL(fn)));
+    int closureConstant = makeConstant(parser, OBJ_VAL(fn));
+    if (closureConstant <= UINT8_MAX) {
+        emitBytes(parser, OP_CLOSURE, (uint8_t)closureConstant);
+    } else {
+        emitByte(parser, OP_CLOSURE_LONG);
+        emitByte(parser, (uint8_t)(closureConstant & 0xff));
+        emitByte(parser, (uint8_t)((closureConstant >> 8) & 0xff));
+    }
 
     for (int i = 0; i < fn->upvalueCount; i++) {
         emitByte(parser, cs.upvalues[i].isLocal ? 1 : 0);
@@ -1044,7 +2024,7 @@ static void function(Parser* parser, FunctionType type) {
 }
 
 static void functionDeclaration(Parser* parser) {
-    uint8_t global = parseVariable(parser, "Function ka naam do 'kaam' ke baad.");
+    int global = parseVariable(parser, "Function ka naam do 'kaam' ke baad.");
     markInitialized(parser);
     function(parser, TYPE_FUNCTION);
     defineVariable(parser, global);
@@ -1054,6 +2034,10 @@ static void functionDeclaration(Parser* parser) {
 static void returnStatement(Parser* parser) {
     if (currentCS(parser)->type == TYPE_SCRIPT) {
         error(parser, "'wapas do' sirf function ke andar use kar sakte ho.");
+    }
+
+    if (currentCS(parser)->type == TYPE_INITIALIZER) {
+        error(parser, "Constructor (shuru) mein value return nahi kar sakte.");
     }
 
     if (check(parser, TOKEN_NEWLINE) || check(parser, TOKEN_EOF) ||
@@ -1106,7 +2090,62 @@ static void continueStatement(Parser* parser) {
 
 /* --- VARIABLE DECLARATION (maano) --- */
 static void varDeclaration(Parser* parser) {
-    uint8_t global = parseVariable(parser, "Variable ka naam do 'maano' ke baad.");
+    /* List destructuring: maano [a, b, c] = expr */
+    if (check(parser, TOKEN_LEFT_BRACKET)) {
+        advanceParser(parser); /* consume '[' */
+
+        /* Collect variable names */
+        Token names[256];
+        int nameCount = 0;
+
+        if (!check(parser, TOKEN_RIGHT_BRACKET)) {
+            do {
+                skipNewlines(parser);
+                consume(parser, TOKEN_IDENTIFIER, "Variable ka naam do destructuring mein.");
+                if (nameCount >= 256) {
+                    error(parser, "256 se zyada variables destructure nahi kar sakte.");
+                }
+                names[nameCount++] = parser->previous;
+                skipNewlines(parser);
+            } while (matchToken(parser, TOKEN_COMMA));
+        }
+        consume(parser, TOKEN_RIGHT_BRACKET, "']' lagao destructuring pattern ke baad.");
+
+        consume(parser, TOKEN_EQUAL, "'=' lagao value dene ke liye.");
+        expression(parser); /* evaluate RHS (list on stack) */
+
+        if (currentCS(parser)->scopeDepth > 0) {
+            /* Local: store list as hidden local, then extract elements */
+            Token hiddenTok = syntheticToken("__ds_tmp");
+            addLocal(parser, hiddenTok);
+            markInitialized(parser);
+            int listSlot = currentCS(parser)->localCount - 1;
+
+            for (int i = 0; i < nameCount; i++) {
+                emitBytes(parser, OP_GET_LOCAL, (uint8_t)listSlot);
+                emitConstant(parser, NUMBER_VAL(i));
+                emitByte(parser, OP_LIST_GET);
+                addLocal(parser, names[i]);
+                markInitialized(parser);
+            }
+        } else {
+            /* Global: use DUP approach since globals don't live on stack */
+            for (int i = 0; i < nameCount; i++) {
+                if (i < nameCount - 1) {
+                    emitByte(parser, OP_DUP);
+                }
+                emitConstant(parser, NUMBER_VAL(i));
+                emitByte(parser, OP_LIST_GET);
+                int global = identifierConstant(parser, &names[i]);
+                emitConstantOp(parser, OP_DEFINE_GLOBAL, OP_DEFINE_GLOBAL_LONG, global);
+            }
+        }
+
+        consumeNewlineOrEnd(parser);
+        return;
+    }
+
+    int global = parseVariable(parser, "Variable ka naam do 'maano' ke baad.");
     consume(parser, TOKEN_EQUAL, "'=' lagao variable ki value dene ke liye.");
     expression(parser);
     defineVariable(parser, global);
@@ -1130,6 +2169,7 @@ static void synchronize(Parser* parser) {
         switch (parser->current.type) {
             case TOKEN_MAANO:
             case TOKEN_KAAM:
+            case TOKEN_KAKSHA:
             case TOKEN_HAR:
             case TOKEN_AGAR:
             case TOKEN_JAB_TAK:
@@ -1137,6 +2177,10 @@ static void synchronize(Parser* parser) {
             case TOKEN_WAPAS_DO:
             case TOKEN_RUKO:
             case TOKEN_AGLA:
+            case TOKEN_KOSHISH:
+            case TOKEN_PHENKO:
+            case TOKEN_KARO:
+            case TOKEN_DEKHO:
                 return;
             default:
                 break;
@@ -1163,6 +2207,16 @@ static void statement(Parser* parser) {
         breakStatement(parser);
     } else if (matchToken(parser, TOKEN_AGLA)) {
         continueStatement(parser);
+    } else if (matchToken(parser, TOKEN_KOSHISH)) {
+        tryCatchStatement(parser);
+    } else if (matchToken(parser, TOKEN_PHENKO)) {
+        throwStatement(parser);
+    } else if (matchToken(parser, TOKEN_PAKKA)) {
+        assertStatement(parser);
+    } else if (matchToken(parser, TOKEN_KARO)) {
+        doWhileStatement(parser);
+    } else if (matchToken(parser, TOKEN_DEKHO)) {
+        switchStatement(parser);
     } else if (matchToken(parser, TOKEN_LEFT_BRACE)) {
         beginScope(parser);
         block(parser);
@@ -1170,6 +2224,71 @@ static void statement(Parser* parser) {
     } else {
         expressionStatement(parser);
     }
+}
+
+/* --- IMPORT (shamil karo) --- */
+static void importStatement(Parser* parser) {
+    if (currentCS(parser)->scopeDepth > 0) {
+        error(parser, "'shamil karo' sirf top-level par use kar sakte ho.");
+        return;
+    }
+    consume(parser, TOKEN_STRING, "'shamil karo' ke baad file path string do.");
+    int constant = makeConstant(parser, OBJ_VAL(
+        copyString(parser->vm, parser->previous.start + 1,
+                   parser->previous.length - 2)));
+    emitConstantOp(parser, OP_IMPORT, OP_IMPORT_LONG, constant);
+    consumeNewlineOrEnd(parser);
+}
+
+/* --- ENUM DECLARATION (ganana) --- */
+static void enumDeclaration(Parser* parser) {
+    int global = parseVariable(parser, "Enum ka naam do 'ganana' ke baad.");
+    markInitialized(parser);
+
+    consume(parser, TOKEN_LEFT_BRACE, "'{' lagao enum body shuru karne ke liye.");
+    skipNewlines(parser);
+
+    int memberCount = 0;
+    int nextValue = 0;
+
+    if (!check(parser, TOKEN_RIGHT_BRACE)) {
+        do {
+            skipNewlines(parser);
+            consume(parser, TOKEN_IDENTIFIER, "Enum member ka naam do.");
+
+            /* Push member name as string key */
+            int nameConst = makeConstant(parser, OBJ_VAL(
+                copyString(parser->vm, parser->previous.start,
+                           parser->previous.length)));
+            emitConstantOp(parser, OP_CONSTANT, OP_CONSTANT_LONG, nameConst);
+
+            /* Check for explicit value assignment */
+            if (matchToken(parser, TOKEN_EQUAL)) {
+                /* If it's a number literal, track for auto-increment */
+                if (check(parser, TOKEN_NUMBER)) {
+                    double val = strtod(parser->current.start, NULL);
+                    nextValue = (int)val + 1;
+                    expression(parser);
+                } else {
+                    expression(parser);
+                    nextValue++;
+                }
+            } else {
+                /* Auto-increment integer value */
+                emitConstant(parser, NUMBER_VAL(nextValue));
+                nextValue++;
+            }
+            memberCount++;
+            skipNewlines(parser);
+        } while (matchToken(parser, TOKEN_COMMA));
+    }
+
+    skipNewlines(parser);
+    consume(parser, TOKEN_RIGHT_BRACE, "'}' lagao enum band karne ke liye.");
+    consumeNewlineOrEnd(parser);
+
+    emitBytes(parser, OP_MAP_NEW, (uint8_t)memberCount);
+    defineVariable(parser, global);
 }
 
 static void declaration(Parser* parser) {
@@ -1180,6 +2299,12 @@ static void declaration(Parser* parser) {
         varDeclaration(parser);
     } else if (matchToken(parser, TOKEN_KAAM)) {
         functionDeclaration(parser);
+    } else if (matchToken(parser, TOKEN_KAKSHA)) {
+        classDeclaration(parser);
+    } else if (matchToken(parser, TOKEN_GANANA)) {
+        enumDeclaration(parser);
+    } else if (matchToken(parser, TOKEN_SHAMIL_KARO)) {
+        importStatement(parser);
     } else {
         statement(parser);
     }

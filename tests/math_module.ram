@@ -1,0 +1,19 @@
+/* math_module.ram - A reusable math module */
+
+kaam square(n) {
+    wapas do n * n
+}
+
+kaam cube(n) {
+    wapas do n * n * n
+}
+
+kaam factorial(n) {
+    agar n <= 1 {
+        wapas do 1
+    }
+    wapas do n * factorial(n - 1)
+}
+
+maano PI = 3.14159265
+maano E = 2.71828182

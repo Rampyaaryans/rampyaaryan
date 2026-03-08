@@ -1,0 +1,85 @@
+/* === Phase 2 Features Test === */
+
+/* --- 1. String Interpolation --- */
+likho "=== 1. STRING INTERPOLATION ==="
+maano naam = "Aryan"
+maano umar = 25
+likho "Hello ${naam}, tum ${umar} saal ke ho!"
+likho "2 + 3 = ${2 + 3}"
+maano items = [1, 2, 3]
+likho "List: ${items}"
+likho "Nested: ${naam + " bhai"}"
+likho "Empty: ${""}done"
+
+/* --- 2. Multi-interpolation --- */
+likho "=== 2. MULTI INTERPOLATION ==="
+maano a = "ek"
+maano b = "do"
+maano c = "teen"
+likho "${a}, ${b}, ${c}"
+
+/* --- 3. Ternary Operator --- */
+likho "=== 3. TERNARY ==="
+maano x = 10
+likho x > 5 ? "bada" : "chhota"
+likho x == 10 ? sach : jhooth
+maano result = (x > 0) ? "positive" : "negative"
+likho result
+
+/* --- 4. OOP Natives --- */
+likho "=== 4. OOP NATIVES ==="
+kaksha MyClass {
+    shuru(val) {
+        yeh.val = val
+    }
+    getVal() {
+        wapas do yeh.val
+    }
+}
+
+kaksha ChildClass : MyClass {
+    shuru(val, extra) {
+        super.shuru(val)
+        yeh.extra = extra
+    }
+}
+
+maano obj = MyClass(42)
+maano child = ChildClass(10, "hello")
+
+likho kya_kaksha(MyClass)
+likho kya_kaksha(obj)
+likho kya_vastu(obj)
+likho kya_vastu(42)
+likho vastu_ka(obj, MyClass)
+likho vastu_ka(child, MyClass)
+likho vastu_ka(child, ChildClass)
+likho kaksha_naam(obj)
+likho kaksha_naam(MyClass)
+likho gun_hai(obj, "val")
+likho gun_hai(obj, "missing")
+likho gun_lo(obj, "val")
+likho gun_lo(obj, "missing", "default")
+gun_rakho(obj, "naya", 99)
+likho gun_lo(obj, "naya")
+likho gun_suchi(obj)
+likho tarika_suchi(MyClass)
+likho kaksha_naam(child)
+likho parent_kaksha(ChildClass)
+
+/* --- 5. Interpolation in expressions --- */
+likho "=== 5. INTERP EXPRESSIONS ==="
+kaam greet(name) {
+    wapas do "Namaste ${name}!"
+}
+likho greet("Duniya")
+likho "Math: ${10 * 5 + 2}"
+
+/* --- 6. Ternary in various contexts --- */
+likho "=== 6. TERNARY USAGE ==="
+har i se 1 tak 5 {
+    maano label = i % 2 == 0 ? "even" : "odd"
+    likho "${i}: ${label}"
+}
+
+likho "=== ALL PHASE 2 TESTS PASSED ==="

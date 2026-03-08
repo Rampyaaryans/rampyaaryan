@@ -24,6 +24,17 @@ typedef struct {
 } CallFrame;
 
 /* ============================================================================
+ *  EXCEPTION HANDLER (for try-catch)
+ * ============================================================================ */
+#define MAX_EXCEPTION_HANDLERS 64
+
+typedef struct {
+    uint8_t* handlerIP;    /* IP to jump to (catch block) */
+    int frameIndex;         /* Which call frame the handler is in */
+    Value* stackTop;        /* Stack top when try was entered */
+} ExceptionHandler;
+
+/* ============================================================================
  *  VM RESULT CODES
  * ============================================================================ */
 typedef enum {
@@ -66,6 +77,22 @@ struct VM {
     /* Error handling */
     char errorMessage[1024];
     bool hadError;
+
+    /* Re-entrant call support */
+    int baseFrameCount;
+
+    /* Exception handling */
+    ExceptionHandler exceptionHandlers[MAX_EXCEPTION_HANDLERS];
+    int exceptionCount;
+
+    /* Constructor name (interned) */
+    ObjString* initString;
+
+    /* Module cache (imported files) */
+    Table modules;
+
+    /* Current script file path */
+    const char* scriptPath;
 };
 
 /* ============================================================================
@@ -96,5 +123,10 @@ void runtimeError(VM* vm, const char* format, ...);
  *  NATIVE FUNCTION REGISTRATION
  * ============================================================================ */
 void defineNative(VM* vm, const char* name, NativeFn function, int arity);
+
+/* ============================================================================
+ *  CALLABLE FROM NATIVE FUNCTIONS
+ * ============================================================================ */
+Value vmCallFunction(VM* vm, Value callee, int argCount, Value* args);
 
 #endif /* RAMPYAARYAN_VM_H */

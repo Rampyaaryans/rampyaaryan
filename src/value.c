@@ -239,14 +239,18 @@ const char* valueTypeName(Value value) {
         case VAL_NUMBER: return "sankhya";
         case VAL_OBJ: {
             switch (OBJ_TYPE(value)) {
-                case OBJ_STRING:   return "shabd";
-                case OBJ_FUNCTION: return "kaam";
-                case OBJ_NATIVE:   return "built-in kaam";
-                case OBJ_CLOSURE:  return "kaam";
-                case OBJ_LIST:     return "suchi";
-                case OBJ_MAP:      return "shabdkosh";
-                case OBJ_UPVALUE:  return "upvalue";
+                case OBJ_STRING:       return "shabd";
+                case OBJ_FUNCTION:     return "kaam";
+                case OBJ_NATIVE:       return "built-in kaam";
+                case OBJ_CLOSURE:      return "kaam";
+                case OBJ_LIST:         return "suchi";
+                case OBJ_MAP:          return "shabdkosh";
+                case OBJ_UPVALUE:      return "upvalue";
+                case OBJ_CLASS:        return "kaksha";
+                case OBJ_INSTANCE:     return "vastu";
+                case OBJ_BOUND_METHOD: return "kaam";
             }
+            /* fallthrough */
         }
         default: return "anjaana";
     }

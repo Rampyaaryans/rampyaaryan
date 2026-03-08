@@ -115,6 +115,8 @@ ObjString* repeatString(VM* vm, ObjString* str, int times) {
 ObjFunction* newFunction(VM* vm) {
     ObjFunction* function = ALLOCATE_OBJ(vm, ObjFunction, OBJ_FUNCTION);
     function->arity = 0;
+    function->minArity = 0;
+    function->isVariadic = false;
     function->upvalueCount = 0;
     function->name = NULL;
 
@@ -307,6 +309,7 @@ bool mapDelete(ObjMap* map, Value key) {
 
     entry->isOccupied = false;
     entry->isTombstone = true;
+    map->count--;
     return true;
 }
 
@@ -318,6 +321,37 @@ bool mapHasKey(ObjMap* map, Value key) {
 
 int mapLength(ObjMap* map) {
     return map->count;
+}
+
+/* ============================================================================
+ *  CLASS OBJECT
+ * ============================================================================ */
+ObjClass* newClass(VM* vm, ObjString* name) {
+    ObjClass* klass = ALLOCATE_OBJ(vm, ObjClass, OBJ_CLASS);
+    klass->name = name;
+    klass->superclass = NULL;
+    initTable(&klass->methods);
+    return klass;
+}
+
+/* ============================================================================
+ *  INSTANCE OBJECT
+ * ============================================================================ */
+ObjInstance* newInstance(VM* vm, ObjClass* klass) {
+    ObjInstance* instance = ALLOCATE_OBJ(vm, ObjInstance, OBJ_INSTANCE);
+    instance->klass = klass;
+    initTable(&instance->fields);
+    return instance;
+}
+
+/* ============================================================================
+ *  BOUND METHOD
+ * ============================================================================ */
+ObjBoundMethod* newBoundMethod(VM* vm, Value receiver, ObjClosure* method) {
+    ObjBoundMethod* bound = ALLOCATE_OBJ(vm, ObjBoundMethod, OBJ_BOUND_METHOD);
+    bound->receiver = receiver;
+    bound->method = method;
+    return bound;
 }
 
 /* ============================================================================
@@ -379,6 +413,25 @@ void printObject(Value value) {
             printf("}");
             break;
         }
+        case OBJ_CLASS: {
+            ObjClass* klass = AS_CLASS(value);
+            printf("<kaksha %s>", klass->name->chars);
+            break;
+        }
+        case OBJ_INSTANCE: {
+            ObjInstance* instance = AS_INSTANCE(value);
+            printf("<%s instance>", instance->klass->name->chars);
+            break;
+        }
+        case OBJ_BOUND_METHOD: {
+            ObjBoundMethod* bound = AS_BOUND_METHOD(value);
+            if (bound->method->function->name != NULL) {
+                printf("<bound %s>", bound->method->function->name->chars);
+            } else {
+                printf("<bound method>");
+            }
+            break;
+        }
     }
 }
 
@@ -430,6 +483,22 @@ void freeObject(VM* vm, Obj* object) {
             ObjMap* map = (ObjMap*)object;
             FREE_ARRAY(MapEntry, map->entries, map->capacity);
             FREE(ObjMap, object);
+            break;
+        }
+        case OBJ_CLASS: {
+            ObjClass* klass = (ObjClass*)object;
+            freeTable(&klass->methods);
+            FREE(ObjClass, object);
+            break;
+        }
+        case OBJ_INSTANCE: {
+            ObjInstance* instance = (ObjInstance*)object;
+            freeTable(&instance->fields);
+            FREE(ObjInstance, object);
+            break;
+        }
+        case OBJ_BOUND_METHOD: {
+            FREE(ObjBoundMethod, object);
             break;
         }
     }

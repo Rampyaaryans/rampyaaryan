@@ -1,0 +1,51 @@
+likho "=== ASSERT & POWER ASSIGN TEST ==="
+
+likho "--- 1. Assert Pass ---"
+pakka sach
+pakka 1 + 1 == 2
+pakka "hello" == "hello"
+likho "All asserts passed"
+
+likho "--- 2. Assert with Message ---"
+koshish {
+    pakka 1 == 2, "1 is not 2!"
+} pakdo (e) {
+    likho "Caught: " + e
+}
+
+likho "--- 3. Assert in Function ---"
+kaam check_positive(n) {
+    pakka n > 0, "Number must be positive"
+    wapas do n * 2
+}
+likho check_positive(5)
+koshish {
+    check_positive(-1)
+} pakdo (e) {
+    likho "Caught: " + e
+}
+
+likho "--- 4. Power Assign **= ---"
+maano x = 2
+x **= 10
+likho x
+maano y = 3
+y **= 3
+likho y
+
+likho "--- 5. All Augmented Assigns ---"
+maano a = 10
+a += 5
+likho a
+a -= 3
+likho a
+a *= 2
+likho a
+a /= 4
+likho a
+a %= 5
+likho a
+a **= 3
+likho a
+
+likho "=== ALL ASSERT/POWER TESTS PASSED ==="

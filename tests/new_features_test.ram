@@ -1,0 +1,317 @@
+# ============================================================================
+# NEW FEATURES TEST - Classes, Try-Catch, For-In, Switch, Do-While, Lambda
+# ============================================================================
+
+# === 1. CLASSES - Basic ===
+likho "=== 1. CLASSES - Basic ==="
+kaksha Janwar {
+    shuru(naam, umar) {
+        yeh.naam = naam
+        yeh.umar = umar
+    }
+    bolo() {
+        likho yeh.naam + " ki umar " + shabd(yeh.umar) + " hai"
+    }
+}
+
+maano j = Janwar("Tommy", 5)
+j.bolo()
+likho j.naam
+likho j.umar
+
+# === 2. CLASSES - Methods ===
+likho "\n=== 2. CLASSES - Methods ==="
+kaksha Calculator {
+    shuru() {
+        yeh.result = 0
+    }
+    add(x) {
+        yeh.result = yeh.result + x
+        wapas do yeh
+    }
+    getResult() {
+        wapas do yeh.result
+    }
+}
+
+maano calc = Calculator()
+calc.add(10)
+calc.add(20)
+calc.add(30)
+likho calc.getResult()
+
+# === 3. CLASSES - Inheritance ===
+likho "\n=== 3. CLASSES - Inheritance ==="
+kaksha Shape {
+    shuru(naam) {
+        yeh.naam = naam
+    }
+    describe() {
+        wapas do "Shape: " + yeh.naam
+    }
+}
+
+kaksha Circle : Shape {
+    shuru(radius) {
+        super.shuru("Circle")
+        yeh.radius = radius
+    }
+    area() {
+        wapas do 3.14159 * yeh.radius * yeh.radius
+    }
+}
+
+maano c = Circle(5)
+likho c.describe()
+likho c.area()
+likho c.naam
+
+# === 4. TRY-CATCH ===
+likho "\n=== 4. TRY-CATCH ==="
+koshish {
+    likho "Try block"
+    phenko "Galti ho gayi!"
+    likho "Ye print nahi hoga"
+} pakdo (err) {
+    likho "Pakda: " + err
+}
+likho "Baad mein"
+
+# === 5. TRY-CATCH Nested ===
+likho "\n=== 5. TRY-CATCH Nested ==="
+koshish {
+    koshish {
+        phenko "Andar ki galti"
+    } pakdo (e) {
+        likho "Andar pakda: " + e
+        phenko "Bahar ki galti"
+    }
+} pakdo (e) {
+    likho "Bahar pakda: " + e
+}
+
+# === 6. TRY-CATCH with Finally ===
+likho "\n=== 6. TRY-CATCH with Finally ==="
+koshish {
+    likho "Koshish karte hain"
+    phenko "Ek aur galti"
+} pakdo (err) {
+    likho "Pakda: " + err
+} aakhir {
+    likho "Aakhir mein ye hamesha chalega"
+}
+
+# === 7. FOR-IN LOOP ===
+likho "\n=== 7. FOR-IN LOOP ==="
+maano fruits = ["seb", "kela", "aam", "santara"]
+har fruit mein fruits {
+    likho fruit;
+    likho " ";
+}
+likho ""
+
+# === 8. FOR-IN with numbers ===
+likho "\n=== 8. FOR-IN Numbers ==="
+maano nums = [1, 2, 3, 4, 5]
+maano total = 0
+har n mein nums {
+    total += n
+}
+likho "Total: " + shabd(total)
+
+# === 9. DO-WHILE ===
+likho "\n=== 9. DO-WHILE ==="
+maano count = 0
+karo {
+    count += 1
+    likho count;
+    likho " ";
+} jab tak count < 5
+likho ""
+
+# === 10. SWITCH/MATCH ===
+likho "\n=== 10. SWITCH/MATCH ==="
+maano color = "laal"
+dekho color {
+    jab "neela" {
+        likho "Blue"
+    }
+    jab "laal" {
+        likho "Red"
+    }
+    jab "hara" {
+        likho "Green"
+    }
+    chalao {
+        likho "Unknown"
+    }
+}
+
+# === 11. SWITCH with numbers ===
+likho "\n=== 11. SWITCH Numbers ==="
+maano x = 3
+dekho x {
+    jab 1 {
+        likho "Ek"
+    }
+    jab 2 {
+        likho "Do"
+    }
+    jab 3 {
+        likho "Teen"
+    }
+    chalao {
+        likho "Bahut bada"
+    }
+}
+
+# === 12. LAMBDA/ANONYMOUS FUNCTIONS ===
+likho "\n=== 12. LAMBDA ==="
+maano double = kaam (x) => x * 2
+likho double(21)
+
+maano add = kaam (a, b) {
+    wapas do a + b
+}
+likho add(10, 20)
+
+# === 13. LAMBDA in Higher-Order ===
+likho "\n=== 13. LAMBDA Higher-Order ==="
+maano nums2 = [1, 2, 3, 4, 5]
+maano doubled = naksha(nums2, kaam (x) => x * 2)
+likho doubled
+
+maano evens = chhaano(nums2, kaam (x) => x % 2 == 0)
+likho evens
+
+maano sum = ikkatha(nums2, kaam (a, b) => a + b, 0)
+likho sum
+
+# === 14. CLASS with properties ===
+likho "\n=== 14. CLASS Properties ==="
+kaksha Person {
+    shuru(naam, umar) {
+        yeh.naam = naam
+        yeh.umar = umar
+    }
+    toString() {
+        wapas do yeh.naam + " (umar: " + shabd(yeh.umar) + ")"
+    }
+}
+
+maano p = Person("Aryan", 25)
+likho p.toString()
+p.umar = 26
+likho p.toString()
+
+# === 15. Multiple inheritance levels ===
+likho "\n=== 15. Inheritance Chain ==="
+kaksha Animal {
+    shuru(naam) {
+        yeh.naam = naam
+    }
+    speak() {
+        wapas do yeh.naam + " bolta hai"
+    }
+}
+
+kaksha Dog : Animal {
+    shuru(naam) {
+        super.shuru(naam)
+    }
+    speak() {
+        wapas do yeh.naam + ": Bhow Bhow!"
+    }
+}
+
+kaksha Puppy : Dog {
+    shuru(naam) {
+        super.shuru(naam)
+    }
+    speak() {
+        wapas do yeh.naam + ": Yip Yip!"
+    }
+}
+
+maano p2 = Puppy("Chhotu")
+likho p2.speak()
+likho p2.naam
+
+# === 16. FOR-IN with break ===
+likho "\n=== 16. FOR-IN Break ==="
+maano data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+har item mein data {
+    agar item == 6 {
+        ruko
+    }
+    likho item;
+    likho " ";
+}
+likho ""
+
+# === 17. Nested for-in ===
+likho "\n=== 17. Nested FOR-IN ==="
+maano matrix = [[1, 2], [3, 4], [5, 6]]
+har row mein matrix {
+    har val mein row {
+        likho val;
+        likho " ";
+    }
+}
+likho ""
+
+# === 18. Class storing closures ===
+likho "\n=== 18. Class Closures ==="
+kaksha EventEmitter {
+    shuru() {
+        yeh.handlers = []
+    }
+    on(fn) {
+        joodo(yeh.handlers, fn)
+    }
+    fire(val) {
+        har h mein yeh.handlers {
+            h(val)
+        }
+    }
+}
+
+maano ee = EventEmitter()
+ee.on(kaam (v) {
+    likho "Handler 1: " + shabd(v)
+})
+ee.on(kaam (v) {
+    likho "Handler 2: " + shabd(v * 2)
+})
+ee.fire(10)
+
+# === 19. Error handling in functions ===
+likho "\n=== 19. Error in Functions ==="
+kaam divide(a, b) {
+    agar b == 0 {
+        phenko "Division by zero!"
+    }
+    wapas do a / b
+}
+
+koshish {
+    likho divide(10, 2)
+    likho divide(10, 0)
+} pakdo (e) {
+    likho "Error: " + e
+}
+
+# === 20. Do-while with break ===
+likho "\n=== 20. Do-While Break ==="
+maano i = 0
+karo {
+    i += 1
+    agar i == 3 {
+        ruko
+    }
+    likho i;
+    likho " ";
+} jab tak i < 10
+likho ""
+
+likho "\n=== ALL NEW FEATURE TESTS PASSED ==="

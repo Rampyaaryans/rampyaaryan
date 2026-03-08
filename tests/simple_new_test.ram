@@ -1,0 +1,96 @@
+# Simple class test - isolated
+likho "=== CLASSES ==="
+
+kaksha Animal {
+    shuru(naam) {
+        yeh.naam = naam
+    }
+    speak() {
+        wapas do yeh.naam + " bolta hai"
+    }
+}
+
+kaksha Dog : Animal {
+    shuru(naam) {
+        super.shuru(naam)
+    }
+    speak() {
+        wapas do yeh.naam + ": Bhow Bhow!"
+    }
+}
+
+kaksha Puppy : Dog {
+    shuru(naam) {
+        super.shuru(naam)
+    }
+    speak() {
+        wapas do yeh.naam + ": Yip Yip!"
+    }
+}
+
+maano a = Animal("Billy")
+likho a.speak()
+
+maano d = Dog("Tommy")
+likho d.speak()
+
+maano p = Puppy("Chhotu")
+likho p.speak()
+likho p.naam
+
+likho "\n=== TRY-CATCH ==="
+koshish {
+    phenko "Test error"
+} pakdo (e) {
+    likho "Caught: " + e
+}
+
+koshish {
+    koshish {
+        phenko "inner"
+    } pakdo (e) {
+        likho "Inner: " + e
+        phenko "outer"
+    }
+} pakdo (e) {
+    likho "Outer: " + e
+}
+
+likho "\n=== FOR-IN ==="
+maano items = [10, 20, 30, 40, 50]
+har item mein items {
+    likho item;
+    likho " ";
+}
+likho ""
+
+likho "\n=== DO-WHILE ==="
+maano c = 0
+karo {
+    c += 1
+} jab tak c < 5
+likho c
+
+likho "\n=== SWITCH ==="
+maano val = 2
+dekho val {
+    jab 1 { likho "one" }
+    jab 2 { likho "two" }
+    jab 3 { likho "three" }
+    chalao { likho "other" }
+}
+
+likho "\n=== LAMBDA ==="
+maano sq = kaam (x) => x * x
+likho sq(7)
+
+maano add = kaam (a, b) {
+    wapas do a + b
+}
+likho add(3, 4)
+
+maano nums = [1, 2, 3, 4, 5]
+maano doubled = naksha(nums, kaam (x) => x * 2)
+likho doubled
+
+likho "\n=== ALL PASSED ==="

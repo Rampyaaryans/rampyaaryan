@@ -121,7 +121,10 @@ static Value nativeLambai(VM* vm, int argCount, Value* args) {
     if (IS_LIST(args[0])) {
         return NUMBER_VAL((double)AS_LIST(args[0])->items.count);
     }
-    runtimeError(vm, "lambai() sirf string ya list ke liye kaam karta hai.");
+    if (IS_MAP(args[0])) {
+        return NUMBER_VAL((double)mapLength(AS_MAP(args[0])));
+    }
+    runtimeError(vm, "lambai() sirf string, list, ya map ke liye kaam karta hai.");
     return NULL_VAL;
 }
 
@@ -1517,13 +1520,14 @@ static Value nativeMapGet(VM* vm, int argCount, Value* args) {
 static Value nativeNaksha(VM* vm, int argCount, Value* args) {
     (void)argCount;
     if (!IS_LIST(args[0])) { runtimeError(vm, "naksha() ka pehla argument list hona chahiye."); return NULL_VAL; }
-    if (!IS_NATIVE(args[1])) { runtimeError(vm, "naksha() ka doosra argument built-in function hona chahiye."); return NULL_VAL; }
+    if (!IS_OBJ(args[1]) || (OBJ_TYPE(args[1]) != OBJ_NATIVE && OBJ_TYPE(args[1]) != OBJ_CLOSURE)) {
+        runtimeError(vm, "naksha() ka doosra argument function hona chahiye."); return NULL_VAL;
+    }
     ObjList* src = AS_LIST(args[0]);
-    ObjNative* fn = AS_NATIVE(args[1]);
     ObjList* result = newList(vm);
     push(vm, OBJ_VAL(result));
     for (int i = 0; i < src->items.count; i++) {
-        Value mapped = fn->function(vm, 1, &src->items.values[i]);
+        Value mapped = vmCallFunction(vm, args[1], 1, &src->items.values[i]);
         if (vm->hadError) { pop(vm); return NULL_VAL; }
         listAppend(vm, result, mapped);
     }
@@ -1535,13 +1539,14 @@ static Value nativeNaksha(VM* vm, int argCount, Value* args) {
 static Value nativeChhaano(VM* vm, int argCount, Value* args) {
     (void)argCount;
     if (!IS_LIST(args[0])) { runtimeError(vm, "chhaano() ka pehla argument list hona chahiye."); return NULL_VAL; }
-    if (!IS_NATIVE(args[1])) { runtimeError(vm, "chhaano() ka doosra argument built-in function hona chahiye."); return NULL_VAL; }
+    if (!IS_OBJ(args[1]) || (OBJ_TYPE(args[1]) != OBJ_NATIVE && OBJ_TYPE(args[1]) != OBJ_CLOSURE)) {
+        runtimeError(vm, "chhaano() ka doosra argument function hona chahiye."); return NULL_VAL;
+    }
     ObjList* src = AS_LIST(args[0]);
     ObjList* result = newList(vm);
     push(vm, OBJ_VAL(result));
-    ObjNative* fn = AS_NATIVE(args[1]);
     for (int i = 0; i < src->items.count; i++) {
-        Value testResult = fn->function(vm, 1, &src->items.values[i]);
+        Value testResult = vmCallFunction(vm, args[1], 1, &src->items.values[i]);
         if (vm->hadError) { pop(vm); return NULL_VAL; }
         if (isTruthy(testResult)) {
             listAppend(vm, result, src->items.values[i]);
@@ -1554,17 +1559,18 @@ static Value nativeChhaano(VM* vm, int argCount, Value* args) {
 /* ikkatha(list, fn, initial) – reduce() */
 static Value nativeIkkatha(VM* vm, int argCount, Value* args) {
     if (!IS_LIST(args[0])) { runtimeError(vm, "ikkatha() ka pehla argument list hona chahiye."); return NULL_VAL; }
-    if (!IS_NATIVE(args[1])) { runtimeError(vm, "ikkatha() ka doosra argument built-in function hona chahiye."); return NULL_VAL; }
+    if (!IS_OBJ(args[1]) || (OBJ_TYPE(args[1]) != OBJ_NATIVE && OBJ_TYPE(args[1]) != OBJ_CLOSURE)) {
+        runtimeError(vm, "ikkatha() ka doosra argument function hona chahiye."); return NULL_VAL;
+    }
     ObjList* src = AS_LIST(args[0]);
     if (src->items.count == 0) {
         return (argCount >= 3) ? args[2] : NULL_VAL;
     }
-    ObjNative* fn = AS_NATIVE(args[1]);
     Value accumulator = (argCount >= 3) ? args[2] : src->items.values[0];
     int start = (argCount >= 3) ? 0 : 1;
     for (int i = start; i < src->items.count; i++) {
         Value fnArgs[2] = { accumulator, src->items.values[i] };
-        accumulator = fn->function(vm, 2, fnArgs);
+        accumulator = vmCallFunction(vm, args[1], 2, fnArgs);
         if (vm->hadError) return NULL_VAL;
     }
     return accumulator;
@@ -2141,7 +2147,1252 @@ static Value nativeNAN(VM* vm, int argCount, Value* args) {
 }
 
 /* ============================================================================
- *  REGISTRATION — 110+ Built-in Functions
+ *  OOP / INSTANCE FUNCTIONS
+ * ============================================================================ */
+
+/* kya_kaksha(val) - is it a class? */
+static Value nativeKyaKaksha(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    return BOOL_VAL(IS_CLASS(args[0]));
+}
+
+/* kya_vastu(val) - is it an instance? */
+static Value nativeKyaVastu(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    return BOOL_VAL(IS_INSTANCE(args[0]));
+}
+
+/* vastu_ka(instance, class) - isinstance check (including inheritance) */
+static Value nativeVastuKa(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_INSTANCE(args[0]) || !IS_CLASS(args[1])) {
+        return BOOL_VAL(false);
+    }
+    ObjClass* klass = AS_INSTANCE(args[0])->klass;
+    ObjClass* target = AS_CLASS(args[1]);
+    while (klass != NULL) {
+        if (klass == target) return BOOL_VAL(true);
+        klass = klass->superclass;
+    }
+    return BOOL_VAL(false);
+}
+
+/* kaksha_naam(instance_or_class) - get class name */
+static Value nativeKakshaNaam(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (IS_INSTANCE(args[0])) {
+        return OBJ_VAL(AS_INSTANCE(args[0])->klass->name);
+    } else if (IS_CLASS(args[0])) {
+        return OBJ_VAL(AS_CLASS(args[0])->name);
+    }
+    return OBJ_VAL(copyString(vm, "anjaana", 7));
+}
+
+/* gun_hai(instance, name) - hasattr: check if instance has field/method */
+static Value nativeGunHai(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_INSTANCE(args[0]) || !IS_STRING(args[1])) {
+        return BOOL_VAL(false);
+    }
+    ObjInstance* inst = AS_INSTANCE(args[0]);
+    ObjString* name = AS_STRING(args[1]);
+    Value dummy;
+    if (tableGet(&inst->fields, name, &dummy)) return BOOL_VAL(true);
+    if (tableGet(&inst->klass->methods, name, &dummy)) return BOOL_VAL(true);
+    /* Check up the superclass chain */
+    ObjClass* super = inst->klass->superclass;
+    while (super != NULL) {
+        if (tableGet(&super->methods, name, &dummy)) return BOOL_VAL(true);
+        super = super->superclass;
+    }
+    (void)vm;
+    return BOOL_VAL(false);
+}
+
+/* gun_lo(instance, name, default?) - getattr */
+static Value nativeGunLo(VM* vm, int argCount, Value* args) {
+    if (!IS_INSTANCE(args[0]) || !IS_STRING(args[1])) {
+        if (argCount >= 3) return args[2];
+        return NULL_VAL;
+    }
+    ObjInstance* inst = AS_INSTANCE(args[0]);
+    ObjString* name = AS_STRING(args[1]);
+    Value val;
+    if (tableGet(&inst->fields, name, &val)) return val;
+    if (argCount >= 3) return args[2];
+    (void)vm;
+    return NULL_VAL;
+}
+
+/* gun_rakho(instance, name, value) - setattr */
+static Value nativeGunRakho(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_INSTANCE(args[0]) || !IS_STRING(args[1])) {
+        return NULL_VAL;
+    }
+    ObjInstance* inst = AS_INSTANCE(args[0]);
+    ObjString* name = AS_STRING(args[1]);
+    tableSet(&inst->fields, name, args[2]);
+    (void)vm;
+    return args[2];
+}
+
+/* gun_suchi(instance) - list all field names of an instance */
+static Value nativeGunSuchi(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_INSTANCE(args[0])) {
+        ObjList* empty = newList(vm);
+        return OBJ_VAL(empty);
+    }
+    ObjInstance* inst = AS_INSTANCE(args[0]);
+    ObjList* list = newList(vm);
+    for (int i = 0; i < inst->fields.capacity; i++) {
+        Entry* entry = &inst->fields.entries[i];
+        if (entry->key != NULL) {
+            writeValueArray(&list->items, OBJ_VAL(entry->key));
+        }
+    }
+    return OBJ_VAL(list);
+}
+
+/* tarika_suchi(instance_or_class) - list all method names */
+static Value nativeTarikaSuchi(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    Table* methods = NULL;
+    if (IS_INSTANCE(args[0])) {
+        methods = &AS_INSTANCE(args[0])->klass->methods;
+    } else if (IS_CLASS(args[0])) {
+        methods = &AS_CLASS(args[0])->methods;
+    } else {
+        return OBJ_VAL(newList(vm));
+    }
+    ObjList* list = newList(vm);
+    for (int i = 0; i < methods->capacity; i++) {
+        Entry* entry = &methods->entries[i];
+        if (entry->key != NULL) {
+            writeValueArray(&list->items, OBJ_VAL(entry->key));
+        }
+    }
+    return OBJ_VAL(list);
+}
+
+/* parent_kaksha(instance_or_class) - get superclass (or khali) */
+static Value nativeParentKaksha(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    ObjClass* klass = NULL;
+    if (IS_INSTANCE(args[0])) {
+        klass = AS_INSTANCE(args[0])->klass->superclass;
+    } else if (IS_CLASS(args[0])) {
+        klass = AS_CLASS(args[0])->superclass;
+    }
+    if (klass == NULL) return NULL_VAL;
+    return OBJ_VAL(klass);
+}
+
+/* ============================================================================
+ *  ADDITIONAL UTILITIES
+ * ============================================================================ */
+
+/* tukda_shabd(str, start, end?) - string slice like Python's str[start:end] */
+static Value nativeTukdaShabd(VM* vm, int argCount, Value* args) {
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) return NULL_VAL;
+    ObjString* str = AS_STRING(args[0]);
+    int len = str->length;
+    int start = (int)AS_NUMBER(args[1]);
+    int end = (argCount >= 3 && IS_NUMBER(args[2])) ? (int)AS_NUMBER(args[2]) : len;
+
+    if (start < 0) start += len;
+    if (end < 0) end += len;
+    if (start < 0) start = 0;
+    if (end > len) end = len;
+    if (start >= end) return OBJ_VAL(copyString(vm, "", 0));
+
+    return OBJ_VAL(copyString(vm, str->chars + start, end - start));
+}
+
+/* tukda_suchi(list, start, end?) - list slice */
+static Value nativeTukdaSuchi(VM* vm, int argCount, Value* args) {
+    if (!IS_LIST(args[0]) || !IS_NUMBER(args[1])) return OBJ_VAL(newList(vm));
+    ObjList* list = AS_LIST(args[0]);
+    int len = list->items.count;
+    int start = (int)AS_NUMBER(args[1]);
+    int end = (argCount >= 3 && IS_NUMBER(args[2])) ? (int)AS_NUMBER(args[2]) : len;
+
+    if (start < 0) start += len;
+    if (end < 0) end += len;
+    if (start < 0) start = 0;
+    if (end > len) end = len;
+
+    ObjList* result = newList(vm);
+    for (int i = start; i < end; i++) {
+        writeValueArray(&result->items, list->items.values[i]);
+    }
+    return OBJ_VAL(result);
+}
+
+/* enumerate_suchi(list) - returns [[0, item0], [1, item1], ...] */
+static Value nativeEnumerateSuchi(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return OBJ_VAL(newList(vm));
+    ObjList* list = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    for (int i = 0; i < list->items.count; i++) {
+        ObjList* pair = newList(vm);
+        writeValueArray(&pair->items, NUMBER_VAL(i));
+        writeValueArray(&pair->items, list->items.values[i]);
+        writeValueArray(&result->items, OBJ_VAL(pair));
+    }
+    return OBJ_VAL(result);
+}
+
+/* zip_suchi(list1, list2) - zip two lists into pairs */
+static Value nativeZipSuchi(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_LIST(args[1])) return OBJ_VAL(newList(vm));
+    ObjList* a = AS_LIST(args[0]);
+    ObjList* b = AS_LIST(args[1]);
+    int len = a->items.count < b->items.count ? a->items.count : b->items.count;
+    ObjList* result = newList(vm);
+    for (int i = 0; i < len; i++) {
+        ObjList* pair = newList(vm);
+        writeValueArray(&pair->items, a->items.values[i]);
+        writeValueArray(&pair->items, b->items.values[i]);
+        writeValueArray(&result->items, OBJ_VAL(pair));
+    }
+    return OBJ_VAL(result);
+}
+
+/* unzip_suchi(list_of_pairs) - [[a,1],[b,2]] -> [[a,b],[1,2]] */
+static Value nativeUnzipSuchi(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return OBJ_VAL(newList(vm));
+    ObjList* list = AS_LIST(args[0]);
+    ObjList* keys = newList(vm);
+    ObjList* vals = newList(vm);
+    for (int i = 0; i < list->items.count; i++) {
+        if (IS_LIST(list->items.values[i])) {
+            ObjList* pair = AS_LIST(list->items.values[i]);
+            if (pair->items.count >= 1) writeValueArray(&keys->items, pair->items.values[0]);
+            if (pair->items.count >= 2) writeValueArray(&vals->items, pair->items.values[1]);
+        }
+    }
+    ObjList* result = newList(vm);
+    writeValueArray(&result->items, OBJ_VAL(keys));
+    writeValueArray(&result->items, OBJ_VAL(vals));
+    return OBJ_VAL(result);
+}
+
+/* char_list(str) - split string into list of characters */
+static Value nativeCharList(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) return OBJ_VAL(newList(vm));
+    ObjString* str = AS_STRING(args[0]);
+    ObjList* result = newList(vm);
+    for (int i = 0; i < str->length; i++) {
+        writeValueArray(&result->items, OBJ_VAL(copyString(vm, &str->chars[i], 1)));
+    }
+    return OBJ_VAL(result);
+}
+
+/* suchi_se_shabd(list, sep?) - join list into string with optional separator */
+static Value nativeSuchiSeShabd(VM* vm, int argCount, Value* args) {
+    if (!IS_LIST(args[0])) return OBJ_VAL(copyString(vm, "", 0));
+    ObjList* list = AS_LIST(args[0]);
+    const char* sep = "";
+    int sepLen = 0;
+    if (argCount >= 2 && IS_STRING(args[1])) {
+        sep = AS_STRING(args[1])->chars;
+        sepLen = AS_STRING(args[1])->length;
+    }
+
+    int totalLen = 0;
+    char** parts = malloc(sizeof(char*) * list->items.count);
+    int* partLens = malloc(sizeof(int) * list->items.count);
+    for (int i = 0; i < list->items.count; i++) {
+        parts[i] = valueToString(list->items.values[i]);
+        partLens[i] = parts[i] ? (int)strlen(parts[i]) : 0;
+        totalLen += partLens[i];
+        if (i > 0) totalLen += sepLen;
+    }
+
+    char* buf = malloc(totalLen + 1);
+    int pos = 0;
+    for (int i = 0; i < list->items.count; i++) {
+        if (i > 0 && sepLen > 0) {
+            memcpy(buf + pos, sep, sepLen);
+            pos += sepLen;
+        }
+        if (parts[i]) {
+            memcpy(buf + pos, parts[i], partLens[i]);
+            pos += partLens[i];
+            free(parts[i]);
+        }
+    }
+    buf[pos] = '\0';
+    free(parts);
+    free(partLens);
+
+    ObjString* result = copyString(vm, buf, pos);
+    free(buf);
+    return OBJ_VAL(result);
+}
+
+/* map_values_list(map) - get all values as a list */
+static Value nativeMapValuesList(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) return OBJ_VAL(newList(vm));
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* result = newList(vm);
+    for (int i = 0; i < map->capacity; i++) {
+        MapEntry* entry = &map->entries[i];
+        if (!IS_NULL(entry->key)) {
+            writeValueArray(&result->items, entry->value);
+        }
+    }
+    return OBJ_VAL(result);
+}
+
+/* map_keys_list(map) - get all keys as a list */
+static Value nativeMapKeysList(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) return OBJ_VAL(newList(vm));
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* result = newList(vm);
+    for (int i = 0; i < map->capacity; i++) {
+        MapEntry* entry = &map->entries[i];
+        if (!IS_NULL(entry->key)) {
+            writeValueArray(&result->items, entry->key);
+        }
+    }
+    return OBJ_VAL(result);
+}
+
+/* suchi_mein(list, value) - check if value is in list */
+static Value nativeSuchiMein(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) return BOOL_VAL(false);
+    ObjList* list = AS_LIST(args[0]);
+    for (int i = 0; i < list->items.count; i++) {
+        if (valuesEqual(list->items.values[i], args[1])) return BOOL_VAL(true);
+    }
+    return BOOL_VAL(false);
+}
+
+/* shabd_mein(str, substr) - check if substring is in string */
+static Value nativeShabdMein(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0]) || !IS_STRING(args[1])) return BOOL_VAL(false);
+    return BOOL_VAL(strstr(AS_STRING(args[0])->chars, AS_STRING(args[1])->chars) != NULL);
+}
+
+/* min_suchi(list) - min of a list */
+static Value nativeMinSuchi(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) return NULL_VAL;
+    ObjList* list = AS_LIST(args[0]);
+    if (list->items.count == 0) return NULL_VAL;
+    Value min = list->items.values[0];
+    for (int i = 1; i < list->items.count; i++) {
+        if (IS_NUMBER(list->items.values[i]) && IS_NUMBER(min)) {
+            if (AS_NUMBER(list->items.values[i]) < AS_NUMBER(min))
+                min = list->items.values[i];
+        }
+    }
+    return min;
+}
+
+/* max_suchi(list) - max of a list */
+static Value nativeMaxSuchi(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) return NULL_VAL;
+    ObjList* list = AS_LIST(args[0]);
+    if (list->items.count == 0) return NULL_VAL;
+    Value max = list->items.values[0];
+    for (int i = 1; i < list->items.count; i++) {
+        if (IS_NUMBER(list->items.values[i]) && IS_NUMBER(max)) {
+            if (AS_NUMBER(list->items.values[i]) > AS_NUMBER(max))
+                max = list->items.values[i];
+        }
+    }
+    return max;
+}
+
+/* suchi_bharo(n, value) - create list of n copies of value */
+static Value nativeSuchiBharo(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) return OBJ_VAL(newList(vm));
+    int n = (int)AS_NUMBER(args[0]);
+    if (n < 0) n = 0;
+    if (n > 100000) n = 100000;
+    ObjList* result = newList(vm);
+    Value val = (argCount >= 2) ? args[1] : NULL_VAL;
+    for (int i = 0; i < n; i++) {
+        writeValueArray(&result->items, val);
+    }
+    return OBJ_VAL(result);
+}
+
+/* str_replace_all(str, old, new) - replace all occurrences */
+static Value nativeStrReplaceAll(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0]) || !IS_STRING(args[1]) || !IS_STRING(args[2]))
+        return args[0];
+    ObjString* str = AS_STRING(args[0]);
+    ObjString* old = AS_STRING(args[1]);
+    ObjString* rep = AS_STRING(args[2]);
+
+    if (old->length == 0) return args[0];
+
+    /* Count occurrences */
+    int count = 0;
+    const char* p = str->chars;
+    while ((p = strstr(p, old->chars)) != NULL) {
+        count++;
+        p += old->length;
+    }
+    if (count == 0) return args[0];
+
+    int newLen = str->length + count * (rep->length - old->length);
+    char* buf = malloc(newLen + 1);
+    char* dst = buf;
+    p = str->chars;
+    while (*p) {
+        if (strncmp(p, old->chars, old->length) == 0) {
+            memcpy(dst, rep->chars, rep->length);
+            dst += rep->length;
+            p += old->length;
+        } else {
+            *dst++ = *p++;
+        }
+    }
+    *dst = '\0';
+    ObjString* result = copyString(vm, buf, newLen);
+    free(buf);
+    return OBJ_VAL(result);
+}
+
+/* str_split_lines(str) - split string by newlines */
+static Value nativeStrSplitLines(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) return OBJ_VAL(newList(vm));
+    ObjString* str = AS_STRING(args[0]);
+    ObjList* result = newList(vm);
+    const char* start = str->chars;
+    for (int i = 0; i <= str->length; i++) {
+        if (i == str->length || str->chars[i] == '\n') {
+            int lineLen = (int)(&str->chars[i] - start);
+            if (lineLen > 0 && start[lineLen - 1] == '\r') lineLen--;
+            writeValueArray(&result->items, OBJ_VAL(copyString(vm, start, lineLen)));
+            start = &str->chars[i + 1];
+        }
+    }
+    return OBJ_VAL(result);
+}
+
+/* to_json(value) - simple JSON-like string conversion */
+static Value nativeToJson(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    char* str = valueToString(args[0]);
+    if (!str) return OBJ_VAL(copyString(vm, "khali", 5));
+    ObjString* result = copyString(vm, str, (int)strlen(str));
+    free(str);
+    return OBJ_VAL(result);
+}
+
+/* assert_(condition, message?) - assertion */
+static Value nativeAssert(VM* vm, int argCount, Value* args) {
+    if (IS_BOOL(args[0]) && AS_BOOL(args[0]) == false) {
+        if (argCount >= 2 && IS_STRING(args[1])) {
+            runtimeError(vm, "Assert fail: %s", AS_STRING(args[1])->chars);
+        } else {
+            runtimeError(vm, "Assert fail!");
+        }
+        /* Note: runtimeError doesn't return in a try-catch, this will be caught */
+    }
+    return NULL_VAL;
+}
+
+/* suchi_kram_ulta(list) - sort list in reverse order */
+static Value nativeSuchiKramUlta(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return OBJ_VAL(newList(vm));
+    ObjList* orig = AS_LIST(args[0]);
+    ObjList* sorted = newList(vm);
+    for (int i = 0; i < orig->items.count; i++) {
+        writeValueArray(&sorted->items, orig->items.values[i]);
+    }
+    /* Simple bubble sort descending */
+    for (int i = 0; i < sorted->items.count - 1; i++) {
+        for (int j = 0; j < sorted->items.count - 1 - i; j++) {
+            if (IS_NUMBER(sorted->items.values[j]) && IS_NUMBER(sorted->items.values[j+1])) {
+                if (AS_NUMBER(sorted->items.values[j]) < AS_NUMBER(sorted->items.values[j+1])) {
+                    Value tmp = sorted->items.values[j];
+                    sorted->items.values[j] = sorted->items.values[j+1];
+                    sorted->items.values[j+1] = tmp;
+                }
+            }
+        }
+    }
+    return OBJ_VAL(sorted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ *  BATCH 3 — More Python-equivalent natives
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* str_starts_with(str, prefix) */
+static Value nativeStrStartsWith(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0]) || !IS_STRING(args[1])) return BOOL_VAL(false);
+    ObjString* s = AS_STRING(args[0]);
+    ObjString* pre = AS_STRING(args[1]);
+    if (pre->length > s->length) return BOOL_VAL(false);
+    return BOOL_VAL(memcmp(s->chars, pre->chars, pre->length) == 0);
+}
+
+/* str_ends_with(str, suffix) */
+static Value nativeStrEndsWith(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0]) || !IS_STRING(args[1])) return BOOL_VAL(false);
+    ObjString* s = AS_STRING(args[0]);
+    ObjString* suf = AS_STRING(args[1]);
+    if (suf->length > s->length) return BOOL_VAL(false);
+    return BOOL_VAL(memcmp(s->chars + s->length - suf->length, suf->chars, suf->length) == 0);
+}
+
+/* str_lstrip(str) - remove leading whitespace */
+static Value nativeStrLstrip(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) return args[0];
+    ObjString* s = AS_STRING(args[0]);
+    int start = 0;
+    while (start < s->length && (s->chars[start] == ' ' || s->chars[start] == '\t' ||
+           s->chars[start] == '\n' || s->chars[start] == '\r')) start++;
+    return OBJ_VAL(copyString(vm, s->chars + start, s->length - start));
+}
+
+/* str_rstrip(str) - remove trailing whitespace */
+static Value nativeStrRstrip(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) return args[0];
+    ObjString* s = AS_STRING(args[0]);
+    int end = s->length;
+    while (end > 0 && (s->chars[end-1] == ' ' || s->chars[end-1] == '\t' ||
+           s->chars[end-1] == '\n' || s->chars[end-1] == '\r')) end--;
+    return OBJ_VAL(copyString(vm, s->chars, end));
+}
+
+/* str_reverse(str) */
+static Value nativeStrReverse(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) return args[0];
+    ObjString* s = AS_STRING(args[0]);
+    char* buf = ALLOCATE(char, s->length + 1);
+    for (int i = 0; i < s->length; i++) buf[i] = s->chars[s->length - 1 - i];
+    buf[s->length] = '\0';
+    ObjString* result = takeString(vm, buf, s->length);
+    return OBJ_VAL(result);
+}
+
+/* str_char_at(str, index) */
+static Value nativeStrCharAt(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) return NULL_VAL;
+    ObjString* s = AS_STRING(args[0]);
+    int idx = (int)AS_NUMBER(args[1]);
+    if (idx < 0) idx += s->length;
+    if (idx < 0 || idx >= s->length) return NULL_VAL;
+    return OBJ_VAL(copyString(vm, s->chars + idx, 1));
+}
+
+/* str_repeat(str, n) */
+static Value nativeStrRepeat(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) return args[0];
+    ObjString* s = AS_STRING(args[0]);
+    int n = (int)AS_NUMBER(args[1]);
+    if (n <= 0) return OBJ_VAL(copyString(vm, "", 0));
+    if (n > 10000) n = 10000;
+    int len = s->length * n;
+    char* buf = ALLOCATE(char, len + 1);
+    for (int i = 0; i < n; i++) memcpy(buf + i * s->length, s->chars, s->length);
+    buf[len] = '\0';
+    return OBJ_VAL(takeString(vm, buf, len));
+}
+
+/* str_ord(str) - get unicode codepoint of first char */
+static Value nativeStrOrd(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0])) return NUMBER_VAL(0);
+    ObjString* s = AS_STRING(args[0]);
+    if (s->length == 0) return NUMBER_VAL(0);
+    return NUMBER_VAL((unsigned char)s->chars[0]);
+}
+
+/* str_chr(n) - get char from codepoint */
+static Value nativeStrChr(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0])) return OBJ_VAL(copyString(vm, "", 0));
+    int c = (int)AS_NUMBER(args[0]);
+    if (c < 0 || c > 127) return OBJ_VAL(copyString(vm, "?", 1));
+    char ch = (char)c;
+    return OBJ_VAL(copyString(vm, &ch, 1));
+}
+
+/* str_count(str, sub) - count occurrences of substring */
+static Value nativeStrCount(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_STRING(args[0]) || !IS_STRING(args[1])) return NUMBER_VAL(0);
+    ObjString* s = AS_STRING(args[0]);
+    ObjString* sub = AS_STRING(args[1]);
+    if (sub->length == 0) return NUMBER_VAL(0);
+    int count = 0;
+    const char* p = s->chars;
+    while ((p = strstr(p, sub->chars)) != NULL) { count++; p += sub->length; }
+    return NUMBER_VAL(count);
+}
+
+/* str_ljust(str, width, fill) */
+static Value nativeStrLjust(VM* vm, int argCount, Value* args) {
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) return args[0];
+    ObjString* s = AS_STRING(args[0]);
+    int width = (int)AS_NUMBER(args[1]);
+    char fill = ' ';
+    if (argCount >= 3 && IS_STRING(args[2]) && AS_STRING(args[2])->length > 0)
+        fill = AS_STRING(args[2])->chars[0];
+    if (s->length >= width) return args[0];
+    char* buf = ALLOCATE(char, width + 1);
+    memcpy(buf, s->chars, s->length);
+    memset(buf + s->length, fill, width - s->length);
+    buf[width] = '\0';
+    return OBJ_VAL(takeString(vm, buf, width));
+}
+
+/* str_rjust(str, width, fill) */
+static Value nativeStrRjust(VM* vm, int argCount, Value* args) {
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) return args[0];
+    ObjString* s = AS_STRING(args[0]);
+    int width = (int)AS_NUMBER(args[1]);
+    char fill = ' ';
+    if (argCount >= 3 && IS_STRING(args[2]) && AS_STRING(args[2])->length > 0)
+        fill = AS_STRING(args[2])->chars[0];
+    if (s->length >= width) return args[0];
+    char* buf = ALLOCATE(char, width + 1);
+    int pad = width - s->length;
+    memset(buf, fill, pad);
+    memcpy(buf + pad, s->chars, s->length);
+    buf[width] = '\0';
+    return OBJ_VAL(takeString(vm, buf, width));
+}
+
+/* str_zfill(str, width) - pad with zeros on left */
+static Value nativeStrZfill(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0]) || !IS_NUMBER(args[1])) return args[0];
+    ObjString* s = AS_STRING(args[0]);
+    int width = (int)AS_NUMBER(args[1]);
+    if (s->length >= width) return args[0];
+    char* buf = ALLOCATE(char, width + 1);
+    int pad = width - s->length;
+    memset(buf, '0', pad);
+    memcpy(buf + pad, s->chars, s->length);
+    buf[width] = '\0';
+    return OBJ_VAL(takeString(vm, buf, width));
+}
+
+/* list_count(list, value) - count occurrences in list */
+static Value nativeListCount(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) return NUMBER_VAL(0);
+    ObjList* list = AS_LIST(args[0]);
+    int count = 0;
+    for (int i = 0; i < list->items.count; i++) {
+        if (valuesEqual(list->items.values[i], args[1])) count++;
+    }
+    return NUMBER_VAL(count);
+}
+
+/* list_extend(list, other) - extend list with another list (returns new) */
+static Value nativeListExtend(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_LIST(args[1])) return args[0];
+    ObjList* a = AS_LIST(args[0]);
+    ObjList* b = AS_LIST(args[1]);
+    ObjList* result = newList(vm);
+    for (int i = 0; i < a->items.count; i++) writeValueArray(&result->items, a->items.values[i]);
+    for (int i = 0; i < b->items.count; i++) writeValueArray(&result->items, b->items.values[i]);
+    return OBJ_VAL(result);
+}
+
+/* list_pop_front(list) - remove first element, return [element, remaining_list] */
+static Value nativeListPopFront(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return NULL_VAL;
+    ObjList* list = AS_LIST(args[0]);
+    if (list->items.count == 0) return NULL_VAL;
+    Value first = list->items.values[0];
+    ObjList* rest = newList(vm);
+    for (int i = 1; i < list->items.count; i++)
+        writeValueArray(&rest->items, list->items.values[i]);
+    ObjList* pair = newList(vm);
+    writeValueArray(&pair->items, first);
+    writeValueArray(&pair->items, OBJ_VAL(rest));
+    return OBJ_VAL(pair);
+}
+
+/* list_flat_map(list, fn) - map then flatten one level */
+static Value nativeListFlatMap(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    for (int i = 0; i < list->items.count; i++) {
+        Value mapped = vmCallFunction(vm, args[1], 1, &list->items.values[i]);
+        if (IS_LIST(mapped)) {
+            ObjList* inner = AS_LIST(mapped);
+            for (int j = 0; j < inner->items.count; j++)
+                writeValueArray(&result->items, inner->items.values[j]);
+        } else {
+            writeValueArray(&result->items, mapped);
+        }
+    }
+    return OBJ_VAL(result);
+}
+
+/* list_chunk(list, size) - split list into chunks */
+static Value nativeListChunk(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_NUMBER(args[1])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    int size = (int)AS_NUMBER(args[1]);
+    if (size <= 0) size = 1;
+    ObjList* result = newList(vm);
+    for (int i = 0; i < list->items.count; i += size) {
+        ObjList* chunk = newList(vm);
+        for (int j = i; j < i + size && j < list->items.count; j++)
+            writeValueArray(&chunk->items, list->items.values[j]);
+        writeValueArray(&result->items, OBJ_VAL(chunk));
+    }
+    return OBJ_VAL(result);
+}
+
+/* list_windowed(list, size) - sliding window */
+static Value nativeListWindowed(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_NUMBER(args[1])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    int size = (int)AS_NUMBER(args[1]);
+    if (size <= 0) size = 1;
+    ObjList* result = newList(vm);
+    for (int i = 0; i <= list->items.count - size; i++) {
+        ObjList* window = newList(vm);
+        for (int j = i; j < i + size; j++)
+            writeValueArray(&window->items, list->items.values[j]);
+        writeValueArray(&result->items, OBJ_VAL(window));
+    }
+    return OBJ_VAL(result);
+}
+
+/* list_take(list, n) - take first n elements */
+static Value nativeListTake(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_NUMBER(args[1])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    int n = (int)AS_NUMBER(args[1]);
+    if (n < 0) n = 0;
+    if (n > list->items.count) n = list->items.count;
+    ObjList* result = newList(vm);
+    for (int i = 0; i < n; i++) writeValueArray(&result->items, list->items.values[i]);
+    return OBJ_VAL(result);
+}
+
+/* list_drop(list, n) - skip first n elements */
+static Value nativeListDrop(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0]) || !IS_NUMBER(args[1])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    int n = (int)AS_NUMBER(args[1]);
+    if (n < 0) n = 0;
+    if (n > list->items.count) n = list->items.count;
+    ObjList* result = newList(vm);
+    for (int i = n; i < list->items.count; i++) writeValueArray(&result->items, list->items.values[i]);
+    return OBJ_VAL(result);
+}
+
+/* list_take_while(list, fn) - take while predicate is true */
+static Value nativeListTakeWhile(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    for (int i = 0; i < list->items.count; i++) {
+        Value res = vmCallFunction(vm, args[1], 1, &list->items.values[i]);
+        if (!isTruthy(res)) break;
+        writeValueArray(&result->items, list->items.values[i]);
+    }
+    return OBJ_VAL(result);
+}
+
+/* list_drop_while(list, fn) - skip while predicate is true */
+static Value nativeListDropWhile(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    ObjList* result = newList(vm);
+    bool dropping = true;
+    for (int i = 0; i < list->items.count; i++) {
+        if (dropping) {
+            Value res = vmCallFunction(vm, args[1], 1, &list->items.values[i]);
+            if (!isTruthy(res)) dropping = false;
+        }
+        if (!dropping) writeValueArray(&result->items, list->items.values[i]);
+    }
+    return OBJ_VAL(result);
+}
+
+/* list_find(list, fn) - find first element matching predicate */
+static Value nativeListFind(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return NULL_VAL;
+    ObjList* list = AS_LIST(args[0]);
+    for (int i = 0; i < list->items.count; i++) {
+        Value res = vmCallFunction(vm, args[1], 1, &list->items.values[i]);
+        if (isTruthy(res)) return list->items.values[i];
+    }
+    return NULL_VAL;
+}
+
+/* list_find_index(list, fn) - find index of first element matching predicate */
+static Value nativeListFindIndex(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return NUMBER_VAL(-1);
+    ObjList* list = AS_LIST(args[0]);
+    for (int i = 0; i < list->items.count; i++) {
+        Value res = vmCallFunction(vm, args[1], 1, &list->items.values[i]);
+        if (isTruthy(res)) return NUMBER_VAL(i);
+    }
+    return NUMBER_VAL(-1);
+}
+
+/* list_group_by(list, fn) - group elements by key function (returns list of [key, [items]]) */
+static Value nativeListGroupBy(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    ObjList* keys = newList(vm);
+    ObjList* groups = newList(vm);
+
+    for (int i = 0; i < list->items.count; i++) {
+        Value key = vmCallFunction(vm, args[1], 1, &list->items.values[i]);
+        int found = -1;
+        for (int j = 0; j < keys->items.count; j++) {
+            if (valuesEqual(keys->items.values[j], key)) { found = j; break; }
+        }
+        if (found == -1) {
+            writeValueArray(&keys->items, key);
+            ObjList* g = newList(vm);
+            writeValueArray(&g->items, list->items.values[i]);
+            writeValueArray(&groups->items, OBJ_VAL(g));
+        } else {
+            ObjList* g = AS_LIST(groups->items.values[found]);
+            writeValueArray(&g->items, list->items.values[i]);
+        }
+    }
+    ObjList* result = newList(vm);
+    for (int i = 0; i < keys->items.count; i++) {
+        ObjList* pair = newList(vm);
+        writeValueArray(&pair->items, keys->items.values[i]);
+        writeValueArray(&pair->items, groups->items.values[i]);
+        writeValueArray(&result->items, OBJ_VAL(pair));
+    }
+    return OBJ_VAL(result);
+}
+
+/* list_sort_by(list, fn) - sort by key function */
+static Value nativeListSortBy(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return args[0];
+    ObjList* list = AS_LIST(args[0]);
+    int n = list->items.count;
+    ObjList* result = newList(vm);
+    for (int i = 0; i < n; i++) writeValueArray(&result->items, list->items.values[i]);
+    /* Compute keys */
+    Value* keyVals = ALLOCATE(Value, n);
+    for (int i = 0; i < n; i++) {
+        keyVals[i] = vmCallFunction(vm, args[1], 1, &result->items.values[i]);
+    }
+    /* Bubble sort by key */
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (IS_NUMBER(keyVals[j]) && IS_NUMBER(keyVals[j+1])) {
+                if (AS_NUMBER(keyVals[j]) > AS_NUMBER(keyVals[j+1])) {
+                    Value tmp = result->items.values[j];
+                    result->items.values[j] = result->items.values[j+1];
+                    result->items.values[j+1] = tmp;
+                    Value kt = keyVals[j]; keyVals[j] = keyVals[j+1]; keyVals[j+1] = kt;
+                }
+            } else if (IS_STRING(keyVals[j]) && IS_STRING(keyVals[j+1])) {
+                if (strcmp(AS_CSTRING(keyVals[j]), AS_CSTRING(keyVals[j+1])) > 0) {
+                    Value tmp = result->items.values[j];
+                    result->items.values[j] = result->items.values[j+1];
+                    result->items.values[j+1] = tmp;
+                    Value kt = keyVals[j]; keyVals[j] = keyVals[j+1]; keyVals[j+1] = kt;
+                }
+            }
+        }
+    }
+    FREE_ARRAY(Value, keyVals, n);
+    return OBJ_VAL(result);
+}
+
+/* for_each(list, fn) - call fn for each element, returns khali */
+static Value nativeForEach(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return NULL_VAL;
+    ObjList* list = AS_LIST(args[0]);
+    for (int i = 0; i < list->items.count; i++) {
+        vmCallFunction(vm, args[1], 1, &list->items.values[i]);
+    }
+    return NULL_VAL;
+}
+
+/* map_from_pairs(list_of_pairs) - convert [[k,v],...] to map */
+static Value nativeMapFromPairs(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_LIST(args[0])) return NULL_VAL;
+    ObjList* pairs = AS_LIST(args[0]);
+    ObjMap* map = newMap(vm);
+    for (int i = 0; i < pairs->items.count; i++) {
+        if (!IS_LIST(pairs->items.values[i])) continue;
+        ObjList* pair = AS_LIST(pairs->items.values[i]);
+        if (pair->items.count < 2) continue;
+        mapSet(vm, map, pair->items.values[0], pair->items.values[1]);
+    }
+    return OBJ_VAL(map);
+}
+
+/* map_to_pairs(map) - convert map to [[k,v],...] */
+static Value nativeMapToPairs(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) return OBJ_VAL(newList(vm));
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* result = newList(vm);
+    for (int i = 0; i < map->capacity; i++) {
+        if (!map->entries[i].isOccupied) continue;
+        ObjList* pair = newList(vm);
+        writeValueArray(&pair->items, map->entries[i].key);
+        writeValueArray(&pair->items, map->entries[i].value);
+        writeValueArray(&result->items, OBJ_VAL(pair));
+    }
+    return OBJ_VAL(result);
+}
+
+/* map_filter(map, fn) - filter map entries by predicate fn(key, value) */
+static Value nativeMapFilter(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) return args[0];
+    ObjMap* map = AS_MAP(args[0]);
+    ObjMap* result = newMap(vm);
+    for (int i = 0; i < map->capacity; i++) {
+        if (!map->entries[i].isOccupied) continue;
+        Value fnArgs[2] = { map->entries[i].key, map->entries[i].value };
+        Value res = vmCallFunction(vm, args[1], 2, fnArgs);
+        if (isTruthy(res)) {
+            mapSet(vm, result, map->entries[i].key, map->entries[i].value);
+        }
+    }
+    return OBJ_VAL(result);
+}
+
+/* map_map(map, fn) - transform map values fn(key, value) -> new_value */
+static Value nativeMapMap(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) return args[0];
+    ObjMap* map = AS_MAP(args[0]);
+    ObjMap* result = newMap(vm);
+    for (int i = 0; i < map->capacity; i++) {
+        if (!map->entries[i].isOccupied) continue;
+        Value fnArgs[2] = { map->entries[i].key, map->entries[i].value };
+        Value newVal = vmCallFunction(vm, args[1], 2, fnArgs);
+        mapSet(vm, result, map->entries[i].key, newVal);
+    }
+    return OBJ_VAL(result);
+}
+
+/* sum_list(list) - sum of all numbers */
+static Value nativeSumList(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) return NUMBER_VAL(0);
+    ObjList* list = AS_LIST(args[0]);
+    double sum = 0;
+    for (int i = 0; i < list->items.count; i++) {
+        if (IS_NUMBER(list->items.values[i])) sum += AS_NUMBER(list->items.values[i]);
+    }
+    return NUMBER_VAL(sum);
+}
+
+/* product_list(list) - product of all numbers */
+static Value nativeProductList(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (!IS_LIST(args[0])) return NUMBER_VAL(0);
+    ObjList* list = AS_LIST(args[0]);
+    double prod = 1;
+    for (int i = 0; i < list->items.count; i++) {
+        if (IS_NUMBER(list->items.values[i])) prod *= AS_NUMBER(list->items.values[i]);
+    }
+    return NUMBER_VAL(prod);
+}
+
+/* range_step(start, end, step) - range with step */
+static Value nativeRangeStep(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0]) || !IS_NUMBER(args[1]) || !IS_NUMBER(args[2])) return OBJ_VAL(newList(vm));
+    double start = AS_NUMBER(args[0]);
+    double end = AS_NUMBER(args[1]);
+    double step = AS_NUMBER(args[2]);
+    if (step == 0) return OBJ_VAL(newList(vm));
+    ObjList* result = newList(vm);
+    if (step > 0) {
+        for (double i = start; i < end; i += step) {
+            writeValueArray(&result->items, NUMBER_VAL(i));
+            if (result->items.count > 100000) break;
+        }
+    } else {
+        for (double i = start; i > end; i += step) {
+            writeValueArray(&result->items, NUMBER_VAL(i));
+            if (result->items.count > 100000) break;
+        }
+    }
+    return OBJ_VAL(result);
+}
+
+/* linspace(start, end, n) - n evenly spaced numbers */
+static Value nativeLinspace(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_NUMBER(args[0]) || !IS_NUMBER(args[1]) || !IS_NUMBER(args[2])) return OBJ_VAL(newList(vm));
+    double start = AS_NUMBER(args[0]);
+    double end = AS_NUMBER(args[1]);
+    int n = (int)AS_NUMBER(args[2]);
+    if (n < 2) n = 2;
+    if (n > 100000) n = 100000;
+    ObjList* result = newList(vm);
+    double step = (end - start) / (n - 1);
+    for (int i = 0; i < n; i++) {
+        writeValueArray(&result->items, NUMBER_VAL(start + i * step));
+    }
+    return OBJ_VAL(result);
+}
+
+/* input(prompt) - read line from stdin */
+static Value nativeInput(VM* vm, int argCount, Value* args) {
+    if (argCount >= 1 && IS_STRING(args[0])) {
+        printf("%s", AS_CSTRING(args[0]));
+        fflush(stdout);
+    }
+    char buffer[4096];
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return OBJ_VAL(copyString(vm, "", 0));
+    }
+    int len = (int)strlen(buffer);
+    if (len > 0 && buffer[len-1] == '\n') buffer[--len] = '\0';
+    if (len > 0 && buffer[len-1] == '\r') buffer[--len] = '\0';
+    return OBJ_VAL(copyString(vm, buffer, len));
+}
+
+/* from_json(str) - parse basic JSON string */
+static Value nativeFromJson(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_STRING(args[0])) return NULL_VAL;
+    ObjString* s = AS_STRING(args[0]);
+    const char* p = s->chars;
+    /* Trim whitespace */
+    while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r') p++;
+
+    if (*p == '\0') return NULL_VAL;
+    /* null */
+    if (strncmp(p, "null", 4) == 0) return NULL_VAL;
+    /* true/false */
+    if (strncmp(p, "true", 4) == 0) return BOOL_VAL(true);
+    if (strncmp(p, "false", 5) == 0) return BOOL_VAL(false);
+    /* number */
+    if (*p == '-' || (*p >= '0' && *p <= '9')) {
+        char* end;
+        double val = strtod(p, &end);
+        if (end > p) return NUMBER_VAL(val);
+    }
+    /* string - basic handling */
+    if (*p == '"') {
+        p++;
+        const char* start = p;
+        while (*p && *p != '"') p++;
+        return OBJ_VAL(copyString(vm, start, (int)(p - start)));
+    }
+    return NULL_VAL;
+}
+
+/* type_name(value) - get type name as string */
+static Value nativeTypeName(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    const char* name = "anjaana";
+    if (IS_NUMBER(args[0])) name = "sankhya";
+    else if (IS_BOOL(args[0])) name = "bool";
+    else if (IS_NULL(args[0])) name = "khali";
+    else if (IS_STRING(args[0])) name = "shabd";
+    else if (IS_LIST(args[0])) name = "suchi";
+    else if (IS_MAP(args[0])) name = "naksha";
+    else if (IS_CLOSURE(args[0]) || IS_FUNCTION(args[0])) name = "kaam";
+    else if (IS_CLASS(args[0])) name = "kaksha";
+    else if (IS_INSTANCE(args[0])) name = "vastu";
+    return OBJ_VAL(copyString(vm, name, (int)strlen(name)));
+}
+
+/* id(value) - unique identifier for objects */
+static Value nativeId(VM* vm, int argCount, Value* args) {
+    (void)vm; (void)argCount;
+    if (IS_OBJ(args[0])) return NUMBER_VAL((double)(uintptr_t)AS_OBJ(args[0]));
+    return NUMBER_VAL(0);
+}
+
+/* deep_copy(value) - deep copy lists/maps */
+static Value nativeDeepCopy(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (IS_LIST(args[0])) {
+        ObjList* orig = AS_LIST(args[0]);
+        ObjList* copy = newList(vm);
+        for (int i = 0; i < orig->items.count; i++) {
+            Value item = orig->items.values[i];
+            if (IS_LIST(item)) {
+                Value deepArgs[1] = { item };
+                item = nativeDeepCopy(vm, 1, deepArgs);
+            }
+            writeValueArray(&copy->items, item);
+        }
+        return OBJ_VAL(copy);
+    }
+    if (IS_MAP(args[0])) {
+        ObjMap* orig = AS_MAP(args[0]);
+        ObjMap* copy = newMap(vm);
+        for (int i = 0; i < orig->capacity; i++) {
+            if (!orig->entries[i].isOccupied) continue;
+            Value val = orig->entries[i].value;
+            if (IS_LIST(val) || IS_MAP(val)) {
+                Value deepArgs[1] = { val };
+                val = nativeDeepCopy(vm, 1, deepArgs);
+            }
+            mapSet(vm, copy, orig->entries[i].key, val);
+        }
+        return OBJ_VAL(copy);
+    }
+    return args[0];
+}
+
+/* ============================================================================
+ *  MAP UTILITY NATIVES
+ * ============================================================================ */
+
+/* naksha_keys(map) - Get list of map keys */
+static Value nativeNakshaKeys(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "naksha_keys() ko map chahiye.");
+        return NULL_VAL;
+    }
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* keys = newList(vm);
+    push(vm, OBJ_VAL(keys));
+    for (int i = 0; i < map->capacity; i++) {
+        if (map->entries[i].isOccupied) {
+            writeValueArray(&keys->items, map->entries[i].key);
+        }
+    }
+    pop(vm);
+    return OBJ_VAL(keys);
+}
+
+/* naksha_values(map) - Get list of map values */
+static Value nativeNakshaValues(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "naksha_values() ko map chahiye.");
+        return NULL_VAL;
+    }
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* values = newList(vm);
+    push(vm, OBJ_VAL(values));
+    for (int i = 0; i < map->capacity; i++) {
+        if (map->entries[i].isOccupied) {
+            writeValueArray(&values->items, map->entries[i].value);
+        }
+    }
+    pop(vm);
+    return OBJ_VAL(values);
+}
+
+/* naksha_items(map) - Get list of [key, value] pairs */
+static Value nativeNakshaItems(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "naksha_items() ko map chahiye.");
+        return NULL_VAL;
+    }
+    ObjMap* map = AS_MAP(args[0]);
+    ObjList* items = newList(vm);
+    push(vm, OBJ_VAL(items));
+    for (int i = 0; i < map->capacity; i++) {
+        if (map->entries[i].isOccupied) {
+            ObjList* pair = newList(vm);
+            writeValueArray(&pair->items, map->entries[i].key);
+            writeValueArray(&pair->items, map->entries[i].value);
+            writeValueArray(&items->items, OBJ_VAL(pair));
+        }
+    }
+    pop(vm);
+    return OBJ_VAL(items);
+}
+
+/* naksha_hatao(map, key) - Remove key from map, return value */
+static Value nativeNakshaHatao(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0])) {
+        runtimeError(vm, "naksha_hatao() ko map chahiye.");
+        return NULL_VAL;
+    }
+    ObjMap* map = AS_MAP(args[0]);
+    Value removed;
+    if (mapGet(map, args[1], &removed)) {
+        mapDelete(map, args[1]);
+        return removed;
+    }
+    return NULL_VAL;
+}
+
+/* naksha_merge(map1, map2) - Merge two maps, return new map */
+static Value nativeNakshaMerge(VM* vm, int argCount, Value* args) {
+    (void)argCount;
+    if (!IS_MAP(args[0]) || !IS_MAP(args[1])) {
+        runtimeError(vm, "naksha_merge() ko do map chahiye.");
+        return NULL_VAL;
+    }
+    ObjMap* a = AS_MAP(args[0]);
+    ObjMap* b = AS_MAP(args[1]);
+    ObjMap* result = newMap(vm);
+    push(vm, OBJ_VAL(result));
+    for (int i = 0; i < a->capacity; i++) {
+        if (a->entries[i].isOccupied) {
+            mapSet(vm, result, a->entries[i].key, a->entries[i].value);
+        }
+    }
+    for (int i = 0; i < b->capacity; i++) {
+        if (b->entries[i].isOccupied) {
+            mapSet(vm, result, b->entries[i].key, b->entries[i].value);
+        }
+    }
+    pop(vm);
+    return OBJ_VAL(result);
+}
+
+/* ============================================================================
+ *  REGISTRATION — 215+ Built-in Functions
  * ============================================================================ */
 void registerNatives(VM* vm) {
     /* ── I/O ── */
@@ -2312,4 +3563,90 @@ void registerNatives(VM* vm) {
     defineNative(vm, "minute",    nativeMinute,    0);
     defineNative(vm, "second",    nativeSecond,    0);
     defineNative(vm, "hafta_din", nativeHaftaDin,  0);
+
+    /* ── OOP / Instance ── */
+    defineNative(vm, "kya_kaksha",    nativeKyaKaksha,    1);
+    defineNative(vm, "kya_vastu",     nativeKyaVastu,     1);
+    defineNative(vm, "vastu_ka",      nativeVastuKa,      2);
+    defineNative(vm, "kaksha_naam",   nativeKakshaNaam,   1);
+    defineNative(vm, "gun_hai",       nativeGunHai,       2);
+    defineNative(vm, "gun_lo",        nativeGunLo,        -1);
+    defineNative(vm, "gun_rakho",     nativeGunRakho,     3);
+    defineNative(vm, "gun_suchi",     nativeGunSuchi,     1);
+    defineNative(vm, "tarika_suchi",  nativeTarikaSuchi,  1);
+    defineNative(vm, "parent_kaksha", nativeParentKaksha, 1);
+
+    /* ── Additional Utilities ── */
+    defineNative(vm, "tukda_shabd",    nativeTukdaShabd,    -1);
+    defineNative(vm, "tukda_suchi",    nativeTukdaSuchi,    -1);
+    defineNative(vm, "enumerate_suchi", nativeEnumerateSuchi, 1);
+    defineNative(vm, "zip_suchi",      nativeZipSuchi,      2);
+    defineNative(vm, "unzip_suchi",    nativeUnzipSuchi,    1);
+    defineNative(vm, "char_list",      nativeCharList,      1);
+    defineNative(vm, "suchi_se_shabd", nativeSuchiSeShabd,  -1);
+    defineNative(vm, "map_values_list", nativeMapValuesList, 1);
+    defineNative(vm, "map_keys_list",  nativeMapKeysList,   1);
+    defineNative(vm, "suchi_mein",     nativeSuchiMein,     2);
+    defineNative(vm, "shabd_mein",     nativeShabdMein,     2);
+    defineNative(vm, "min_suchi",      nativeMinSuchi,      1);
+    defineNative(vm, "max_suchi",      nativeMaxSuchi,      1);
+    defineNative(vm, "suchi_bharo",    nativeSuchiBharo,    -1);
+    defineNative(vm, "sab_badlo",      nativeStrReplaceAll, 3);
+    defineNative(vm, "todo_lines",     nativeStrSplitLines, 1);
+    defineNative(vm, "to_json",        nativeToJson,        1);
+    defineNative(vm, "daawa",          nativeAssert,        -1);
+    defineNative(vm, "kram_ulta",      nativeSuchiKramUlta, 1);
+
+    /* ── Batch 3: More utilities ── */
+    defineNative(vm, "shuru_hai",    nativeStrStartsWith, 2);
+    defineNative(vm, "ant_hai",      nativeStrEndsWith,   2);
+    defineNative(vm, "baya_saaf",    nativeStrLstrip,     1);
+    defineNative(vm, "daya_saaf",    nativeStrRstrip,     1);
+    defineNative(vm, "ulta_shabd",   nativeStrReverse,    1);
+    defineNative(vm, "akshar_par",   nativeStrCharAt,     2);
+    defineNative(vm, "dohrao_shabd", nativeStrRepeat,     2);
+    defineNative(vm, "ord",          nativeStrOrd,        1);
+    defineNative(vm, "chr",          nativeStrChr,        1);
+    defineNative(vm, "gino_shabd",   nativeStrCount,      2);
+    defineNative(vm, "baya_bharao",  nativeStrLjust,      -1);
+    defineNative(vm, "daya_bharao",  nativeStrRjust,      -1);
+    defineNative(vm, "zero_bharao",  nativeStrZfill,      2);
+
+    defineNative(vm, "gino_suchi",   nativeListCount,     2);
+    defineNative(vm, "badhao",       nativeListExtend,    2);
+    defineNative(vm, "pehla_nikalo", nativeListPopFront,  1);
+    defineNative(vm, "flat_naksha",  nativeListFlatMap,   2);
+    defineNative(vm, "tukde",        nativeListChunk,     2);
+    defineNative(vm, "khidki",       nativeListWindowed,  2);
+    defineNative(vm, "lo_suchi",     nativeListTake,      2);
+    defineNative(vm, "chodo_suchi",  nativeListDrop,      2);
+    defineNative(vm, "jab_tak_lo",   nativeListTakeWhile, 2);
+    defineNative(vm, "jab_tak_chodo",nativeListDropWhile, 2);
+    defineNative(vm, "dhundho_suchi",nativeListFind,      2);
+    defineNative(vm, "dhundho_index",nativeListFindIndex, 2);
+    defineNative(vm, "samuh",        nativeListGroupBy,   2);
+    defineNative(vm, "kram_se",      nativeListSortBy,    2);
+    defineNative(vm, "har_ek",       nativeForEach,       2);
+
+    defineNative(vm, "jodi_se_naksha",  nativeMapFromPairs, 1);
+    defineNative(vm, "naksha_se_jodi",  nativeMapToPairs,   1);
+    defineNative(vm, "naksha_chhaano",  nativeMapFilter,    2);
+    defineNative(vm, "naksha_badlo",    nativeMapMap,       2);
+
+    defineNative(vm, "jod_suchi",    nativeSumList,       1);
+    defineNative(vm, "gunanfal",     nativeProductList,   1);
+    defineNative(vm, "range_step",   nativeRangeStep,     3);
+    defineNative(vm, "linspace",     nativeLinspace,      3);
+    defineNative(vm, "pucho",        nativeInput,         -1);
+    defineNative(vm, "from_json",    nativeFromJson,      1);
+    defineNative(vm, "prakar_naam",  nativeTypeName,      1);
+    defineNative(vm, "pehchan",      nativeId,            1);
+    defineNative(vm, "gehri_nakal",  nativeDeepCopy,      1);
+
+    /* ── Map Utility Aliases ── */
+    defineNative(vm, "naksha_keys",    nativeNakshaKeys,    1);
+    defineNative(vm, "naksha_values",  nativeNakshaValues,  1);
+    defineNative(vm, "naksha_items",   nativeNakshaItems,   1);
+    defineNative(vm, "naksha_hatao",   nativeNakshaHatao,   2);
+    defineNative(vm, "naksha_jodo",    nativeNakshaMerge,   2);
 }

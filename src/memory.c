@@ -148,6 +148,27 @@ static void blackenObject(VM* vm, Obj* object) {
         case OBJ_NATIVE:
         case OBJ_STRING:
             break;
+        case OBJ_CLASS: {
+            ObjClass* klass = (ObjClass*)object;
+            markValue(vm, OBJ_VAL(klass->name));
+            markTable(vm, &klass->methods);
+            if (klass->superclass != NULL) {
+                markValue(vm, OBJ_VAL(klass->superclass));
+            }
+            break;
+        }
+        case OBJ_INSTANCE: {
+            ObjInstance* instance = (ObjInstance*)object;
+            markValue(vm, OBJ_VAL(instance->klass));
+            markTable(vm, &instance->fields);
+            break;
+        }
+        case OBJ_BOUND_METHOD: {
+            ObjBoundMethod* bound = (ObjBoundMethod*)object;
+            markValue(vm, bound->receiver);
+            markValue(vm, OBJ_VAL(bound->method));
+            break;
+        }
     }
 }
 

@@ -59,6 +59,17 @@ static int constantLongInstruction(const char* name, Chunk* chunk, int offset) {
     return offset + 3;
 }
 
+static int invokeLongInstruction(const char* name, Chunk* chunk, int offset) {
+    uint8_t lo = chunk->code[offset + 1];
+    uint8_t hi = chunk->code[offset + 2];
+    int constant = lo | (hi << 8);
+    uint8_t argCount = chunk->code[offset + 3];
+    printf("%-24s (%d args) %4d '", name, argCount, constant);
+    printValue(chunk->constants.values[constant]);
+    printf("'\n");
+    return offset + 4;
+}
+
 /* ============================================================================
  *  DISASSEMBLE SINGLE INSTRUCTION
  * ============================================================================ */
@@ -85,6 +96,9 @@ int disassembleInstruction(Chunk* chunk, int offset) {
         case OP_DEFINE_GLOBAL:  return constantInstruction("OP_DEFINE_GLOBAL", chunk, offset);
         case OP_GET_GLOBAL:     return constantInstruction("OP_GET_GLOBAL", chunk, offset);
         case OP_SET_GLOBAL:     return constantInstruction("OP_SET_GLOBAL", chunk, offset);
+        case OP_DEFINE_GLOBAL_LONG: return constantLongInstruction("OP_DEFINE_GLOBAL_LONG", chunk, offset);
+        case OP_GET_GLOBAL_LONG:    return constantLongInstruction("OP_GET_GLOBAL_LONG", chunk, offset);
+        case OP_SET_GLOBAL_LONG:    return constantLongInstruction("OP_SET_GLOBAL_LONG", chunk, offset);
         case OP_GET_LOCAL:      return byteInstruction("OP_GET_LOCAL", chunk, offset);
         case OP_SET_LOCAL:      return byteInstruction("OP_SET_LOCAL", chunk, offset);
         case OP_GET_UPVALUE:    return byteInstruction("OP_GET_UPVALUE", chunk, offset);
@@ -129,6 +143,25 @@ int disassembleInstruction(Chunk* chunk, int offset) {
             return offset;
         }
 
+        case OP_CLOSURE_LONG: {
+            offset++;
+            uint8_t lo = chunk->code[offset++];
+            uint8_t hi = chunk->code[offset++];
+            int constant = lo | (hi << 8);
+            printf("%-24s %4d ", "OP_CLOSURE_LONG", constant);
+            printValue(chunk->constants.values[constant]);
+            printf("\n");
+
+            ObjFunction* function = AS_FUNCTION(chunk->constants.values[constant]);
+            for (int j = 0; j < function->upvalueCount; j++) {
+                int isLocal = chunk->code[offset++];
+                int index = chunk->code[offset++];
+                printf("%04d    |                     %s %d\n",
+                    offset - 2, isLocal ? "local" : "upvalue", index);
+            }
+            return offset;
+        }
+
         case OP_CLOSE_UPVALUE:  return simpleInstruction("OP_CLOSE_UPVALUE", offset);
         case OP_RETURN:         return simpleInstruction("OP_RETURN", offset);
         case OP_PRINT:          return simpleInstruction("OP_PRINT", offset);
@@ -137,6 +170,8 @@ int disassembleInstruction(Chunk* chunk, int offset) {
         case OP_LIST_NEW:       return byteInstruction("OP_LIST_NEW", chunk, offset);
         case OP_LIST_GET:       return simpleInstruction("OP_LIST_GET", offset);
         case OP_LIST_SET:       return simpleInstruction("OP_LIST_SET", offset);
+        case OP_LIST_APPEND:    return simpleInstruction("OP_LIST_APPEND", offset);
+        case OP_SLICE:          return simpleInstruction("OP_SLICE", offset);
         case OP_STR_CONCAT:     return simpleInstruction("OP_STR_CONCAT", offset);
         case OP_MAP_NEW:        return byteInstruction("OP_MAP_NEW", chunk, offset);
         case OP_BIT_AND:        return simpleInstruction("OP_BIT_AND", offset);
@@ -146,6 +181,55 @@ int disassembleInstruction(Chunk* chunk, int offset) {
         case OP_SHIFT_LEFT:     return simpleInstruction("OP_SHIFT_LEFT", offset);
         case OP_SHIFT_RIGHT:    return simpleInstruction("OP_SHIFT_RIGHT", offset);
         case OP_HALT:           return simpleInstruction("OP_HALT", offset);
+
+        /* Try-catch */
+        case OP_TRY:            return jumpInstruction("OP_TRY", 1, chunk, offset);
+        case OP_TRY_END:        return simpleInstruction("OP_TRY_END", offset);
+        case OP_THROW:          return simpleInstruction("OP_THROW", offset);
+
+        /* OOP */
+        case OP_CLASS:          return constantInstruction("OP_CLASS", chunk, offset);
+        case OP_CLASS_LONG:     return constantLongInstruction("OP_CLASS_LONG", chunk, offset);
+        case OP_GET_PROPERTY:   return constantInstruction("OP_GET_PROPERTY", chunk, offset);
+        case OP_GET_PROPERTY_LONG: return constantLongInstruction("OP_GET_PROPERTY_LONG", chunk, offset);
+        case OP_SET_PROPERTY:   return constantInstruction("OP_SET_PROPERTY", chunk, offset);
+        case OP_SET_PROPERTY_LONG: return constantLongInstruction("OP_SET_PROPERTY_LONG", chunk, offset);
+        case OP_METHOD:         return constantInstruction("OP_METHOD", chunk, offset);
+        case OP_METHOD_LONG:    return constantLongInstruction("OP_METHOD_LONG", chunk, offset);
+        case OP_INVOKE: {
+            offset++;
+            uint8_t constant = chunk->code[offset++];
+            uint8_t argCount = chunk->code[offset++];
+            printf("%-24s (%d args) %4d '", "OP_INVOKE", argCount, constant);
+            printValue(chunk->constants.values[constant]);
+            printf("'\n");
+            return offset;
+        }
+        case OP_INVOKE_LONG:    return invokeLongInstruction("OP_INVOKE_LONG", chunk, offset);
+        case OP_INHERIT:        return simpleInstruction("OP_INHERIT", offset);
+        case OP_GET_SUPER:      return constantInstruction("OP_GET_SUPER", chunk, offset);
+        case OP_GET_SUPER_LONG: return constantLongInstruction("OP_GET_SUPER_LONG", chunk, offset);
+        case OP_SUPER_INVOKE: {
+            offset++;
+            uint8_t constant = chunk->code[offset++];
+            uint8_t argCount = chunk->code[offset++];
+            printf("%-24s (%d args) %4d '", "OP_SUPER_INVOKE", argCount, constant);
+            printValue(chunk->constants.values[constant]);
+            printf("'\n");
+            return offset;
+        }
+        case OP_SUPER_INVOKE_LONG: return invokeLongInstruction("OP_SUPER_INVOKE_LONG", chunk, offset);
+
+        /* Module */
+        case OP_IMPORT:         return constantInstruction("OP_IMPORT", chunk, offset);
+        case OP_IMPORT_LONG:    return constantLongInstruction("OP_IMPORT_LONG", chunk, offset);
+        case OP_EXPORT:         return constantInstruction("OP_EXPORT", chunk, offset);
+
+        /* Utility */
+        case OP_LENGTH:         return simpleInstruction("OP_LENGTH", offset);
+        case OP_IN:             return simpleInstruction("OP_IN", offset);
+        case OP_MAP_KEYS:       return simpleInstruction("OP_MAP_KEYS", offset);
+        case OP_ITER_PREP:      return simpleInstruction("OP_ITER_PREP", offset);
 
         default:
             printf("Anjaana opcode %d\n", instruction);

@@ -31,6 +31,9 @@ typedef enum {
     OP_DEFINE_GLOBAL,   /* Define global variable */
     OP_GET_GLOBAL,      /* Read global variable */
     OP_SET_GLOBAL,      /* Set global variable */
+    OP_DEFINE_GLOBAL_LONG, /* Define global (16-bit index) */
+    OP_GET_GLOBAL_LONG,    /* Read global (16-bit index) */
+    OP_SET_GLOBAL_LONG,    /* Set global (16-bit index) */
     OP_GET_LOCAL,       /* Read local variable */
     OP_SET_LOCAL,       /* Set local variable */
     OP_GET_UPVALUE,     /* Read upvalue (closure) */
@@ -64,6 +67,7 @@ typedef enum {
     /* Functions */
     OP_CALL,            /* Call function */
     OP_CLOSURE,         /* Create closure */
+    OP_CLOSURE_LONG,    /* Create closure (16-bit index) */
     OP_CLOSE_UPVALUE,   /* Close upvalue */
     OP_RETURN,          /* wapas do */
 
@@ -75,6 +79,8 @@ typedef enum {
     OP_LIST_NEW,        /* Create new list with N elements */
     OP_LIST_GET,        /* Get list[index] */
     OP_LIST_SET,        /* Set list[index] = value */
+    OP_LIST_APPEND,     /* Append value to list (for comprehensions) */
+    OP_SLICE,           /* Slice list/string [start:end] */
 
     /* String Operations */
     OP_STR_CONCAT,      /* String concatenation */
@@ -89,6 +95,39 @@ typedef enum {
     OP_BIT_NOT,         /* ~ */
     OP_SHIFT_LEFT,      /* << */
     OP_SHIFT_RIGHT,     /* >> */
+
+    /* Try-Catch */
+    OP_TRY,             /* Begin try block (operand: catch jump offset) */
+    OP_TRY_END,         /* End try block (pop handler) */
+    OP_THROW,           /* Throw exception */
+
+    /* OOP - Classes */
+    OP_CLASS,           /* Create class */
+    OP_CLASS_LONG,      /* Create class (16-bit index) */
+    OP_GET_PROPERTY,    /* Get object property */
+    OP_GET_PROPERTY_LONG, /* Get object property (16-bit) */
+    OP_SET_PROPERTY,    /* Set object property */
+    OP_SET_PROPERTY_LONG, /* Set object property (16-bit) */
+    OP_METHOD,          /* Define method on class */
+    OP_METHOD_LONG,     /* Define method (16-bit index) */
+    OP_INVOKE,          /* Optimized method call */
+    OP_INVOKE_LONG,     /* Optimized method call (16-bit) */
+    OP_INHERIT,         /* Class inheritance */
+    OP_GET_SUPER,       /* Access super method */
+    OP_GET_SUPER_LONG,  /* Access super method (16-bit) */
+    OP_SUPER_INVOKE,    /* Super method call */
+    OP_SUPER_INVOKE_LONG, /* Super method call (16-bit) */
+
+    /* Module system */
+    OP_IMPORT,          /* Import module */
+    OP_IMPORT_LONG,     /* Import module (16-bit) */
+    OP_EXPORT,          /* Export variable */
+
+    /* Utility */
+    OP_LENGTH,          /* Get length of list/string/map */
+    OP_IN,              /* Membership test: value in collection */
+    OP_MAP_KEYS,        /* Get list of map keys */
+    OP_ITER_PREP,       /* Prepare iterable: maps → keys list, others unchanged */
 
     /* Program Control */
     OP_HALT,            /* Stop VM */

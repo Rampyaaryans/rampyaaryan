@@ -1,0 +1,32 @@
+/* ===== SLICING TEST ===== */
+
+/* 1. String slicing */
+likho("=== 1. String Slice ===")
+maano s = "Hello World"
+likho(s[0:5])
+likho(s[6:11])
+
+/* 2. List slicing */
+likho("=== 2. List Slice ===")
+maano l = [10, 20, 30, 40, 50]
+likho(l[1:3])
+likho(l[0:2])
+
+/* 3. Open-ended slicing */
+likho("=== 3. Open-ended ===")
+likho(s[6:])
+likho(s[:5])
+likho(l[2:])
+likho(l[:3])
+
+/* 4. Negative indices */
+likho("=== 4. Negative ===")
+likho(s[-5:])
+likho(l[-2:])
+
+/* 5. Empty slice */
+likho("=== 5. Empty Slice ===")
+likho(s[3:3])
+likho(l[5:5])
+
+likho("=== ALL SLICING TESTS PASSED ===")
