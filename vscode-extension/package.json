@@ -1,0 +1,69 @@
+{
+  "name": "rampyaaryan",
+  "displayName": "Rampyaaryan - Hinglish Programming Language",
+  "description": "Syntax highlighting, file icons, and language support for Rampyaaryan (.ram) — India's First Hinglish Programming Language",
+  "version": "1.0.0",
+  "publisher": "Rampyaaryans",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rampyaaryans/rampyaaryan"
+  },
+  "homepage": "https://rampyaaryans.github.io/rampyaaryan/",
+  "bugs": {
+    "url": "https://github.com/Rampyaaryans/rampyaaryan/issues"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "rampyaaryan",
+    "hinglish",
+    "hindi",
+    "indian",
+    "programming language",
+    "ram"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "rampyaaryan",
+        "aliases": [
+          "Rampyaaryan",
+          "rampyaaryan",
+          "ram"
+        ],
+        "extensions": [
+          ".ram"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/ram-icon-light.png",
+          "dark": "./icons/ram-icon-dark.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rampyaaryan",
+        "scopeName": "source.rampyaaryan",
+        "path": "./syntaxes/rampyaaryan.tmLanguage.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "rampyaaryan-icons",
+        "label": "Rampyaaryan File Icons",
+        "path": "./icons/icon-theme.json"
+      }
+    ]
+  },
+  "galleryBanner": {
+    "color": "#2c2416",
+    "theme": "dark"
+  }
+}

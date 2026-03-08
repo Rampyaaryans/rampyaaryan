@@ -1,0 +1,23 @@
+{
+  "hidesExplorerArrows": false,
+  "file": "_file",
+  "folder": "_folder",
+  "folderExpanded": "_folder_open",
+  "fileExtensions": {
+    "ram": "_ram"
+  },
+  "iconDefinitions": {
+    "_file": {
+      "iconPath": "./ram-icon-light.png"
+    },
+    "_folder": {
+      "iconPath": "./ram-icon-light.png"
+    },
+    "_folder_open": {
+      "iconPath": "./ram-icon-light.png"
+    },
+    "_ram": {
+      "iconPath": "./ram-icon-light.png"
+    }
+  }
+}

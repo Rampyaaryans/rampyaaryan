@@ -1,0 +1,310 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Rampyaaryan",
+  "scopeName": "source.rampyaaryan",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#string-interpolation" },
+    { "include": "#numbers" },
+    { "include": "#keywords-control" },
+    { "include": "#keywords-declaration" },
+    { "include": "#keywords-operator" },
+    { "include": "#constants" },
+    { "include": "#builtins" },
+    { "include": "#function-call" },
+    { "include": "#function-definition" },
+    { "include": "#class-definition" },
+    { "include": "#operators" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.rampyaaryan",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.rampyaaryan",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.rampyaaryan",
+              "match": "\\\\."
+            },
+            {
+              "name": "variable.other.interpolation.rampyaaryan",
+              "match": "\\{[^}]*\\}"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.rampyaaryan",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.rampyaaryan",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.triple.rampyaaryan",
+          "begin": "\"\"\"",
+          "end": "\"\"\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.rampyaaryan",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "string-interpolation": {
+      "patterns": [
+        {
+          "name": "meta.interpolation.rampyaaryan",
+          "match": "\\$\\{[^}]*\\}",
+          "captures": {
+            "0": { "name": "variable.other.interpolation.rampyaaryan" }
+          }
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.rampyaaryan",
+          "match": "\\b0[xX][0-9a-fA-F]+\\b"
+        },
+        {
+          "name": "constant.numeric.octal.rampyaaryan",
+          "match": "\\b0[oO][0-7]+\\b"
+        },
+        {
+          "name": "constant.numeric.binary.rampyaaryan",
+          "match": "\\b0[bB][01]+\\b"
+        },
+        {
+          "name": "constant.numeric.float.rampyaaryan",
+          "match": "\\b[0-9]+\\.[0-9]+([eE][+-]?[0-9]+)?\\b"
+        },
+        {
+          "name": "constant.numeric.integer.rampyaaryan",
+          "match": "\\b[0-9]+\\b"
+        }
+      ]
+    },
+    "keywords-control": {
+      "patterns": [
+        {
+          "name": "keyword.control.rampyaaryan",
+          "match": "\\b(agar|warna\\s+agar|warna|jab\\s+tak|har|ruko|agla|dekho|chalao|aakhir|wapas\\s+do|koshish|pakdo|phenko|shamil\\s+karo|mein|se|tak|pakka)\\b"
+        }
+      ]
+    },
+    "keywords-declaration": {
+      "patterns": [
+        {
+          "name": "keyword.other.declaration.rampyaaryan",
+          "match": "\\b(maano|kaam|kaksha|ganana|naya)\\b"
+        }
+      ]
+    },
+    "keywords-operator": {
+      "patterns": [
+        {
+          "name": "keyword.operator.logical.rampyaaryan",
+          "match": "\\b(aur|ya|nahi)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.true.rampyaaryan",
+          "match": "\\b(sach)\\b"
+        },
+        {
+          "name": "constant.language.boolean.false.rampyaaryan",
+          "match": "\\b(jhooth)\\b"
+        },
+        {
+          "name": "constant.language.null.rampyaaryan",
+          "match": "\\b(khali)\\b"
+        },
+        {
+          "name": "variable.language.this.rampyaaryan",
+          "match": "\\b(yeh)\\b"
+        },
+        {
+          "name": "variable.language.super.rampyaaryan",
+          "match": "\\b(super)\\b"
+        },
+        {
+          "name": "constant.language.math.rampyaaryan",
+          "match": "\\b(PI|E|INF|NAN_VAL)\\b"
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "name": "support.function.io.rampyaaryan",
+          "match": "\\b(likho|likho_line|pucho|padho_file|likho_file|joodo_file|file_hai)\\b"
+        },
+        {
+          "name": "support.function.type.rampyaaryan",
+          "match": "\\b(prakar|sankhya|dashmlav|shabd|purn|bool_val|kya_sankhya|kya_shabd|kya_suchi|kya_kaam|kya_bool|kya_khali|kya_purn|kya_map|typeof_val|print_type|prakar_naam|pehchan)\\b"
+        },
+        {
+          "name": "support.function.string.rampyaaryan",
+          "match": "\\b(lambai|bade_akshar|chhote_akshar|kato|dhundho|badlo|todo|saaf|shuru_se|ant_se|dohrao|akshar|ascii_code|ascii_se|jodo_shabd|format|gino|title_case|capitalize|swapcase|center|kya_ank|kya_akshar|kya_alnum|kya_space|pad_left|pad_right|sab_badlo|todo_lines|shuru_hai|ant_hai|baya_saaf|daya_saaf|ulta_shabd|akshar_par|dohrao_shabd|ord|chr|gino_shabd|baya_bharao|daya_bharao|zero_bharao|char_list|suchi_se_shabd)\\b"
+        },
+        {
+          "name": "support.function.list.rampyaaryan",
+          "match": "\\b(joodo|nikalo|ulta|kram|suchi|range_|shamil|katao|pahla|aakhri|milao|index_of|anokha|daalo|jod|sabse_bada|sabse_chhota|ausat|flatten|tukda|ghuma|copy_suchi|khali_karo|gino_suchi|badhao|pehla_nikalo|flat_naksha|tukde|khidki|lo_suchi|chodo_suchi|jab_tak_lo|jab_tak_chodo|dhundho_suchi|dhundho_index|samuh|kram_se|har_ek|kram_ulta|tukda_suchi|enumerate_suchi|zip_suchi|unzip_suchi|suchi_mein|min_suchi|max_suchi|suchi_bharo|jod_suchi|gunanfal|range_step|linspace)\\b"
+        },
+        {
+          "name": "support.function.higherorder.rampyaaryan",
+          "match": "\\b(naksha|chhaano|ikkatha|sab|koi|jodi_banao|ginati_banao)\\b"
+        },
+        {
+          "name": "support.function.map.rampyaaryan",
+          "match": "\\b(shabdkosh|chabi|mulya|jodi|map_hatao|map_hai|map_milao|map_lambai|map_get|naksha_keys|naksha_values|naksha_items|naksha_hatao|naksha_jodo|jodi_se_naksha|naksha_se_jodi|naksha_chhaano|naksha_badlo|map_values_list|map_keys_list)\\b"
+        },
+        {
+          "name": "support.function.math.rampyaaryan",
+          "match": "\\b(abs_val|gol|upar|neeche|sqrt_val|bada|chhota|sin_val|cos_val|tan_val|asin_val|acos_val|atan_val|log_val|log10_val|log2_val|exp_val|power_val|gcd|lcm|sign|clamp|degrees|radians|factorial|kya_prime|fib|hypot_val|is_nan|is_inf|random_choice|random_shuffle|random_int|yaadrchik)\\b"
+        },
+        {
+          "name": "support.function.conversion.rampyaaryan",
+          "match": "\\b(hex_shabd|oct_shabd|bin_shabd|to_json|from_json)\\b"
+        },
+        {
+          "name": "support.function.system.rampyaaryan",
+          "match": "\\b(samay|ruko_samay|bahar|ghadi|platform|env_var|taareekh|waqt|timestamp|hash_val|gehri_nakal|daawa)\\b"
+        },
+        {
+          "name": "support.function.datetime.rampyaaryan",
+          "match": "\\b(din|mahina|saal|ghanta|minute|second|hafta_din)\\b"
+        },
+        {
+          "name": "support.function.oop.rampyaaryan",
+          "match": "\\b(kya_kaksha|kya_vastu|vastu_ka|kaksha_naam|gun_hai|gun_lo|gun_rakho|gun_suchi|tarika_suchi|parent_kaksha|tukda_shabd|shabdmein)\\b"
+        }
+      ]
+    },
+    "function-definition": {
+      "patterns": [
+        {
+          "match": "\\b(kaam)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+          "captures": {
+            "1": { "name": "keyword.other.declaration.rampyaaryan" },
+            "2": { "name": "entity.name.function.rampyaaryan" }
+          }
+        }
+      ]
+    },
+    "class-definition": {
+      "patterns": [
+        {
+          "match": "\\b(kaksha)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.other.declaration.rampyaaryan" },
+            "2": { "name": "entity.name.type.class.rampyaaryan" }
+          }
+        },
+        {
+          "match": "\\b(ganana)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.other.declaration.rampyaaryan" },
+            "2": { "name": "entity.name.type.enum.rampyaaryan" }
+          }
+        }
+      ]
+    },
+    "function-call": {
+      "patterns": [
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+          "captures": {
+            "1": { "name": "entity.name.function.call.rampyaaryan" }
+          }
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison.rampyaaryan",
+          "match": "(==|!=|<=|>=|<|>)"
+        },
+        {
+          "name": "keyword.operator.assignment.rampyaaryan",
+          "match": "(\\*\\*=|<<=|>>=|&=|\\|=|\\^=|\\+=|-=|\\*=|/=|%=|=)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.rampyaaryan",
+          "match": "(\\*\\*|\\+|-|\\*|/|%)"
+        },
+        {
+          "name": "keyword.operator.bitwise.rampyaaryan",
+          "match": "(<<|>>|&|\\||\\^|~)"
+        },
+        {
+          "name": "keyword.operator.nullcoalescing.rampyaaryan",
+          "match": "\\?\\?"
+        },
+        {
+          "name": "keyword.operator.ternary.rampyaaryan",
+          "match": "[?:]"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.separator.comma.rampyaaryan",
+          "match": ","
+        },
+        {
+          "name": "punctuation.terminator.dot.rampyaaryan",
+          "match": "\\."
+        },
+        {
+          "name": "punctuation.section.braces.begin.rampyaaryan",
+          "match": "\\{"
+        },
+        {
+          "name": "punctuation.section.braces.end.rampyaaryan",
+          "match": "\\}"
+        },
+        {
+          "name": "punctuation.section.brackets.begin.rampyaaryan",
+          "match": "\\["
+        },
+        {
+          "name": "punctuation.section.brackets.end.rampyaaryan",
+          "match": "\\]"
+        },
+        {
+          "name": "punctuation.section.parens.begin.rampyaaryan",
+          "match": "\\("
+        },
+        {
+          "name": "punctuation.section.parens.end.rampyaaryan",
+          "match": "\\)"
+        }
+      ]
+    }
+  }
+}

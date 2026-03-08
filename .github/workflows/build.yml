@@ -59,3 +59,22 @@ jobs:
         with:
           name: rampyaaryan-windows
           path: rampyaaryan.exe
+
+  build-vscode-extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+      - name: Package Extension
+        working-directory: vscode-extension
+        run: vsce package --no-dependencies
+      - name: Upload VSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: rampyaaryan-vscode-extension
+          path: vscode-extension/*.vsix

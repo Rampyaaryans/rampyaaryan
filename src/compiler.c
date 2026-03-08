@@ -2146,6 +2146,58 @@ static void varDeclaration(Parser* parser) {
     }
 
     int global = parseVariable(parser, "Variable ka naam do 'maano' ke baad.");
+
+    /* Multi-assignment: maano a, b, c = 1, 2, 3 */
+    if (check(parser, TOKEN_COMMA)) {
+        Token firstVarName = parser->previous;
+        Token names[256];
+        int globals[256];
+        int localIndices[256];
+        names[0] = firstVarName;
+        globals[0] = global;
+        localIndices[0] = currentCS(parser)->localCount - 1;
+        int nameCount = 1;
+        bool isLocal = (currentCS(parser)->scopeDepth > 0);
+
+        while (matchToken(parser, TOKEN_COMMA)) {
+            skipNewlines(parser);
+            globals[nameCount] = parseVariable(parser, "Variable ka naam do.");
+            names[nameCount] = parser->previous;
+            localIndices[nameCount] = currentCS(parser)->localCount - 1;
+            nameCount++;
+            if (nameCount >= 256) {
+                error(parser, "256 se zyada variables nahi assign kar sakte.");
+                break;
+            }
+        }
+
+        consume(parser, TOKEN_EQUAL, "'=' lagao values dene ke liye.");
+
+        /* Parse all the values */
+        for (int i = 0; i < nameCount; i++) {
+            if (i > 0) {
+                consume(parser, TOKEN_COMMA, "',' lagao next value ke liye.");
+            }
+            expression(parser);
+        }
+
+        if (isLocal) {
+            /* For locals: values are already on the stack at correct slots.
+               Just mark each local as initialized. */
+            for (int i = 0; i < nameCount; i++) {
+                currentCS(parser)->locals[localIndices[i]].depth = currentCS(parser)->scopeDepth;
+            }
+        } else {
+            /* For globals: define in reverse order (stack pops top first) */
+            for (int i = nameCount - 1; i >= 0; i--) {
+                defineVariable(parser, globals[i]);
+            }
+        }
+
+        consumeNewlineOrEnd(parser);
+        return;
+    }
+
     consume(parser, TOKEN_EQUAL, "'=' lagao variable ki value dene ke liye.");
     expression(parser);
     defineVariable(parser, global);
