@@ -78,4 +78,4 @@ All notable changes to Rampyaaryan will be documented in this file.
 - 10 example programs
 - Cross-platform support (Windows, Linux, macOS)
 - Makefile and CMake build system
-- MIT License
+- Rampyaaryan License

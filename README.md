@@ -4,7 +4,7 @@
 
 ### **पहली हिंग्लिश प्रोग्रामिंग भाषा — India's First Hinglish Programming Language**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Rampyaaryan](https://img.shields.io/badge/License-Rampyaaryan-red.svg)](LICENSE)
 [![Language: C99](https://img.shields.io/badge/Built%20with-C99-blue.svg)]()
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-green.svg)]()
 [![Functions](https://img.shields.io/badge/Built--in%20Functions-145-orange.svg)](https://rampyaaryans.github.io/rampyaaryan/api.html)
@@ -110,7 +110,7 @@ rampyaaryan/
 ├── scripts/          ← Install scripts
 ├── Makefile          ← GNU Make build
 ├── CMakeLists.txt    ← CMake build
-├── LICENSE           ← MIT License
+├── LICENSE           ← Rampyaaryan License
 └── README.md         ← This file
 ```
 
@@ -124,7 +124,7 @@ Contributions welcome! See the [Contributing Guide](https://rampyaaryans.github.
 
 ## 📜 License
 
-MIT License — See [LICENSE](LICENSE)
+Rampyaaryan License — See [LICENSE](LICENSE)
 
 ---
 
