@@ -132,10 +132,22 @@ body::before {
 }
 
 .sidebar-nav .nav-icon {
-  font-size: 1.05rem;
   width: 1.4rem;
-  text-align: center;
+  height: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+}
+
+.sidebar-nav .nav-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .sidebar-nav .section-title {
@@ -433,8 +445,18 @@ td code {
 }
 
 .card-icon {
-  font-size: 1.8rem;
   margin-bottom: 0.6rem;
+  line-height: 1;
+}
+
+.card-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .card h3 {
@@ -467,8 +489,18 @@ td code {
 }
 
 .feature-icon {
-  font-size: 1.5rem;
   margin-bottom: 0.4rem;
+  line-height: 1;
+}
+
+.feature-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .feature h4 {
