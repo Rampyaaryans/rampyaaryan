@@ -231,23 +231,9 @@ gcc -O2 -o rampyaaryan src/*.c -lm  <span class="cmt"># Direct GCC</span>
 
     <!-- Architecture -->
     <h2>Architecture</h2>
-<pre><code>Source Code (.ram)
-       &#x2193;
-   &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
-   &#x2502;  Lexer   &#x2502;  &#x2192; Tokens (Hinglish keywords)
-   &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
-        &#x2193;
-   &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
-   &#x2502; Compiler  &#x2502;  &#x2192; Bytecode (Pratt parser + code gen)
-   &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
-        &#x2193;
-   &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
-   &#x2502;    VM    &#x2502;  &#x2192; Execution (stack-based)
-   &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x252C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;
-        &#x2193;
-   &#x250C;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
-   &#x2502;    GC    &#x2502;  &#x2192; Memory management (mark-sweep)
-   &#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;</code></pre>
+    <div class="diagram-container">
+      <img src="architecture-pipeline.svg" alt="Rampyaaryan Compilation &amp; Execution Pipeline — Source Code → Lexer → Compiler → VM → Output" loading="lazy">
+    </div>
 
     <table>
       <thead><tr><th>Component</th><th>Technology</th></tr></thead>

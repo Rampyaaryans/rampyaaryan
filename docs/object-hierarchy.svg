@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 310" style="max-width:100%;height:auto">
+  <defs>
+    <filter id="os" x="-3%" y="-3%" width="106%" height="112%">
+      <feDropShadow dx="2" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity="0.10"/>
+    </filter>
+    <marker id="oa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#5a4e3c"/>
+    </marker>
+    <!-- UML inheritance triangle (hollow) -->
+    <marker id="inherit" viewBox="0 0 12 12" refX="12" refY="6" markerWidth="10" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L12 6L0 12z" fill="#faf8f4" stroke="#5a4e3c" stroke-width="1.5"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="850" height="310" rx="12" fill="#faf8f4" stroke="#d4c9b8" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="425" y="28" text-anchor="middle" font-family="Inter,'Segoe UI',system-ui,sans-serif" font-size="13" font-weight="700" fill="#2c2416" letter-spacing="1.5">OBJECT TYPE HIERARCHY</text>
+  <line x1="290" y1="36" x2="560" y2="36" stroke="#c0392b" stroke-width="2" opacity="0.5"/>
+
+  <!-- ═══ BASE: Obj ═══ -->
+  <rect x="355" y="50" width="140" height="52" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.8" filter="url(#os)"/>
+  <text x="425" y="72" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#7a2420">Obj</text>
+  <text x="425" y="90" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#994440">type · next · isMarked</text>
+
+  <!-- Vertical line down from Obj -->
+  <line x1="425" y1="102" x2="425" y2="120" stroke="#5a4e3c" stroke-width="1.5"/>
+
+  <!-- Horizontal distribution line -->
+  <line x1="68" y1="120" x2="782" y2="120" stroke="#5a4e3c" stroke-width="1.5"/>
+
+  <!-- Vertical lines down to each child -->
+  <line x1="68" y1="120" x2="68" y2="140" stroke="#5a4e3c" stroke-width="1.5" marker-end="url(#inherit)"/>
+  <line x1="172" y1="120" x2="172" y2="140" stroke="#5a4e3c" stroke-width="1.5" marker-end="url(#inherit)"/>
+  <line x1="282" y1="120" x2="282" y2="140" stroke="#5a4e3c" stroke-width="1.5" marker-end="url(#inherit)"/>
+  <line x1="390" y1="120" x2="390" y2="140" stroke="#5a4e3c" stroke-width="1.5" marker-end="url(#inherit)"/>
+  <line x1="496" y1="120" x2="496" y2="140" stroke="#5a4e3c" stroke-width="1.5" marker-end="url(#inherit)"/>
+  <line x1="600" y1="120" x2="600" y2="140" stroke="#5a4e3c" stroke-width="1.5" marker-end="url(#inherit)"/>
+  <line x1="700" y1="120" x2="700" y2="140" stroke="#5a4e3c" stroke-width="1.5" marker-end="url(#inherit)"/>
+  <line x1="782" y1="120" x2="782" y2="140" stroke="#5a4e3c" stroke-width="1.5" marker-end="url(#inherit)"/>
+
+  <!-- ═══ CHILD TYPES ═══ -->
+
+  <!-- ObjString -->
+  <rect x="15" y="148" width="106" height="58" rx="7" fill="#d5e8d4" stroke="#82b366" stroke-width="1.3" filter="url(#os)"/>
+  <text x="68" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#2d5a1e">ObjString</text>
+  <text x="68" y="186" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#4a7a38">chars · length</text>
+  <text x="68" y="198" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#4a7a38">hash (interned)</text>
+
+  <!-- ObjFunction -->
+  <rect x="132" y="148" width="106" height="58" rx="7" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.3" filter="url(#os)"/>
+  <text x="185" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#1a3a5c">ObjFunction</text>
+  <text x="185" y="186" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#3d6a99">chunk · arity</text>
+  <text x="185" y="198" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#3d6a99">upvalueCount</text>
+
+  <!-- ObjClosure -->
+  <rect x="249" y="148" width="106" height="58" rx="7" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.3" filter="url(#os)"/>
+  <text x="302" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#1a3a5c">ObjClosure</text>
+  <text x="302" y="186" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#3d6a99">function</text>
+  <text x="302" y="198" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#3d6a99">upvalues[]</text>
+
+  <!-- ObjUpvalue -->
+  <rect x="366" y="148" width="106" height="58" rx="7" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.3" filter="url(#os)"/>
+  <text x="419" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#5b3a6e">ObjUpvalue</text>
+  <text x="419" y="186" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7a5a8e">location</text>
+  <text x="419" y="198" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7a5a8e">closed · next</text>
+
+  <!-- ObjClass -->
+  <rect x="483" y="148" width="106" height="58" rx="7" fill="#fff2cc" stroke="#d6b656" stroke-width="1.3" filter="url(#os)"/>
+  <text x="536" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#7a6420">ObjClass</text>
+  <text x="536" y="186" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#8a7430">name · methods</text>
+  <text x="536" y="198" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#8a7430">superclass</text>
+
+  <!-- ObjInstance -->
+  <rect x="600" y="148" width="106" height="58" rx="7" fill="#fff2cc" stroke="#d6b656" stroke-width="1.3" filter="url(#os)"/>
+  <text x="653" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#7a6420">ObjInstance</text>
+  <text x="653" y="186" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#8a7430">klass · fields</text>
+  <text x="653" y="198" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#8a7430">(hash table)</text>
+
+  <!-- ObjList + ObjMap -->
+  <rect x="717" y="148" width="118" height="58" rx="7" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.3" filter="url(#os)"/>
+  <text x="776" y="167" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#7a5000">ObjList</text>
+  <text x="776" y="183" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#7a5000">ObjMap</text>
+  <text x="776" y="198" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#996a10">items[] · entries</text>
+
+  <!-- ═══ ADDITIONAL: ObjNative, ObjBoundMethod ═══ -->
+
+  <!-- Relationship lines to second row -->
+  <line x1="185" y1="206" x2="185" y2="228" stroke="#6c8ebf" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#oa)"/>
+  <line x1="536" y1="206" x2="536" y2="228" stroke="#d6b656" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#oa)"/>
+
+  <!-- ObjNative (below ObjFunction) -->
+  <rect x="130" y="234" width="110" height="44" rx="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.1" filter="url(#os)" opacity="0.85"/>
+  <text x="185" y="253" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#1a3a5c">ObjNative</text>
+  <text x="185" y="268" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#3d6a99">215+ built-in fns</text>
+
+  <!-- ObjBoundMethod (below ObjClass) -->
+  <rect x="481" y="234" width="110" height="44" rx="6" fill="#fff2cc" stroke="#d6b656" stroke-width="1.1" filter="url(#os)" opacity="0.85"/>
+  <text x="536" y="253" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#7a6420">ObjBoundMethod</text>
+  <text x="536" y="268" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#8a7430">receiver · method</text>
+
+  <!-- Legend -->
+  <rect x="30" y="256" width="85" height="36" rx="5" fill="#f0ebe3" stroke="#d4c9b8" stroke-width="1"/>
+  <text x="72" y="271" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="600" fill="#5a4e3c">LEGEND</text>
+  <line x1="40" y1="281" x2="65" y2="281" stroke="#5a4e3c" stroke-width="1.5"/>
+  <text x="80" y="285" font-family="Inter,sans-serif" font-size="7.5" fill="#5a4e3c">inherits</text>
+
+  <!-- Footer -->
+  <text x="425" y="300" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5" fill="#8a7e6c" letter-spacing="2">ALL OBJECTS TRACKED IN GC LINKED LIST · AUTOMATIC MEMORY MANAGEMENT</text>
+</svg>

@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 310" style="max-width:100%;height:auto">
+  <defs>
+    <filter id="shadow" x="-3%" y="-3%" width="106%" height="112%">
+      <feDropShadow dx="2" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#5a4e3c"/>
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#82b366"/>
+    </marker>
+    <marker id="arr-y" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#d6b656"/>
+    </marker>
+    <marker id="arr-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="4" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#d79b00"/>
+    </marker>
+  </defs>
+
+  <!-- Outer frame -->
+  <rect width="850" height="310" rx="12" fill="#faf8f4" stroke="#d4c9b8" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="425" y="28" text-anchor="middle" font-family="Inter,'Segoe UI',system-ui,sans-serif" font-size="13" font-weight="700" fill="#2c2416" letter-spacing="1.5">COMPILATION &amp; EXECUTION PIPELINE</text>
+  <line x1="265" y1="36" x2="585" y2="36" stroke="#c0392b" stroke-width="2" opacity="0.5"/>
+
+  <!-- ═══ MAIN FLOW ═══ -->
+
+  <!-- Source Code -->
+  <rect x="15" y="55" width="118" height="92" rx="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="74" y="83" text-anchor="middle" font-family="Inter,sans-serif" font-size="12.5" font-weight="700" fill="#1a3a5c">Source Code</text>
+  <line x1="33" y1="90" x2="115" y2="90" stroke="#6c8ebf" stroke-width="0.7" opacity="0.4"/>
+  <text x="74" y="110" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3d6a99">.ram file</text>
+  <text x="74" y="126" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5" fill="#3d6a99">Hinglish syntax</text>
+
+  <!-- Arrow 1 -->
+  <line x1="133" y1="100" x2="182" y2="100" stroke="#5a4e3c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Lexer -->
+  <rect x="188" y="55" width="112" height="92" rx="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="244" y="83" text-anchor="middle" font-family="Inter,sans-serif" font-size="12.5" font-weight="700" fill="#2d5a1e">Lexer</text>
+  <line x1="206" y1="90" x2="282" y2="90" stroke="#82b366" stroke-width="0.7" opacity="0.4"/>
+  <text x="244" y="110" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#4a7a38">Tokenization</text>
+  <text x="244" y="126" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5" fill="#4a7a38">50+ Hinglish kw</text>
+
+  <!-- Arrow 2 + label -->
+  <line x1="300" y1="100" x2="352" y2="100" stroke="#5a4e3c" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="308" y="82" width="38" height="14" rx="3" fill="#f0ebe3" stroke="none"/>
+  <text x="327" y="93" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="600" fill="#8a7e6c">Tokens</text>
+
+  <!-- Compiler -->
+  <rect x="358" y="55" width="126" height="92" rx="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="421" y="83" text-anchor="middle" font-family="Inter,sans-serif" font-size="12.5" font-weight="700" fill="#7a6420">Compiler</text>
+  <line x1="376" y1="90" x2="466" y2="90" stroke="#d6b656" stroke-width="0.7" opacity="0.4"/>
+  <text x="421" y="110" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#8a7430">Pratt parser</text>
+  <text x="421" y="126" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5" fill="#8a7430">Single-pass codegen</text>
+
+  <!-- Arrow 3 + label -->
+  <line x1="484" y1="100" x2="536" y2="100" stroke="#5a4e3c" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="488" y="82" width="45" height="14" rx="3" fill="#f0ebe3" stroke="none"/>
+  <text x="511" y="93" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="600" fill="#8a7e6c">Bytecode</text>
+
+  <!-- Virtual Machine -->
+  <rect x="542" y="55" width="122" height="92" rx="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="603" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="11.5" font-weight="700" fill="#7a2420">Virtual</text>
+  <text x="603" y="95" text-anchor="middle" font-family="Inter,sans-serif" font-size="11.5" font-weight="700" fill="#7a2420">Machine</text>
+  <line x1="560" y1="101" x2="646" y2="101" stroke="#b85450" stroke-width="0.7" opacity="0.4"/>
+  <text x="603" y="121" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#994440">Stack-based</text>
+  <text x="603" y="137" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5" fill="#994440">Dispatch loop</text>
+
+  <!-- Arrow 4 -->
+  <line x1="664" y1="100" x2="713" y2="100" stroke="#5a4e3c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Output -->
+  <rect x="719" y="63" width="112" height="76" rx="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="775" y="93" text-anchor="middle" font-family="Inter,sans-serif" font-size="12.5" font-weight="700" fill="#5b3a6e">Output</text>
+  <line x1="737" y1="100" x2="813" y2="100" stroke="#9673a6" stroke-width="0.7" opacity="0.4"/>
+  <text x="775" y="120" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#7a5a8e">Console / Return</text>
+
+  <!-- ═══ SUB-COMPONENTS ═══ -->
+
+  <!-- Dashed: Lexer → String Interning -->
+  <line x1="244" y1="147" x2="244" y2="192" stroke="#82b366" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-g)"/>
+
+  <!-- String Interning -->
+  <rect x="172" y="198" width="145" height="56" rx="6" fill="#d5e8d4" stroke="#82b366" stroke-width="1.2" filter="url(#shadow)" opacity="0.92"/>
+  <text x="244" y="220" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#2d5a1e">String Interning</text>
+  <text x="244" y="238" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#4a7a38">FNV-1a hash · O(1) equality</text>
+
+  <!-- Dashed: Compiler → Constant Pool -->
+  <line x1="421" y1="147" x2="421" y2="192" stroke="#d6b656" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-y)"/>
+
+  <!-- Constant Pool -->
+  <rect x="350" y="198" width="142" height="56" rx="6" fill="#fff2cc" stroke="#d6b656" stroke-width="1.2" filter="url(#shadow)" opacity="0.92"/>
+  <text x="421" y="220" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#7a6420">Constant Pool</text>
+  <text x="421" y="238" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#8a7430">Literals &amp; identifiers</text>
+
+  <!-- Dashed: VM → GC -->
+  <line x1="603" y1="147" x2="603" y2="192" stroke="#d79b00" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#arr-r)"/>
+
+  <!-- Garbage Collector -->
+  <rect x="530" y="198" width="147" height="56" rx="6" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.2" filter="url(#shadow)" opacity="0.92"/>
+  <text x="603" y="220" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#7a5000">Garbage Collector</text>
+  <text x="603" y="238" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#996a10">Tri-color mark-sweep</text>
+
+  <!-- Footer -->
+  <text x="425" y="290" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5" fill="#8a7e6c" letter-spacing="2">PURE C99  ·  ZERO DEPENDENCIES  ·  ~4000 LINES</text>
+</svg>
