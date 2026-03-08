@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.1.1 (2026-03-08)
+- **Improved file icon**: Higher resolution golden R icon (128x128) for .ram files in explorer
+
 ## 3.1.0 (2026-03-08)
 - **New Icon**: Golden R logo for marketplace and .ram file icon
 - **Fixed icon theme**: Only overrides .ram files, no longer replaces all default file/folder icons
