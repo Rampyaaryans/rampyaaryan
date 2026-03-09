@@ -109,6 +109,7 @@ jobs:
         shell: cmd
         run: |
           "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" scripts\installer.iss
+          copy installer-output\rampyaaryan-windows-x64-setup.exe rampyaaryan-windows-x64-setup.exe
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -121,7 +122,7 @@ jobs:
           name: release-windows
           path: |
             rampyaaryan-windows-x64.zip
-            installer-output/rampyaaryan-windows-x64-setup.exe
+            rampyaaryan-windows-x64-setup.exe
 
   build-vscode-extension:
     runs-on: ubuntu-latest

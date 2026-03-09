@@ -1,6 +1,6 @@
 [Setup]
 AppName=Rampyaaryan
-AppVersion=3.1.1
+AppVersion=3.2.0
 AppPublisher=Rampyaaryans
 AppPublisherURL=https://github.com/Rampyaaryans/rampyaaryan
 AppSupportURL=https://github.com/Rampyaaryans/rampyaaryan/issues
