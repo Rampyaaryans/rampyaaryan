@@ -269,6 +269,48 @@ function activate(context) {
             messages.forEach((msg, i) => {
                 setTimeout(() => vscode.window.showInformationMessage(msg), i * 1200);
             });
+        }),
+        vscode.commands.registerCommand('rampyaaryan.translateToHindi', async () => {
+            const currentLang = vscode.env.language;
+            if (currentLang === 'hi') {
+                const pick = await vscode.window.showInformationMessage(
+                    'IDE \u092A\u0939\u0932\u0947 \u0938\u0947 \u0939\u093F\u0928\u094D\u0926\u0940 \u092E\u0947\u0902 \u0939\u0948! English \u092E\u0947\u0902 \u0935\u093E\u092A\u0938 \u091C\u093E\u0928\u093E \u0939\u0948?',
+                    'Switch to English', '\u0930\u0939\u0928\u0947 \u0926\u094B'
+                );
+                if (pick === 'Switch to English') {
+                    await vscode.commands.executeCommand('workbench.action.configureLocale', 'en');
+                    vscode.window.showInformationMessage('Restart VS Code to switch back to English.');
+                }
+                return;
+            }
+
+            const hindiPack = vscode.extensions.getExtension('MS-CEINTL.vscode-language-pack-hi');
+            if (!hindiPack) {
+                const install = await vscode.window.showInformationMessage(
+                    'Hindi Language Pack install karna hoga. Install karein?',
+                    'Install \u0915\u0930\u094B', 'Cancel'
+                );
+                if (install === 'Install \u0915\u0930\u094B') {
+                    await vscode.commands.executeCommand('workbench.extensions.installExtension', 'MS-CEINTL.vscode-language-pack-hi');
+                    vscode.window.showInformationMessage(
+                        'Hindi Language Pack install ho raha hai... Install hone ke baad VS Code restart hoga.',
+                    );
+                    setTimeout(async () => {
+                        await vscode.commands.executeCommand('workbench.action.configureLocale', 'hi');
+                    }, 5000);
+                }
+                return;
+            }
+
+            await vscode.commands.executeCommand('workbench.action.configureLocale', 'hi');
+            vscode.window.showInformationMessage(
+                '\u092D\u093E\u0937\u093E \u0939\u093F\u0928\u094D\u0926\u0940 \u092E\u0947\u0902 \u092C\u0926\u0932 \u0926\u0940 \u0917\u092F\u0940! VS Code restart \u0915\u0930\u0947\u0902\u0964',
+                'Restart Now'
+            ).then(choice => {
+                if (choice === 'Restart Now') {
+                    vscode.commands.executeCommand('workbench.action.reloadWindow');
+                }
+            });
         })
     );
 
