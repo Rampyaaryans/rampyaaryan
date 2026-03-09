@@ -1,0 +1,105 @@
+likho "=== TEST 02: Arithmetic & Operators ==="
+
+// Basic arithmetic
+pakka 2 + 3 == 5, "addition failed"
+pakka 10 - 4 == 6, "subtraction failed"
+pakka 3 * 7 == 21, "multiplication failed"
+pakka 20 / 4 == 5, "division failed"
+pakka 17 % 5 == 2, "modulo failed"
+pakka 2 ** 10 == 1024, "power failed"
+
+// Float arithmetic
+pakka 1.5 + 2.5 == 4.0, "float addition failed"
+pakka 10.0 / 3.0 > 3.33 aur 10.0 / 3.0 < 3.34, "float division failed"
+
+// Negative numbers
+pakka -5 + 3 == -2, "negative addition failed"
+pakka -5 * -3 == 15, "negative multiplication failed"
+
+// Operator precedence
+pakka 2 + 3 * 4 == 14, "precedence * over + failed"
+pakka (2 + 3) * 4 == 20, "parentheses failed"
+pakka 2 ** 3 ** 1 == 8, "power precedence failed"
+
+// Comparison operators
+pakka 5 > 3, "greater than failed"
+pakka 3 < 5, "less than failed"
+pakka 5 >= 5, "greater equal failed"
+pakka 5 <= 5, "less equal failed"
+pakka 5 == 5, "equality failed"
+pakka 5 != 4, "inequality failed"
+
+// String comparison
+pakka "abc" == "abc", "string equality failed"
+pakka "abc" != "def", "string inequality failed"
+
+// Logical operators
+pakka sach aur sach, "true AND true failed"
+pakka nahi (sach aur jhooth), "true AND false should be false"
+pakka sach ya jhooth, "true OR false failed"
+pakka nahi (jhooth ya jhooth), "false OR false should be false"
+pakka nahi jhooth, "NOT false failed"
+pakka nahi (nahi sach), "NOT NOT true failed"
+
+// Short-circuit evaluation
+maano counter = 0
+kaam increment() {
+    counter = counter + 1
+    wapas do sach
+}
+jhooth aur increment()
+pakka counter == 0, "short-circuit AND failed"
+sach ya increment()
+pakka counter == 0, "short-circuit OR failed"
+
+// Compound assignment
+maano n = 10
+n += 5
+pakka n == 15, "+= failed"
+n -= 3
+pakka n == 12, "-= failed"
+n *= 2
+pakka n == 24, "*= failed"
+n /= 4
+pakka n == 6, "/= failed"
+n %= 4
+pakka n == 2, "%= failed"
+n **= 3
+pakka n == 8, "**= failed"
+
+// Bitwise operators
+pakka (5 & 3) == 1, "bitwise AND failed"
+pakka (5 | 3) == 7, "bitwise OR failed"
+pakka (5 ^ 3) == 6, "bitwise XOR failed"
+pakka (1 << 3) == 8, "left shift failed"
+pakka (8 >> 2) == 2, "right shift failed"
+pakka (~0) == -1, "bitwise NOT failed"
+
+// Bitwise compound assignment
+maano bw = 15
+bw &= 9
+pakka bw == 9, "&= failed"
+bw |= 6
+pakka bw == 15, "|= failed"
+bw ^= 5
+pakka bw == 10, "^= failed"
+bw <<= 1
+pakka bw == 20, "<<= failed"
+bw >>= 2
+pakka bw == 5, ">>= failed"
+
+// Ternary operator
+maano t = sach ? "yes" : "no"
+pakka t == "yes", "ternary true failed"
+maano f = jhooth ? "yes" : "no"
+pakka f == "no", "ternary false failed"
+
+// Null coalescing
+maano val = khali
+maano result = val ?? "default"
+pakka result == "default", "null coalescing null failed"
+maano val2 = "exists"
+maano result2 = val2 ?? "default"
+pakka result2 == "exists", "null coalescing non-null failed"
+
+likho "✅ TEST 02 PASSED: Arithmetic & Operators"

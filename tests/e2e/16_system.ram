@@ -1,0 +1,98 @@
+likho "=== TEST 16: System and Date/Time ==="
+
+// Platform detection
+maano p = platform()
+pakka p == "windows" ya p == "linux" ya p == "macos" ya p == "unknown", "platform invalid value"
+
+// Date string
+maano d = taareekh()
+pakka kya_shabd(d), "taareekh should return string"
+pakka lambai(d) > 0, "taareekh should not be empty"
+
+// Time string
+maano t = waqt()
+pakka kya_shabd(t), "waqt should return string"
+pakka lambai(t) > 0, "waqt should not be empty"
+
+// Timestamp (epoch seconds - should be a number)
+maano ts = timestamp()
+pakka kya_sankhya(ts), "timestamp should be number"
+pakka ts > 1000000000, "timestamp too small - not epoch"
+
+// Date parts
+maano yr = saal()
+pakka kya_sankhya(yr), "saal should be number"
+pakka yr >= 2024, "saal too small"
+
+maano mo = mahina()
+pakka kya_sankhya(mo), "mahina should be number"
+pakka mo >= 1 aur mo <= 12, "mahina out of range"
+
+maano dy = din()
+pakka kya_sankhya(dy), "din should be number"
+pakka dy >= 1 aur dy <= 31, "din out of range"
+
+// Time parts
+maano hr = ghanta()
+pakka kya_sankhya(hr), "ghanta should be number"
+pakka hr >= 0 aur hr <= 23, "ghanta out of range"
+
+maano mn = minute()
+pakka kya_sankhya(mn), "minute should be number"
+pakka mn >= 0 aur mn <= 59, "minute out of range"
+
+maano sc = second()
+pakka kya_sankhya(sc), "second should be number"
+pakka sc >= 0 aur sc <= 59, "second out of range"
+
+// Sleep/clock timing
+maano start = ghadi()
+ruko_samay(10)  // sleep 10ms
+maano end = ghadi()
+pakka end >= start, "clock should not go backwards"
+
+// Hash function
+maano h1 = hash_val("hello")
+maano h2 = hash_val("hello")
+pakka h1 == h2, "hash deterministic failed"
+maano h3 = hash_val("world")
+pakka h1 != h3, "hash collision on different strings"
+
+// JSON operations
+maano obj = {"name": "test", "value": 42}
+maano json_str = to_json(obj)
+pakka kya_shabd(json_str), "to_json should return string"
+pakka shamil(json_str, "name"), "to_json should contain key"
+
+// from_json only handles primitives (number, string, bool, null)
+pakka from_json("42") == 42, "from_json number failed"
+pakka from_json("true") == sach, "from_json true failed"
+pakka from_json("false") == jhooth, "from_json false failed"
+pakka from_json("null") == khali, "from_json null failed"
+
+// JSON array to_json
+maano arr = [1, 2, 3]
+maano json_arr = to_json(arr)
+pakka kya_shabd(json_arr), "to_json array should return string"
+pakka shamil(json_arr, "1"), "to_json array should contain 1"
+
+// Environment variable (PATH should exist)
+maano path = env_var("PATH")
+pakka kya_shabd(path), "env_var PATH should be string"
+pakka lambai(path) > 0, "PATH should not be empty"
+
+// Random number (yaadrchik with no args = random float 0-1)
+maano r = yaadrchik()
+pakka kya_sankhya(r), "random should be number"
+pakka r >= 0 aur r <= 1, "random out of range"
+
+// Random integer
+maano ri = random_int(1, 100)
+pakka kya_sankhya(ri), "random_int should be number"
+pakka ri >= 1 aur ri <= 100, "random_int out of range"
+
+// Random with range
+maano rr = yaadrchik(10, 20)
+pakka rr >= 10 aur rr <= 20, "random range failed"
+
+likho "✅ TEST 16 PASSED: System and Date/Time"

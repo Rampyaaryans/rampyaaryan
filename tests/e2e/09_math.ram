@@ -1,0 +1,100 @@
+likho "=== TEST 09: Math Functions ==="
+
+// Absolute value
+pakka abs_val(-5) == 5, "abs negative failed"
+pakka abs_val(5) == 5, "abs positive failed"
+pakka abs_val(0) == 0, "abs zero failed"
+
+// Rounding
+pakka gol(3.5) == 4, "round up failed"
+pakka gol(3.4) == 3, "round down failed"
+pakka upar(3.1) == 4, "ceil failed"
+pakka neeche(3.9) == 3, "floor failed"
+
+// Square root
+pakka sqrt_val(25) == 5, "sqrt 25 failed"
+pakka sqrt_val(0) == 0, "sqrt 0 failed"
+maano s = sqrt_val(2)
+pakka s > 1.414 aur s < 1.415, "sqrt 2 precision failed"
+
+// Min/max of two
+pakka bada(3, 7) == 7, "max failed"
+pakka chhota(3, 7) == 3, "min failed"
+
+// Power
+pakka power_val(2, 10) == 1024, "power failed"
+pakka power_val(3, 0) == 1, "power zero exp failed"
+
+// Trigonometry
+maano pi = PI()
+pakka pi > 3.141 aur pi < 3.142, "PI value failed"
+
+maano sin0 = sin_val(0)
+pakka sin0 == 0, "sin(0) failed"
+
+maano cos0 = cos_val(0)
+pakka cos0 == 1, "cos(0) failed"
+
+// Degrees/radians conversion
+pakka degrees(PI()) > 179.9 aur degrees(PI()) < 180.1, "degrees failed"
+pakka radians(180) > 3.141 aur radians(180) < 3.142, "radians failed"
+
+// Logarithms
+maano e = E()
+pakka e > 2.718 aur e < 2.719, "E value failed"
+
+maano ln_e = log_val(E())
+pakka ln_e > 0.999 aur ln_e < 1.001, "ln(e) failed"
+
+pakka log10_val(100) == 2, "log10(100) failed"
+pakka log2_val(8) == 3, "log2(8) failed"
+
+maano exp1 = exp_val(1)
+pakka exp1 > 2.718 aur exp1 < 2.719, "exp(1) failed"
+
+// GCD and LCM
+pakka gcd(12, 8) == 4, "gcd failed"
+pakka lcm(4, 6) == 12, "lcm failed"
+
+// Sign
+pakka sign(42) == 1, "sign positive failed"
+pakka sign(-42) == -1, "sign negative failed"
+pakka sign(0) == 0, "sign zero failed"
+
+// Clamp
+pakka clamp(15, 0, 10) == 10, "clamp above failed"
+pakka clamp(-5, 0, 10) == 0, "clamp below failed"
+pakka clamp(5, 0, 10) == 5, "clamp within failed"
+
+// Factorial
+pakka factorial(0) == 1, "factorial 0 failed"
+pakka factorial(5) == 120, "factorial 5 failed"
+
+// isPrime
+pakka kya_prime(2) == sach, "prime 2 failed"
+pakka kya_prime(17) == sach, "prime 17 failed"
+pakka kya_prime(4) == jhooth, "prime 4 failed"
+pakka kya_prime(1) == jhooth, "prime 1 failed"
+
+// Fibonacci
+pakka fib(0) == 0, "fib 0 failed"
+pakka fib(1) == 1, "fib 1 failed"
+pakka fib(10) == 55, "fib 10 failed"
+
+// Hypot
+maano h = hypot_val(3, 4)
+pakka h == 5, "hypot 3-4-5 failed"
+
+// NaN and Infinity
+maano inf = INF()
+pakka is_inf(inf), "is_inf failed"
+maano nan = NAN_VAL()
+pakka is_nan(nan), "is_nan failed"
+
+// Linspace
+maano ls = linspace(0, 10, 5)
+pakka lambai(ls) == 5, "linspace length failed"
+pakka ls[0] == 0, "linspace first failed"
+pakka ls[4] == 10, "linspace last failed"
+
+likho "✅ TEST 09 PASSED: Math Functions"

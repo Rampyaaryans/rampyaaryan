@@ -1,0 +1,96 @@
+likho "=== TEST 18: String Interpolation and Advanced Strings ==="
+
+// Basic interpolation
+maano name = "Rampyaaryan"
+pakka "${name}" == "Rampyaaryan", "basic interpolation failed"
+
+// Expression in interpolation
+pakka "${2 + 3}" == "5", "expr interpolation failed"
+
+// Multiple interpolations
+maano a = "hello"
+maano b = "world"
+pakka "${a} ${b}" == "hello world", "multi interpolation failed"
+
+// Nested quotes in strings
+maano s1 = 'He said "hi"'
+pakka shamil(s1, '"hi"'), "single quote with double failed"
+
+// String escape sequences
+maano nl = "line1\nline2"
+pakka shamil(nl, "\n"), "newline escape failed"
+
+maano tb = "col1\tcol2"
+pakka shamil(tb, "\t"), "tab escape failed"
+
+// Interpolation with method calls
+maano nums = [1, 2, 3]
+pakka "len=${lambai(nums)}" == "len=3", "interpolation with function failed"
+
+// String comparison (equality only, < > not supported for strings)
+pakka "abc" == "abc", "string equality failed"
+pakka "abc" != "xyz", "string inequality failed"
+
+// String indexing
+maano word = "Hello"
+pakka akshar(word, 0) == "H", "string index 0 failed"
+pakka akshar(word, 4) == "o", "string index 4 failed"
+
+// Unicode in string
+maano hindi = "नमस्ते"
+pakka lambai(hindi) > 0, "hindi string length failed"
+
+// Empty string interpolation
+maano empty = ""
+pakka "pre${empty}post" == "prepost", "empty interpolation failed"
+
+// Boolean in interpolation
+pakka "${sach}" == "sach", "bool interpolation failed"
+
+// Null in interpolation
+pakka "${khali}" == "khali", "null interpolation failed"
+
+// Number to string conversion
+pakka shabd(3.14159) == "3.14159", "number to string failed"
+pakka shabd(42) == "42", "int to string failed"
+
+// String multiplication / repeat
+pakka dohrao("ab", 3) == "ababab", "string repeat failed"
+pakka dohrao("x", 0) == "", "string repeat 0 failed"
+
+// Case conversion
+pakka bade_akshar("hello") == "HELLO", "uppercase failed"
+pakka chhote_akshar("HELLO") == "hello", "lowercase failed"
+pakka title_case("hello world") == "Hello World", "title case failed"
+
+// Trim
+pakka saaf("  hi  ") == "hi", "trim both failed"
+pakka baya_saaf("  hi  ") == "hi  ", "trim left failed"
+pakka daya_saaf("  hi  ") == "  hi", "trim right failed"
+
+// Split and join round-trip
+maano original = "a,b,c,d"
+maano parts = todo(original, ",")
+maano rejoined = jodo_shabd(parts, ",")
+pakka rejoined == original, "split-join roundtrip failed"
+
+// Replace all
+pakka badlo("aaa", "a", "b") == "bbb", "replace all failed"
+pakka badlo("hello", "x", "y") == "hello", "replace none failed"
+
+// Contains
+pakka shamil("hello world", "world"), "string contains failed"
+pakka shamil("hello", "xyz") == jhooth, "string not contains failed"
+
+// Starts/ends with
+pakka shuru_se("hello", "hel"), "starts with failed"
+pakka ant_se("hello", "llo"), "ends with failed"
+
+// Count occurrences
+pakka gino("banana", "a") == 3, "count occurrences failed"
+
+// Find
+pakka dhundho("hello world", "world") == 6, "find index failed"
+pakka dhundho("hello", "xyz") == -1, "find not found failed"
+
+likho "✅ TEST 18 PASSED: String Interpolation and Advanced Strings"

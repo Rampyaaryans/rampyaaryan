@@ -1,0 +1,41 @@
+likho "=== TEST 12: File I/O ==="
+
+// Write a file
+likho_file("tests/e2e/_test_output.txt", "Hello Rampyaaryan")
+
+// Check file exists
+pakka file_hai("tests/e2e/_test_output.txt") == sach, "file_hai after write failed"
+
+// Read the file back
+maano content = padho_file("tests/e2e/_test_output.txt")
+pakka content == "Hello Rampyaaryan", "padho_file content mismatch"
+
+// Overwrite file
+likho_file("tests/e2e/_test_output.txt", "Overwritten content")
+maano content2 = padho_file("tests/e2e/_test_output.txt")
+pakka content2 == "Overwritten content", "overwrite file failed"
+
+// Append to file
+joodo_file("tests/e2e/_test_output.txt", "\nAppended line")
+maano content3 = padho_file("tests/e2e/_test_output.txt")
+pakka content3 == "Overwritten content\nAppended line", "append file failed"
+
+// Non-existent file check
+pakka file_hai("tests/e2e/_nonexistent_xyz.txt") == jhooth, "file_hai nonexistent should be false"
+
+// Write multi-line
+likho_file("tests/e2e/_test_output.txt", "line1\nline2\nline3")
+maano ml = padho_file("tests/e2e/_test_output.txt")
+pakka shamil(ml, "line1"), "multiline line1 missing"
+pakka shamil(ml, "line2"), "multiline line2 missing"
+pakka shamil(ml, "line3"), "multiline line3 missing"
+
+// Write empty file
+likho_file("tests/e2e/_test_output.txt", "")
+maano empty = padho_file("tests/e2e/_test_output.txt")
+pakka empty == "", "empty file write/read failed"
+
+// Clean up - write something to confirm no crash on final write
+likho_file("tests/e2e/_test_output.txt", "cleanup")
+
+likho "✅ TEST 12 PASSED: File I/O"

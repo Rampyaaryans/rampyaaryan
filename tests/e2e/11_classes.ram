@@ -1,0 +1,161 @@
+likho "=== TEST 11: Classes and OOP ==="
+
+// Basic class
+kaksha Janwar {
+    shuru(naam, awaaz) {
+        yeh.naam = naam
+        yeh.awaaz = awaaz
+    }
+    bolo() {
+        wapas do yeh.naam + " says " + yeh.awaaz
+    }
+}
+
+maano kutta = Janwar("Dog", "Woof")
+pakka kutta.naam == "Dog", "class property failed"
+pakka kutta.bolo() == "Dog says Woof", "class method failed"
+
+// Class with computed properties
+kaksha Counter {
+    shuru() {
+        yeh.count = 0
+    }
+    increment() {
+        yeh.count = yeh.count + 1
+    }
+    get_count() {
+        wapas do yeh.count
+    }
+}
+maano c = Counter()
+c.increment()
+c.increment()
+c.increment()
+pakka c.get_count() == 3, "counter class failed"
+
+// Inheritance
+kaksha Animal {
+    shuru(name) {
+        yeh.name = name
+    }
+    speak() {
+        wapas do yeh.name + " makes a sound"
+    }
+}
+
+kaksha Dog : Animal {
+    shuru(name, breed) {
+        super.shuru(name)
+        yeh.breed = breed
+    }
+    speak() {
+        wapas do yeh.name + " barks"
+    }
+}
+
+maano d = Dog("Rex", "German Shepherd")
+pakka d.name == "Rex", "inheritance property failed"
+pakka d.breed == "German Shepherd", "child property failed"
+pakka d.speak() == "Rex barks", "method override failed"
+
+// Multiple levels of inheritance
+kaksha Shape {
+    shuru(name) {
+        yeh.name = name
+    }
+    describe() {
+        wapas do "I am a " + yeh.name
+    }
+}
+
+kaksha Rectangle : Shape {
+    shuru(w, h) {
+        super.shuru("Rectangle")
+        yeh.width = w
+        yeh.height = h
+    }
+    area() {
+        wapas do yeh.width * yeh.height
+    }
+}
+
+kaksha Square : Rectangle {
+    shuru(side) {
+        super.shuru(side, side)
+        yeh.name = "Square"
+    }
+}
+
+maano sq = Square(5)
+pakka sq.area() == 25, "multi-level inheritance failed"
+pakka sq.describe() == "I am a Square", "grandparent method failed"
+
+// Class name reflection
+pakka kaksha_naam(kutta) == "Janwar", "kaksha_naam failed"
+pakka kaksha_naam(d) == "Dog", "kaksha_naam child failed"
+
+// Property checks
+pakka gun_hai(kutta, "naam") == sach, "gun_hai positive failed"
+pakka gun_hai(kutta, "xyz") == jhooth, "gun_hai negative failed"
+
+// Get and set property dynamically
+gun_rakho(kutta, "age", 5)
+pakka gun_lo(kutta, "age") == 5, "gun_lo/gun_rakho failed"
+
+// Property list
+maano props = gun_suchi(c)
+pakka kya_suchi(props), "gun_suchi should return list"
+pakka shamil(props, "count"), "gun_suchi missing count"
+
+// Method list
+maano methods = tarika_suchi(c)
+pakka kya_suchi(methods), "tarika_suchi should return list"
+
+// Parent class
+pakka parent_kaksha(d) == Animal, "parent_kaksha failed"
+
+// Type checks
+pakka kya_vastu(kutta) == sach, "kya_vastu failed"
+pakka kya_vastu(42) == jhooth, "kya_vastu non-object failed"
+
+// Class check - kya_kaksha checks if value IS a class
+pakka kya_kaksha(Janwar) == sach, "kya_kaksha class positive failed"
+pakka kya_kaksha(kutta) == jhooth, "kya_kaksha instance should be false"
+pakka kya_kaksha(42) == jhooth, "kya_kaksha non-object failed"
+
+// vastu_ka for class-based objects
+pakka vastu_ka(d, Dog) == sach, "vastu_ka direct class failed"
+pakka vastu_ka(d, Animal) == sach, "vastu_ka parent class failed"
+
+// Class modifying self
+kaksha Bank {
+    shuru(balance) {
+        yeh.balance = balance
+    }
+    deposit(amount) {
+        yeh.balance = yeh.balance + amount
+        wapas do yeh.balance
+    }
+    withdraw(amount) {
+        agar (amount > yeh.balance) {
+            phenko "Insufficient funds"
+        }
+        yeh.balance = yeh.balance - amount
+        wapas do yeh.balance
+    }
+}
+
+maano acct = Bank(100)
+pakka acct.deposit(50) == 150, "bank deposit failed"
+pakka acct.withdraw(30) == 120, "bank withdraw failed"
+
+maano err_caught = jhooth
+koshish {
+    acct.withdraw(200)
+} pakdo (e) {
+    err_caught = sach
+    pakka e == "Insufficient funds", "bank error message wrong"
+}
+pakka err_caught, "bank overdraw should throw"
+
+likho "✅ TEST 11 PASSED: Classes and OOP"

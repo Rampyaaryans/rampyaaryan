@@ -1,0 +1,149 @@
+likho "=== TEST 03: Control Flow ==="
+
+// Basic if
+maano x = 10
+maano result = ""
+agar x > 5 {
+    result = "big"
+}
+pakka result == "big", "basic if failed"
+
+// If-else
+maano y = 3
+agar y > 5 {
+    result = "big"
+} warna {
+    result = "small"
+}
+pakka result == "small", "if-else failed"
+
+// If-else if-else
+maano marks = 85
+maano grade = ""
+agar marks >= 90 {
+    grade = "A+"
+} warna agar marks >= 80 {
+    grade = "A"
+} warna agar marks >= 70 {
+    grade = "B"
+} warna {
+    grade = "C"
+}
+pakka grade == "A", "else-if chain failed"
+
+// Nested if
+maano a = 10
+maano b = 20
+maano r = ""
+agar a > 5 {
+    agar b > 15 {
+        r = "both"
+    } warna {
+        r = "only a"
+    }
+}
+pakka r == "both", "nested if failed"
+
+// While loop (jab tak)
+maano sum = 0
+maano i = 1
+jab tak i <= 10 {
+    sum = sum + i
+    i = i + 1
+}
+pakka sum == 55, "while loop sum 1-10 failed"
+
+// For loop C-style
+maano sum2 = 0
+har j = 1; j <= 10; j = j + 1 {
+    sum2 = sum2 + j
+}
+pakka sum2 == 55, "for loop C-style failed"
+
+// For-in loop with list
+maano nums = [10, 20, 30]
+maano total = 0
+har n mein nums {
+    total = total + n
+}
+pakka total == 60, "for-in list failed"
+
+// For range loop (har i se start tak end)
+maano sum3 = 0
+har k se 1 tak 5 {
+    sum3 = sum3 + k
+}
+pakka sum3 == 15, "for range 1 to 5 failed"
+
+// Do-while loop (karo/jab tak)
+maano count = 0
+karo {
+    count = count + 1
+} jab tak count < 5
+pakka count == 5, "do-while failed"
+
+// Break (ruko)
+maano found = -1
+har i = 0; i < 100; i = i + 1 {
+    agar i == 42 {
+        found = i
+        ruko
+    }
+}
+pakka found == 42, "break failed"
+
+// Continue (agla)
+maano even_sum = 0
+har i = 1; i <= 10; i = i + 1 {
+    agar i % 2 != 0 {
+        agla
+    }
+    even_sum = even_sum + i
+}
+pakka even_sum == 30, "continue failed"
+
+// Nested loops with break
+maano outer_count = 0
+har i = 0; i < 5; i = i + 1 {
+    har j = 0; j < 5; j = j + 1 {
+        agar j == 2 {
+            ruko
+        }
+    }
+    outer_count = outer_count + 1
+}
+pakka outer_count == 5, "nested loop break failed"
+
+// Switch (dekho/jab/chalao)
+maano day = 3
+maano day_name = ""
+dekho day {
+    jab 1 {
+        day_name = "Monday"
+    }
+    jab 2 {
+        day_name = "Tuesday"
+    }
+    jab 3 {
+        day_name = "Wednesday"
+    }
+    chalao {
+        day_name = "Other"
+    }
+}
+pakka day_name == "Wednesday", "switch case 3 failed"
+
+// Switch default
+maano day2 = 99
+maano day_name2 = ""
+dekho day2 {
+    jab 1 {
+        day_name2 = "Monday"
+    }
+    chalao {
+        day_name2 = "Unknown"
+    }
+}
+pakka day_name2 == "Unknown", "switch default failed"
+
+likho "✅ TEST 03 PASSED: Control Flow"

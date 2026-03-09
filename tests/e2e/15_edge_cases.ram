@@ -1,0 +1,112 @@
+likho "=== TEST 15: Edge Cases ==="
+
+// Empty string operations
+maano empty = ""
+pakka lambai(empty) == 0, "empty string length failed"
+pakka empty + "hello" == "hello", "empty concat failed"
+
+// Zero and negative numbers
+pakka 0 == 0, "zero identity failed"
+pakka -0 == 0, "neg zero failed"
+pakka -(-5) == 5, "double negation failed"
+
+// Large numbers
+maano big = 999999999
+pakka big + 1 == 1000000000, "large number add failed"
+
+// Float precision
+maano f = 0.1 + 0.2
+pakka f > 0.299 aur f < 0.301, "float precision failed"
+
+// String with special chars
+maano s = "hello\nworld"
+pakka lambai(s) == 11, "string newline length failed"
+maano t = "tab\there"
+pakka shamil(t, "\t"), "tab in string failed"
+
+// Empty list operations
+maano el = []
+pakka lambai(el) == 0, "empty list length failed"
+pakka kya_suchi(el), "empty list type check failed"
+joodo(el, 1)
+pakka lambai(el) == 1, "push to empty list failed"
+
+// Nested list access
+maano nested = [[1, 2], [3, 4], [5, 6]]
+pakka nested[0][0] == 1, "nested list [0][0] failed"
+pakka nested[1][1] == 4, "nested list [1][1] failed"
+pakka nested[2][0] == 5, "nested list [2][0] failed"
+
+// Deeply nested
+maano deep = [[[1]]]
+pakka deep[0][0][0] == 1, "deep nested access failed"
+
+// Empty map
+maano em = {}
+pakka map_lambai(em) == 0, "empty map length failed"
+
+// Nested maps
+maano nm = {"a": {"b": {"c": 42}}}
+pakka nm["a"]["b"]["c"] == 42, "nested map access failed"
+
+// Boolean edge cases
+pakka sach == sach, "true identity failed"
+pakka jhooth == jhooth, "false identity failed"
+pakka nahi sach == jhooth, "not true failed"
+pakka nahi jhooth == sach, "not false failed"
+
+// Null comparisons
+pakka khali == khali, "null identity failed"
+pakka (khali == jhooth) == jhooth, "null != false"
+
+// String number conversions
+pakka sankhya("42") == 42, "string to number failed"
+pakka sankhya("3.14") == 3.14, "string to float failed"
+pakka shabd(42) == "42", "number to string failed"
+
+// Type coercion in concatenation
+maano mixed = "count: " + shabd(5)
+pakka mixed == "count: 5", "string concat with num failed"
+
+// Comparison chain logic
+pakka (1 < 2) == sach, "1 < 2 failed"
+pakka (2 > 1) == sach, "2 > 1 failed"
+pakka (1 <= 1) == sach, "1 <= 1 failed"
+pakka (1 >= 1) == sach, "1 >= 1 failed"
+pakka (1 != 2) == sach, "1 != 2 failed"
+
+// Modulo edge cases
+pakka 10 % 3 == 1, "modulo positive failed"
+pakka 0 % 5 == 0, "zero modulo failed"
+
+// Power edge cases
+pakka 2 ** 0 == 1, "power zero failed"
+pakka 0 ** 0 == 1, "zero power zero failed"
+
+// Recursive data building
+maano result = []
+har i = 0; i < 100; i = i + 1 {
+    joodo(result, i)
+}
+pakka lambai(result) == 100, "build 100 element list failed"
+pakka result[99] == 99, "100th element wrong"
+
+// String repetition
+maano rep = dohrao("ab", 50)
+pakka lambai(rep) == 100, "string repeat 50x failed"
+
+// Chained method style
+maano nums = [3, 1, 4, 1, 5, 9, 2, 6]
+maano sorted = kram(copy_suchi(nums))
+pakka sorted[0] == 1, "sort first element failed"
+pakka sorted[lambai(sorted) - 1] == 9, "sort last element failed"
+
+// Mixed types in list
+maano ml = [1, "two", sach, khali, 3.14, [1, 2]]
+pakka lambai(ml) == 6, "mixed type list length failed"
+pakka ml[0] == 1, "mixed list int failed"
+pakka ml[1] == "two", "mixed list string failed"
+pakka ml[2] == sach, "mixed list bool failed"
+pakka ml[3] == khali, "mixed list null failed"
+
+likho "✅ TEST 15 PASSED: Edge Cases"

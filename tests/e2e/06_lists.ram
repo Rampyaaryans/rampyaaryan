@@ -1,0 +1,145 @@
+likho "=== TEST 06: Lists ==="
+
+// Basic list
+maano nums = [1, 2, 3, 4, 5]
+pakka lambai(nums) == 5, "list length failed"
+pakka nums[0] == 1, "index 0 failed"
+pakka nums[4] == 5, "index 4 failed"
+
+// Empty list
+maano empty = []
+pakka lambai(empty) == 0, "empty list length failed"
+
+// Mixed types
+maano mixed = [1, "two", sach, khali, [3, 4]]
+pakka lambai(mixed) == 5, "mixed list length failed"
+pakka mixed[1] == "two", "mixed list string failed"
+pakka mixed[2] == sach, "mixed list bool failed"
+pakka kya_khali(mixed[3]), "mixed list null failed"
+
+// List modification
+maano list = [1, 2, 3]
+list[0] = 10
+pakka list[0] == 10, "index assignment failed"
+
+// Push (joodo)
+maano arr = [1, 2]
+joodo(arr, 3)
+pakka lambai(arr) == 3, "push length failed"
+pakka arr[2] == 3, "push value failed"
+
+// Pop (nikalo)
+maano popped = nikalo(arr)
+pakka popped == 3, "pop value failed"
+pakka lambai(arr) == 2, "pop length failed"
+
+// Sort (kram)
+maano unsorted = [3, 1, 4, 1, 5, 9, 2, 6]
+maano sorted = kram(unsorted)
+pakka sorted[0] == 1, "sort first failed"
+pakka sorted[1] == 1, "sort second failed"
+pakka sorted[7] == 9, "sort last failed"
+
+// Reverse (ulta)
+maano rev = ulta([1, 2, 3])
+pakka rev[0] == 3, "reverse first failed"
+pakka rev[2] == 1, "reverse last failed"
+
+// Slice (katao)
+maano sliced = katao([10, 20, 30, 40, 50], 1, 4)
+pakka lambai(sliced) == 3, "slice length failed"
+pakka sliced[0] == 20, "slice first failed"
+pakka sliced[2] == 40, "slice last failed"
+
+// Contains (shamil)
+pakka shamil([1, 2, 3], 2), "contains true failed"
+pakka nahi shamil([1, 2, 3], 5), "contains false failed"
+
+// Index
+pakka index_of([10, 20, 30], 20) == 1, "index_of found failed"
+pakka index_of([10, 20, 30], 99) == -1, "index_of not found failed"
+
+// First & last
+pakka pahla([5, 6, 7]) == 5, "first failed"
+pakka aakhri([5, 6, 7]) == 7, "last failed"
+
+// Concatenate
+maano joined = milao([1, 2], [3, 4])
+pakka lambai(joined) == 4, "concat length failed"
+pakka joined[2] == 3, "concat value failed"
+
+// Unique
+maano uniq = anokha([1, 2, 2, 3, 3, 3])
+pakka lambai(uniq) == 3, "unique length failed"
+
+// Insert
+maano ins = [1, 3]
+daalo(ins, 1, 2)
+pakka ins[1] == 2, "insert failed"
+pakka lambai(ins) == 3, "insert length failed"
+
+// Aggregate functions
+pakka jod([1, 2, 3, 4]) == 10, "sum failed"
+pakka sabse_bada([3, 1, 4, 1, 5]) == 5, "max failed"
+pakka sabse_chhota([3, 1, 4, 1, 5]) == 1, "min failed"
+pakka ausat([10, 20, 30]) == 20, "average failed"
+
+// Flatten
+maano nested = [[1, 2], [3, 4], [5]]
+maano flat = flatten(nested)
+pakka lambai(flat) == 5, "flatten length failed"
+pakka flat[0] == 1, "flatten first failed"
+pakka flat[4] == 5, "flatten last failed"
+
+// Chunk
+maano chunks = tukda([1, 2, 3, 4, 5], 2)
+pakka lambai(chunks) == 3, "chunk count failed"
+pakka lambai(chunks[0]) == 2, "chunk first size failed"
+pakka lambai(chunks[2]) == 1, "chunk last size failed"
+
+// Rotate
+maano rotated = ghuma([1, 2, 3, 4, 5], 2)
+pakka rotated[0] == 3, "rotate first failed"
+pakka rotated[4] == 2, "rotate last failed"
+
+// Copy
+maano original = [1, 2, 3]
+maano kopied = copy_suchi(original)
+kopied[0] = 99
+pakka original[0] == 1, "copy independence failed"
+
+// Reverse sort
+maano desc = kram_ulta([3, 1, 4, 1, 5])
+pakka desc[0] == 5, "desc sort first failed"
+pakka desc[4] == 1, "desc sort last failed"
+
+// Extend
+maano ext = badhao([1, 2], [3, 4])
+pakka lambai(ext) == 4, "extend length failed"
+
+// Take & drop
+pakka lambai(lo_suchi([1,2,3,4,5], 3)) == 3, "take failed"
+pakka lambai(chodo_suchi([1,2,3,4,5], 2)) == 3, "drop failed"
+
+// Range
+maano r = range_(1, 6)
+pakka lambai(r) == 5, "range length failed"
+pakka r[0] == 1, "range first failed"
+pakka r[4] == 5, "range last failed"
+
+// Range with step
+maano rs = range_step(0, 10, 2)
+pakka lambai(rs) == 5, "range step length failed"
+pakka rs[2] == 4, "range step value failed"
+
+// Enumerate
+maano en = enumerate_suchi(["a", "b", "c"])
+pakka en[0][0] == 0, "enumerate index failed"
+pakka en[0][1] == "a", "enumerate value failed"
+
+// Zip
+maano zipped = zip_suchi([1, 2, 3], ["a", "b", "c"])
+pakka zipped[0][0] == 1, "zip first key failed"
+pakka zipped[0][1] == "a", "zip first val failed"
+
+likho "✅ TEST 06 PASSED: Lists"

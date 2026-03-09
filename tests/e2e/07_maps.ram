@@ -1,0 +1,86 @@
+likho "=== TEST 07: Maps / Dictionaries ==="
+
+// Basic map
+maano m = {"naam": "Ram", "umar": 17, "active": sach}
+pakka m["naam"] == "Ram", "map access string key failed"
+pakka m["umar"] == 17, "map access number value failed"
+pakka m["active"] == sach, "map access bool failed"
+
+// Empty map
+maano empty = {}
+pakka map_lambai(empty) == 0, "empty map length failed"
+
+// Map modification
+m["city"] = "Jaipur"
+pakka m["city"] == "Jaipur", "map set new key failed"
+m["umar"] = 18
+pakka m["umar"] == 18, "map update value failed"
+
+// Keys, values, items
+maano keys = chabi(m)
+pakka lambai(keys) >= 3, "keys length failed"
+
+maano vals = mulya(m)
+pakka lambai(vals) >= 3, "values length failed"
+
+maano items = jodi(m)
+pakka lambai(items) >= 3, "items length failed"
+
+// Has key
+pakka map_hai(m, "naam"), "has key true failed"
+pakka nahi map_hai(m, "xyz"), "has key false failed"
+
+// Map get with default
+pakka map_get(m, "naam") == "Ram", "map get existing failed"
+maano def = map_get(m, "missing", "default")
+pakka def == "default", "map get default failed"
+
+// Delete
+map_hatao(m, "active")
+pakka nahi map_hai(m, "active"), "map delete failed"
+
+// Map length
+maano m2 = {"a": 1, "b": 2, "c": 3}
+pakka map_lambai(m2) == 3, "map length failed"
+
+// Merge
+maano m3 = {"x": 1}
+maano m4 = {"y": 2}
+maano merged = map_milao(m3, m4)
+pakka map_hai(merged, "x"), "merge key x failed"
+pakka map_hai(merged, "y"), "merge key y failed"
+
+// Pairs to map
+maano pairs = [["a", 1], ["b", 2]]
+maano from_pairs = jodi_se_naksha(pairs)
+pakka from_pairs["a"] == 1, "pairs to map a failed"
+pakka from_pairs["b"] == 2, "pairs to map b failed"
+
+// Map to pairs
+maano to_pairs = naksha_se_jodi({"x": 10, "y": 20})
+pakka lambai(to_pairs) == 2, "map to pairs length failed"
+
+// For-in with map (iterates over keys)
+maano test_map = {"a": 1, "b": 2}
+maano key_count = 0
+har k mein test_map {
+    key_count = key_count + 1
+}
+pakka key_count == 2, "for-in map iteration failed"
+
+// Membership test with map
+pakka "a" mein test_map, "map membership true failed"
+pakka nahi ("z" mein test_map), "map membership false failed"
+
+// Nested maps
+maano nested = {"person": {"naam": "Ram", "address": {"city": "Jaipur"}}}
+pakka nested["person"]["naam"] == "Ram", "nested map access failed"
+pakka nested["person"]["address"]["city"] == "Jaipur", "deep nested access failed"
+
+// Map with different value types
+maano varied = {"num": 42, "str": "hello", "list": [1,2,3], "bool": sach, "null": khali}
+pakka kya_sankhya(varied["num"]), "map number value type failed"
+pakka kya_shabd(varied["str"]), "map string value type failed"
+pakka kya_suchi(varied["list"]), "map list value type failed"
+
+likho "✅ TEST 07 PASSED: Maps / Dictionaries"

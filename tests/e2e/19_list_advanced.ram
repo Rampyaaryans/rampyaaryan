@@ -1,0 +1,113 @@
+likho "=== TEST 19: List Comprehensions and Advanced Lists ==="
+
+// Basic list comprehension
+maano squares = [har x mein [1, 2, 3, 4, 5] : x * x]
+pakka lambai(squares) == 5, "comprehension length failed"
+pakka squares[0] == 1, "comprehension sq 1 failed"
+pakka squares[4] == 25, "comprehension sq 25 failed"
+
+// Comprehension with transformation
+maano doubled = [har x mein [10, 20, 30] : x * 2]
+pakka doubled[0] == 20, "double comp 0 failed"
+pakka doubled[2] == 60, "double comp 2 failed"
+
+// Range-based operations
+maano r = range_(1, 6)
+pakka lambai(r) == 5, "range length failed"
+pakka r[0] == 1, "range first failed"
+pakka r[4] == 5, "range last failed"
+
+// Range with step
+maano rs = range_step(0, 10, 2)
+pakka lambai(rs) == 5, "range step length failed"
+pakka rs[0] == 0, "range step first failed"
+pakka rs[4] == 8, "range step last failed"
+
+// List slicing
+maano full = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+maano sl = katao(full, 2, 5)
+pakka lambai(sl) == 3, "slice length failed"
+pakka sl[0] == 2, "slice first failed"
+pakka sl[2] == 4, "slice last failed"
+
+// List copy independence
+maano orig = [1, 2, 3]
+maano cp = copy_suchi(orig)
+cp[0] = 99
+pakka orig[0] == 1, "copy independence failed"
+pakka cp[0] == 99, "copy modification failed"
+
+// List insert
+maano li = [1, 2, 4, 5]
+daalo(li, 2, 3)
+pakka li[2] == 3, "insert value failed"
+pakka lambai(li) == 5, "insert length failed"
+
+// List extend (returns new list)
+maano base = [1, 2]
+maano extended = badhao(base, [3, 4, 5])
+pakka lambai(extended) == 5, "extend length failed"
+pakka extended[4] == 5, "extend last failed"
+
+// List flatten
+maano nested = [[1, 2], [3, 4], [5]]
+maano flat = flatten(nested)
+pakka lambai(flat) == 5, "flatten length failed"
+pakka flat[4] == 5, "flatten last failed"
+
+// List chunking
+maano data = [1, 2, 3, 4, 5, 6]
+maano chunks = tukda(data, 2)
+pakka lambai(chunks) == 3, "chunk count failed"
+pakka lambai(chunks[0]) == 2, "chunk size failed"
+pakka chunks[0][0] == 1, "chunk first elem failed"
+
+// List unique
+maano dupes = [1, 2, 2, 3, 3, 3, 4]
+maano uniq = anokha(dupes)
+pakka lambai(uniq) == 4, "unique length failed"
+
+// List rotate
+maano rot = ghuma([1, 2, 3, 4, 5], 2)
+pakka rot[0] == 3, "rotate first failed"
+pakka rot[4] == 2, "rotate last failed"
+
+// List take/drop
+maano tk = lo_suchi([1, 2, 3, 4, 5], 3)
+pakka lambai(tk) == 3, "take length failed"
+pakka tk[2] == 3, "take last failed"
+
+maano dr = chodo_suchi([1, 2, 3, 4, 5], 2)
+pakka lambai(dr) == 3, "drop length failed"
+pakka dr[0] == 3, "drop first failed"
+
+// Zip lists
+maano z = jodi_banao([1, 2, 3], ["a", "b", "c"])
+pakka lambai(z) == 3, "zip length failed"
+pakka z[0][0] == 1, "zip first pair first failed"
+pakka z[0][1] == "a", "zip first pair second failed"
+
+// Enumerate
+maano en = ginati_banao(["x", "y", "z"])
+pakka en[0][0] == 0, "enumerate index 0 failed"
+pakka en[0][1] == "x", "enumerate value 0 failed"
+pakka en[2][0] == 2, "enumerate index 2 failed"
+
+// Sort descending
+maano desc = kram_ulta([3, 1, 4, 1, 5])
+pakka desc[0] == 5, "sort desc first failed"
+pakka desc[4] == 1, "sort desc last failed"
+
+// Aggregates on list
+maano agg = [10, 20, 30, 40, 50]
+pakka jod(agg) == 150, "sum failed"
+pakka ausat(agg) == 30, "average failed"
+pakka sabse_bada(agg) == 50, "max failed"
+pakka sabse_chhota(agg) == 10, "min failed"
+
+// Concatenate lists
+maano cat = milao([1, 2], [3, 4])
+pakka lambai(cat) == 4, "concat length failed"
+pakka cat[2] == 3, "concat element failed"
+
+likho "✅ TEST 19 PASSED: List Comprehensions and Advanced Lists"

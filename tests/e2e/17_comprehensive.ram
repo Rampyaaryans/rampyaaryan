@@ -1,0 +1,238 @@
+likho "=== TEST 17: Comprehensive Integration ==="
+
+// ============================================
+// Real-world program: Student Grade Calculator
+// ============================================
+kaksha Student {
+    shuru(name, grades) {
+        yeh.name = name
+        yeh.grades = grades
+    }
+    average() {
+        agar (lambai(yeh.grades) == 0) {
+            wapas do 0
+        }
+        wapas do jod(yeh.grades) / lambai(yeh.grades)
+    }
+    highest() {
+        wapas do sabse_bada(yeh.grades)
+    }
+    lowest() {
+        wapas do sabse_chhota(yeh.grades)
+    }
+    grade_letter() {
+        maano avg = yeh.average()
+        agar (avg >= 90) { wapas do "A" }
+        warna agar (avg >= 80) { wapas do "B" }
+        warna agar (avg >= 70) { wapas do "C" }
+        warna agar (avg >= 60) { wapas do "D" }
+        warna { wapas do "F" }
+    }
+}
+
+maano s1 = Student("Alice", [95, 87, 92, 88, 96])
+pakka s1.average() > 91 aur s1.average() < 92, "student avg failed"
+pakka s1.highest() == 96, "student highest failed"
+pakka s1.lowest() == 87, "student lowest failed"
+pakka s1.grade_letter() == "A", "student grade letter failed"
+
+maano s2 = Student("Bob", [65, 72, 58, 70, 75])
+pakka s2.grade_letter() == "D", "bob grade letter failed"
+
+// ============================================
+// Real-world program: Stack data structure
+// ============================================
+kaksha Stack {
+    shuru() {
+        yeh.items = []
+    }
+    push(val) {
+        joodo(yeh.items, val)
+    }
+    pop() {
+        agar (yeh.is_empty()) {
+            phenko "Stack underflow"
+        }
+        wapas do nikalo(yeh.items)
+    }
+    peek() {
+        agar (yeh.is_empty()) {
+            phenko "Stack empty"
+        }
+        wapas do yeh.items[lambai(yeh.items) - 1]
+    }
+    is_empty() {
+        wapas do lambai(yeh.items) == 0
+    }
+    size() {
+        wapas do lambai(yeh.items)
+    }
+}
+
+maano stack = Stack()
+pakka stack.is_empty(), "new stack should be empty"
+stack.push(10)
+stack.push(20)
+stack.push(30)
+pakka stack.size() == 3, "stack size failed"
+pakka stack.peek() == 30, "stack peek failed"
+pakka stack.pop() == 30, "stack pop 1 failed"
+pakka stack.pop() == 20, "stack pop 2 failed"
+pakka stack.size() == 1, "stack size after pop failed"
+
+// ============================================
+// Fibonacci with memoization using map
+// ============================================
+maano memo = {}
+kaam fib_memo(n) {
+    agar (n <= 1) { wapas do n }
+    maano key = shabd(n)
+    agar (map_hai(memo, key)) {
+        wapas do memo[key]
+    }
+    maano result = fib_memo(n - 1) + fib_memo(n - 2)
+    memo[key] = result
+    wapas do result
+}
+pakka fib_memo(20) == 6765, "memoized fib(20) failed"
+pakka fib_memo(30) == 832040, "memoized fib(30) failed"
+
+// ============================================
+// Sorting: Bubble sort implementation
+// ============================================
+kaam bubble_sort(arr) {
+    maano n = lambai(arr)
+    har i = 0; i < n - 1; i = i + 1 {
+        har j = 0; j < n - i - 1; j = j + 1 {
+            agar (arr[j] > arr[j + 1]) {
+                maano temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
+            }
+        }
+    }
+    wapas do arr
+}
+maano unsorted = [64, 34, 25, 12, 22, 11, 90]
+maano sorted = bubble_sort(copy_suchi(unsorted))
+pakka sorted[0] == 11, "bubble sort first failed"
+pakka sorted[6] == 90, "bubble sort last failed"
+
+// ============================================
+// Binary search
+// ============================================
+kaam binary_search(arr, target) {
+    maano low = 0
+    maano high = lambai(arr) - 1
+    jab tak (low <= high) {
+        maano mid = purn((low + high) / 2)
+        agar (arr[mid] == target) {
+            wapas do mid
+        } warna agar (arr[mid] < target) {
+            low = mid + 1
+        } warna {
+            high = mid - 1
+        }
+    }
+    wapas do -1
+}
+pakka binary_search(sorted, 25) == 3, "binary search found failed"
+pakka binary_search(sorted, 99) == -1, "binary search not found failed"
+
+// ============================================
+// String processing pipeline
+// ============================================
+kaam process_csv(csv) {
+    maano lines = todo(csv, "\n")
+    maano result = []
+    har ek mein lines {
+        maano trimmed = saaf(ek)
+        agar (lambai(trimmed) > 0) {
+            joodo(result, todo(trimmed, ","))
+        }
+    }
+    wapas do result
+}
+
+maano csv = "Alice,95,A\nBob,72,C\nCharlie,88,B"
+maano rows = process_csv(csv)
+pakka lambai(rows) == 3, "csv row count failed"
+pakka rows[0][0] == "Alice", "csv first name failed"
+pakka rows[1][1] == "72", "csv second score failed"
+
+// ============================================
+// FizzBuzz
+// ============================================
+kaam fizzbuzz(n) {
+    maano result = []
+    har i = 1; i <= n; i = i + 1 {
+        agar (i % 15 == 0) {
+            joodo(result, "FizzBuzz")
+        } warna agar (i % 3 == 0) {
+            joodo(result, "Fizz")
+        } warna agar (i % 5 == 0) {
+            joodo(result, "Buzz")
+        } warna {
+            joodo(result, shabd(i))
+        }
+    }
+    wapas do result
+}
+maano fb = fizzbuzz(15)
+pakka fb[0] == "1", "fizzbuzz 1 failed"
+pakka fb[2] == "Fizz", "fizzbuzz 3 failed"
+pakka fb[4] == "Buzz", "fizzbuzz 5 failed"
+pakka fb[14] == "FizzBuzz", "fizzbuzz 15 failed"
+
+// ============================================
+// Closure-based module pattern
+// ============================================
+kaam create_calculator() {
+    maano history = []
+    
+    kaam add(a, b) {
+        maano r = a + b
+        joodo(history, "add: " + shabd(a) + "+" + shabd(b) + "=" + shabd(r))
+        wapas do r
+    }
+    kaam multiply(a, b) {
+        maano r = a * b
+        joodo(history, "mul: " + shabd(a) + "*" + shabd(b) + "=" + shabd(r))
+        wapas do r
+    }
+    kaam get_history() {
+        wapas do copy_suchi(history)
+    }
+    
+    wapas do {"add": add, "multiply": multiply, "history": get_history}
+}
+
+maano calc = create_calculator()
+pakka calc["add"](3, 4) == 7, "calc add failed"
+pakka calc["multiply"](5, 6) == 30, "calc multiply failed"
+calc["add"](10, 20)
+maano hist = calc["history"]()
+pakka lambai(hist) == 3, "calc history count failed"
+
+// ============================================
+// Exception-safe resource handling
+// ============================================
+kaam safe_file_ops() {
+    maano ops_done = 0
+    koshish {
+        likho_file("tests/e2e/_safe_test.txt", "test data")
+        ops_done = ops_done + 1
+        maano data = padho_file("tests/e2e/_safe_test.txt")
+        ops_done = ops_done + 1
+        pakka data == "test data", "safe file read failed"
+    } pakdo (e) {
+        likho "File error: " + shabd(e)
+    } aakhir {
+        // Cleanup
+        likho_file("tests/e2e/_safe_test.txt", "")
+    }
+    wapas do ops_done
+}
+pakka safe_file_ops() == 2, "safe file ops count failed"
+
+likho "✅ TEST 17 PASSED: Comprehensive Integration"

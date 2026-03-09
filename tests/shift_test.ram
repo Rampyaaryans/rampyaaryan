@@ -1,4 +1,0 @@
-maano a = 1 << 4
-likho(a)
-maano b = 256 >> 3
-likho(b)

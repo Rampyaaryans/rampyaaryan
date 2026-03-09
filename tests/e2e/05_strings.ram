@@ -1,0 +1,92 @@
+likho "=== TEST 05: Strings ==="
+
+// Basic string operations
+maano s = "Hello World"
+pakka lambai(s) == 11, "string length failed"
+pakka bade_akshar(s) == "HELLO WORLD", "uppercase failed"
+pakka chhote_akshar(s) == "hello world", "lowercase failed"
+
+// Concatenation
+pakka "Hello" + " " + "World" == "Hello World", "concat failed"
+
+// String interpolation
+maano naam = "Ram"
+maano age = 17
+pakka "Hi ${naam}" == "Hi Ram", "interpolation basic failed"
+pakka "Age: ${age}" == "Age: 17", "interpolation number failed"
+pakka "${2 + 3}" == "5", "interpolation expression failed"
+
+// Substring / slice
+pakka kato(s, 0, 5) == "Hello", "kato failed"
+pakka tukda_shabd(s, 6) == "World", "tukda_shabd failed"
+
+// Find & replace
+pakka dhundho(s, "World") == 6, "dhundho found failed"
+pakka dhundho(s, "xyz") == -1, "dhundho not found failed"
+pakka badlo(s, "World", "India") == "Hello India", "badlo failed"
+
+// Split & join
+maano parts = todo("a,b,c", ",")
+pakka lambai(parts) == 3, "split length failed"
+pakka parts[0] == "a", "split first failed"
+pakka parts[2] == "c", "split last failed"
+pakka jodo_shabd(parts, "-") == "a-b-c", "join failed"
+
+// Trim
+pakka saaf("  hello  ") == "hello", "trim failed"
+pakka baya_saaf("  hello  ") == "hello  ", "left trim failed"
+pakka daya_saaf("  hello  ") == "  hello", "right trim failed"
+
+// Starts/ends with
+pakka shuru_se("hello", "he") == sach, "starts with true failed"
+pakka shuru_se("hello", "lo") == jhooth, "starts with false failed"
+pakka ant_se("hello", "lo") == sach, "ends with true failed"
+pakka ant_se("hello", "he") == jhooth, "ends with false failed"
+
+// Repeat
+pakka dohrao("ab", 3) == "ababab", "repeat failed"
+
+// Character access
+pakka akshar("hello", 0) == "h", "char at 0 failed"
+pakka akshar("hello", 4) == "o", "char at 4 failed"
+
+// ASCII operations
+pakka ascii_code("A") == 65, "ascii code A failed"
+pakka ascii_se(65) == "A", "ascii from 65 failed"
+
+// Format
+pakka format("Hi {}, age {}", "Ram", 17) == "Hi Ram, age 17", "format failed"
+
+// Count
+pakka gino("banana", "a") == 3, "count failed"
+
+// Title case & capitalize
+pakka title_case("hello world") == "Hello World", "title case failed"
+pakka capitalize("hello") == "Hello", "capitalize failed"
+pakka swapcase("Hello") == "hELLO", "swapcase failed"
+
+// Center
+pakka lambai(center("hi", 10)) == 10, "center length failed"
+
+// Padding
+pakka pad_left("42", 5, "0") == "00042", "pad left failed"
+pakka pad_right("hi", 5, ".") == "hi...", "pad right failed"
+
+// Type checks on strings
+pakka kya_ank("123") == sach, "kya_ank digits failed"
+pakka kya_ank("12a") == jhooth, "kya_ank mixed failed"
+pakka kya_akshar("abc") == sach, "kya_akshar letters failed"
+pakka kya_space("   ") == sach, "kya_space failed"
+
+// Reverse
+pakka ulta_shabd("hello") == "olleh", "reverse string failed"
+
+// String to char list
+maano chars = char_list("abc")
+pakka lambai(chars) == 3, "char list length failed"
+pakka chars[0] == "a", "char list first failed"
+
+// String membership
+pakka shamil("hello world", "world"), "string contains failed"
+
+likho "✅ TEST 05 PASSED: Strings"

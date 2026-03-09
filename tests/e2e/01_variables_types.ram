@@ -1,0 +1,65 @@
+likho "=== TEST 01: Variables & Types ==="
+
+// Integer
+maano a = 42
+pakka a == 42, "integer assignment failed"
+
+// Float
+maano b = 3.14
+pakka b > 3.13 aur b < 3.15, "float assignment failed"
+
+// String
+maano c = "hello"
+pakka c == "hello", "string assignment failed"
+
+// Boolean
+maano d = sach
+maano e = jhooth
+pakka d == sach, "boolean true failed"
+pakka e == jhooth, "boolean false failed"
+
+// Null
+maano f = khali
+pakka kya_khali(f), "null assignment failed"
+
+// List
+maano g = [1, 2, 3]
+pakka lambai(g) == 3, "list assignment failed"
+
+// Map
+maano h = {"naam": "Ram", "umar": 17}
+pakka map_hai(h, "naam"), "map assignment failed"
+
+// Variable reassignment
+maano x = 10
+x = 20
+pakka x == 20, "reassignment failed"
+
+// Type checking
+pakka kya_sankhya(42), "kya_sankhya failed for int"
+pakka kya_sankhya(3.14), "kya_sankhya failed for float"
+pakka kya_shabd("test"), "kya_shabd failed"
+pakka kya_suchi([1,2]), "kya_suchi failed"
+pakka kya_bool(sach), "kya_bool failed for true"
+pakka kya_bool(jhooth), "kya_bool failed for false"
+pakka kya_khali(khali), "kya_khali failed"
+pakka kya_purn(42), "kya_purn failed"
+pakka kya_map({"a": 1}), "kya_map failed"
+
+// Type names
+pakka prakar(42) == "sankhya", "prakar int failed"
+pakka prakar("hi") == "shabd", "prakar string failed"
+pakka prakar(sach) == "boolean", "prakar bool failed"
+pakka prakar(khali) == "khali", "prakar null failed"
+pakka prakar([]) == "suchi", "prakar list failed"
+
+// Type conversions
+pakka sankhya("42") == 42, "sankhya conversion failed"
+pakka shabd(42) == "42", "shabd conversion failed"
+pakka purn(3.7) == 3, "purn conversion failed"
+pakka bool_val(1) == sach, "bool_val 1 failed"
+pakka bool_val(0) == jhooth, "bool_val 0 failed"
+pakka bool_val("") == jhooth, "bool_val empty string failed"
+pakka bool_val("x") == sach, "bool_val non-empty string failed"
+
+likho "✅ TEST 01 PASSED: Variables & Types"

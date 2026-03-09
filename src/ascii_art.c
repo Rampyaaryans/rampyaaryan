@@ -401,7 +401,7 @@ void showHelp(void) {
 
     setColor(COLOR_DIM);
     printf("  Website: https://github.com/rampyaaryan\n");
-    printf("  License: MIT\n");
+    printf("  License: Rampyaaryan License\n");
     setColor(COLOR_RESET);
     printf("\n");
 }

@@ -1,0 +1,114 @@
+likho "=== TEST 14: Scoping and Closures ==="
+
+// Block scoping
+maano x = "outer"
+{
+    maano x = "inner"
+    pakka x == "inner", "inner block scope failed"
+}
+pakka x == "outer", "outer scope preserved failed"
+
+// Variable shadowing in nested blocks
+maano a = 1
+{
+    maano a = 2
+    {
+        maano a = 3
+        pakka a == 3, "deepest shadow failed"
+    }
+    pakka a == 2, "middle shadow failed"
+}
+pakka a == 1, "outermost shadow failed"
+
+// Closure captures variable
+kaam make_adder(n) {
+    wapas do kaam (x) => x + n
+}
+maano add5 = make_adder(5)
+maano add10 = make_adder(10)
+pakka add5(3) == 8, "closure adder 5 failed"
+pakka add10(3) == 13, "closure adder 10 failed"
+
+// Closure over mutable variable
+kaam counter_factory() {
+    maano count = 0
+    maano inc = kaam () {
+        count = count + 1
+        wapas do count
+    }
+    maano get = kaam () => count
+    wapas do [inc, get]
+}
+maano ctr = counter_factory()
+maano inc_fn = ctr[0]
+maano get_fn = ctr[1]
+inc_fn()
+inc_fn()
+inc_fn()
+pakka get_fn() == 3, "closure mutable capture failed"
+
+// Multiple closures share same variable
+kaam shared_state() {
+    maano val = 0
+    maano inc = kaam () { val = val + 1 }
+    maano dec = kaam () { val = val - 1 }
+    maano read = kaam () => val
+    wapas do [inc, dec, read]
+}
+maano state = shared_state()
+state[0]()  // inc
+state[0]()  // inc
+state[1]()  // dec
+pakka state[2]() == 1, "shared closure state failed"
+
+// Closure in loop
+maano fns = []
+har i = 0; i < 5; i = i + 1 {
+    maano val = i
+    joodo(fns, kaam () => val)
+}
+pakka fns[0]() == 0, "loop closure 0 failed"
+pakka fns[2]() == 2, "loop closure 2 failed"
+pakka fns[4]() == 4, "loop closure 4 failed"
+
+// Function scope isolation
+maano outer = "hello"
+kaam modify_attempt() {
+    maano outer = "modified"
+    wapas do outer
+}
+pakka modify_attempt() == "modified", "function local scope failed"
+pakka outer == "hello", "function isolation failed"
+
+// Nested function scopes
+kaam outer_fn() {
+    maano x = 10
+    kaam middle_fn() {
+        maano y = 20
+        kaam inner_fn() {
+            wapas do x + y
+        }
+        wapas do inner_fn()
+    }
+    wapas do middle_fn()
+}
+pakka outer_fn() == 30, "nested function scopes failed"
+
+// Variable lifecycle in loop
+maano total = 0
+har i = 0; i < 3; i = i + 1 {
+    maano temp = i * 10
+    total = total + temp
+}
+pakka total == 30, "loop variable lifecycle failed"
+
+// Global modification from function
+maano g = 0
+kaam bump() {
+    g = g + 1
+}
+bump()
+bump()
+pakka g == 2, "global modification from function failed"
+
+likho "✅ TEST 14 PASSED: Scoping and Closures"

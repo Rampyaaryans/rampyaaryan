@@ -30,6 +30,13 @@ out.txt
 test_output.txt
 data.csv
 test.c
+_test*.ram
+_test*.txt
+_safe_test*
+_minimal.ram
+
+# Node.js
+node_modules/
 
 # VS Code Extension
 *.vsix

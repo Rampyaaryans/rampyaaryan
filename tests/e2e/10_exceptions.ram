@@ -1,0 +1,121 @@
+likho "=== TEST 10: Exception Handling ==="
+
+// Basic try-catch
+koshish {
+    phenko "test error"
+} pakdo (e) {
+    pakka e == "test error", "basic throw/catch failed"
+}
+
+// Finally always runs
+maano finally_ran = jhooth
+koshish {
+    maano x = 1
+} pakdo (e) {
+    pakka jhooth, "should not catch"
+} aakhir {
+    finally_ran = sach
+}
+pakka finally_ran, "finally block did not run on success"
+
+// Finally runs even after throw
+maano finally_ran2 = jhooth
+koshish {
+    phenko "error"
+} pakdo (e) {
+    pakka e == "error", "catch did not get error"
+} aakhir {
+    finally_ran2 = sach
+}
+pakka finally_ran2, "finally block did not run after throw"
+
+// Catch prevents crash
+maano survived = jhooth
+koshish {
+    phenko "fatal"
+} pakdo (e) {
+    survived = sach
+}
+pakka survived, "catch did not prevent crash"
+
+// Nested try-catch
+maano inner_caught = jhooth
+maano outer_caught = jhooth
+koshish {
+    koshish {
+        phenko "inner error"
+    } pakdo (e) {
+        inner_caught = sach
+        pakka e == "inner error", "inner catch wrong error"
+    }
+} pakdo (e) {
+    outer_caught = sach
+}
+pakka inner_caught, "inner catch did not work"
+pakka outer_caught == jhooth, "outer catch should not fire"
+
+// Error propagation - inner throws, outer catches
+maano propagated = jhooth
+koshish {
+    koshish {
+        phenko "bubble up"
+    } pakdo (e) {
+        phenko "rethrown: " + e
+    }
+} pakdo (e) {
+    propagated = sach
+    pakka e == "rethrown: bubble up", "propagation failed"
+}
+pakka propagated, "error did not propagate"
+
+// Try-catch in function
+kaam safe_divide(a, b) {
+    koshish {
+        agar (b == 0) {
+            phenko "division by zero"
+        }
+        wapas do a / b
+    } pakdo (e) {
+        wapas do e
+    }
+}
+pakka safe_divide(10, 2) == 5, "safe divide normal failed"
+pakka safe_divide(10, 0) == "division by zero", "safe divide by zero failed"
+
+// Throw non-string (number)
+koshish {
+    phenko 42
+} pakdo (e) {
+    pakka e == 42, "throw number failed"
+}
+
+// Throw boolean
+koshish {
+    phenko sach
+} pakdo (e) {
+    pakka e == sach, "throw boolean failed"
+}
+
+// Try without error - pakdo block should not execute
+maano catch_entered = jhooth
+koshish {
+    maano x = 100
+} pakdo (e) {
+    catch_entered = sach
+}
+pakka catch_entered == jhooth, "catch entered without error"
+
+// Try-catch inside loop
+maano errors = 0
+har i = 0; i < 5; i = i + 1 {
+    koshish {
+        agar (i == 2 ya i == 4) {
+            phenko "err"
+        }
+    } pakdo (e) {
+        errors = errors + 1
+    }
+}
+pakka errors == 2, "loop try-catch count failed"
+
+likho "✅ TEST 10 PASSED: Exception Handling"

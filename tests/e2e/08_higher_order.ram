@@ -1,0 +1,100 @@
+likho "=== TEST 08: Higher-Order Functions ==="
+
+// Map (naksha)
+maano doubled = naksha([1, 2, 3, 4], kaam (x) => x * 2)
+pakka doubled[0] == 2, "map first failed"
+pakka doubled[3] == 8, "map last failed"
+pakka lambai(doubled) == 4, "map length failed"
+
+// Filter (chhaano)
+maano evens = chhaano([1, 2, 3, 4, 5, 6], kaam (x) => x % 2 == 0)
+pakka lambai(evens) == 3, "filter length failed"
+pakka evens[0] == 2, "filter first failed"
+pakka evens[2] == 6, "filter last failed"
+
+// Reduce (ikkatha)
+maano sum = ikkatha([1, 2, 3, 4, 5], kaam (acc, x) => acc + x, 0)
+pakka sum == 15, "reduce sum failed"
+
+maano product = ikkatha([1, 2, 3, 4], kaam (acc, x) => acc * x, 1)
+pakka product == 24, "reduce product failed"
+
+// Chaining map + filter + reduce
+maano data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+maano even_doubled = naksha(chhaano(data, kaam (x) => x % 2 == 0), kaam (x) => x * 2)
+pakka lambai(even_doubled) == 5, "chain filter-map length failed"
+pakka even_doubled[0] == 4, "chain first failed"
+
+maano total = ikkatha(even_doubled, kaam (a, b) => a + b, 0)
+pakka total == 60, "chain reduce failed"
+
+// All (sab) & Any (koi)
+pakka sab([sach, sach, sach]), "all true failed"
+pakka nahi sab([sach, jhooth, sach]), "all with false failed"
+pakka koi([jhooth, jhooth, sach]), "any with one true failed"
+pakka nahi koi([jhooth, jhooth, jhooth]), "any all false failed"
+
+// Zip
+maano zipped = jodi_banao([1, 2, 3], ["a", "b", "c"])
+pakka zipped[0][0] == 1, "zip first pair key failed"
+pakka zipped[0][1] == "a", "zip first pair val failed"
+pakka zipped[2][0] == 3, "zip last pair key failed"
+
+// Enumerate
+maano enumerated = ginati_banao(["x", "y", "z"])
+pakka enumerated[0][0] == 0, "enumerate index 0 failed"
+pakka enumerated[0][1] == "x", "enumerate value 0 failed"
+pakka enumerated[2][0] == 2, "enumerate index 2 failed"
+
+// For-each (har_ek) - side effect testing
+maano collected = []
+har_ek([10, 20, 30], kaam (x) => joodo(collected, x * 2))
+pakka lambai(collected) == 3, "for_each length failed"
+pakka collected[0] == 20, "for_each first failed"
+
+// Find (dhundho_suchi)
+maano found = dhundho_suchi([1, 3, 5, 8, 10], kaam (x) => x > 4)
+pakka found == 5, "find first match failed"
+
+// Find index (dhundho_index)
+maano idx = dhundho_index([1, 3, 5, 8], kaam (x) => x > 4)
+pakka idx == 2, "find index failed"
+
+// Sort by key (kram_se)
+maano words = ["banana", "apple", "cherry"]
+maano sorted = kram_se(words, kaam (w) => lambai(w))
+pakka sorted[0] == "apple", "sort by length first failed"
+pakka sorted[2] == "cherry", "sort by length last failed"
+
+// Group by (samuh) - returns list of [key, values] pairs
+maano nums = [1, 2, 3, 4, 5, 6]
+maano groups = samuh(nums, kaam (n) => n % 2 == 0 ? "even" : "odd")
+pakka kya_suchi(groups), "group by should return list"
+pakka lambai(groups) == 2, "group by should have 2 groups"
+
+// Take while (jab_tak_lo)
+maano taken = jab_tak_lo([1, 2, 3, 10, 4, 5], kaam (x) => x < 5)
+pakka lambai(taken) == 3, "take while length failed"
+pakka taken[2] == 3, "take while last failed"
+
+// Drop while (jab_tak_chodo)
+maano dropped = jab_tak_chodo([1, 2, 3, 10, 4, 5], kaam (x) => x < 5)
+pakka dropped[0] == 10, "drop while first failed"
+
+// Flat map
+maano fm = flat_naksha([1, 2, 3], kaam (x) => [x, x * 10])
+pakka lambai(fm) == 6, "flat map length failed"
+pakka fm[0] == 1, "flat map first failed"
+pakka fm[1] == 10, "flat map second failed"
+
+// Map filter on maps (naksha_chhaano)
+maano my_map = {"a": 1, "b": 2, "c": 3, "d": 4}
+maano filtered_map = naksha_chhaano(my_map, kaam (k, v) => v > 2)
+pakka map_hai(filtered_map, "c"), "map filter has c failed"
+pakka map_hai(filtered_map, "d"), "map filter has d failed"
+pakka nahi map_hai(filtered_map, "a"), "map filter excludes a failed"
+
+// Product (gunanfal)
+pakka gunanfal([1, 2, 3, 4]) == 24, "product failed"
+
+likho "✅ TEST 08 PASSED: Higher-Order Functions"

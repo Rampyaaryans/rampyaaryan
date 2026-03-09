@@ -1,0 +1,158 @@
+likho "=== TEST 20: Do-While, Switch, and Advanced Control Flow ==="
+
+// Do-while basic
+maano count = 0
+karo {
+    count = count + 1
+} jab tak (count < 5)
+pakka count == 5, "do-while basic failed"
+
+// Do-while executes at least once
+maano ran = jhooth
+karo {
+    ran = sach
+} jab tak (jhooth)
+pakka ran, "do-while at least once failed"
+
+// Switch basic
+maano result = ""
+maano val = 2
+dekho (val) {
+    jab (1) {
+        result = "one"
+    }
+    jab (2) {
+        result = "two"
+    }
+    jab (3) {
+        result = "three"
+    }
+    chalao {
+        result = "other"
+    }
+}
+pakka result == "two", "switch basic failed"
+
+// Switch default
+maano result2 = ""
+dekho (99) {
+    jab (1) {
+        result2 = "one"
+    }
+    chalao {
+        result2 = "default"
+    }
+}
+pakka result2 == "default", "switch default failed"
+
+// Switch with string
+maano fruit = "apple"
+maano color = ""
+dekho (fruit) {
+    jab ("apple") {
+        color = "red"
+    }
+    jab ("banana") {
+        color = "yellow"
+    }
+    chalao {
+        color = "unknown"
+    }
+}
+pakka color == "red", "switch string failed"
+
+// Nested loops with break
+maano found = jhooth
+har i = 0; i < 10; i = i + 1 {
+    har j = 0; j < 10; j = j + 1 {
+        agar (i == 3 aur j == 5) {
+            found = sach
+            ruko
+        }
+    }
+    agar (found) {
+        ruko
+    }
+}
+pakka found, "nested break failed"
+
+// Continue in loop
+maano evens = []
+har i = 0; i < 10; i = i + 1 {
+    agar (i % 2 != 0) {
+        agla
+    }
+    joodo(evens, i)
+}
+pakka lambai(evens) == 5, "continue even count failed"
+pakka evens[0] == 0, "continue first even failed"
+pakka evens[4] == 8, "continue last even failed"
+
+// For-in with list
+maano items = ["a", "b", "c"]
+maano collected = []
+har item mein items {
+    joodo(collected, bade_akshar(item))
+}
+pakka collected[0] == "A", "for-in first failed"
+pakka collected[2] == "C", "for-in last failed"
+
+// While with complex condition
+maano x = 100
+maano steps = 0
+jab tak (x > 1) {
+    agar (x % 2 == 0) {
+        x = x / 2
+    } warna {
+        x = x * 3 + 1
+    }
+    steps = steps + 1
+}
+pakka x == 1, "collatz converge failed"
+pakka steps > 0, "collatz steps failed"
+
+// Deeply nested if-else
+kaam categorize(n) {
+    agar (n < 0) {
+        wapas do "negative"
+    } warna agar (n == 0) {
+        wapas do "zero"
+    } warna agar (n < 10) {
+        wapas do "single"
+    } warna agar (n < 100) {
+        wapas do "double"
+    } warna agar (n < 1000) {
+        wapas do "triple"
+    } warna {
+        wapas do "big"
+    }
+}
+pakka categorize(-5) == "negative", "categorize negative failed"
+pakka categorize(0) == "zero", "categorize zero failed"
+pakka categorize(7) == "single", "categorize single failed"
+pakka categorize(42) == "double", "categorize double failed"
+pakka categorize(500) == "triple", "categorize triple failed"
+pakka categorize(9999) == "big", "categorize big failed"
+
+// For with range
+maano sum = 0
+har i = 1; i <= 100; i = i + 1 {
+    sum = sum + i
+}
+pakka sum == 5050, "sum 1 to 100 failed"
+
+// Nested do-while
+maano outer = 0
+maano inner_total = 0
+karo {
+    maano inner = 0
+    karo {
+        inner = inner + 1
+        inner_total = inner_total + 1
+    } jab tak (inner < 3)
+    outer = outer + 1
+} jab tak (outer < 4)
+pakka outer == 4, "nested do-while outer failed"
+pakka inner_total == 12, "nested do-while total failed"
+
+likho "✅ TEST 20 PASSED: Do-While, Switch, and Advanced Control Flow"

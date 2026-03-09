@@ -1,0 +1,68 @@
+likho "=== TEST 13: Enums ==="
+
+// Basic enum
+ganana Color {
+    RED,
+    GREEN,
+    BLUE
+}
+
+pakka Color["RED"] == 0, "enum first value should be 0"
+pakka Color["GREEN"] == 1, "enum second value should be 1"
+pakka Color["BLUE"] == 2, "enum third value should be 2"
+
+// Enum with custom values
+ganana HttpStatus {
+    OK = 200,
+    NOT_FOUND = 404,
+    SERVER_ERROR = 500
+}
+
+pakka HttpStatus["OK"] == 200, "custom enum 200 failed"
+pakka HttpStatus["NOT_FOUND"] == 404, "custom enum 404 failed"
+pakka HttpStatus["SERVER_ERROR"] == 500, "custom enum 500 failed"
+
+// Enum in conditions
+maano status = HttpStatus["OK"]
+maano msg = ""
+agar (status == 200) {
+    msg = "success"
+} warna {
+    msg = "failure"
+}
+pakka msg == "success", "enum in condition failed"
+
+// Enum comparison
+pakka Color["RED"] < Color["GREEN"], "enum comparison failed"
+pakka HttpStatus["OK"] < HttpStatus["NOT_FOUND"], "custom enum comparison failed"
+
+// Enum in switch
+maano result = ""
+dekho (Color["GREEN"]) {
+    jab (0) {
+        result = "red"
+    }
+    jab (1) {
+        result = "green"
+    }
+    jab (2) {
+        result = "blue"
+    }
+}
+pakka result == "green", "enum in switch failed"
+
+// Enum values used in arithmetic
+maano sum = Color["RED"] + Color["GREEN"] + Color["BLUE"]
+pakka sum == 3, "enum arithmetic failed"
+
+// Auto-increment after custom value
+ganana Priority {
+    LOW = 1,
+    MEDIUM,
+    HIGH
+}
+pakka Priority["LOW"] == 1, "priority low failed"
+pakka Priority["MEDIUM"] == 2, "priority medium auto-inc failed"
+pakka Priority["HIGH"] == 3, "priority high auto-inc failed"
+
+likho "✅ TEST 13 PASSED: Enums"
