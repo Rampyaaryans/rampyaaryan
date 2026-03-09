@@ -12,7 +12,7 @@
 #define RAMPYAARYAN_COMMON_H
 
 /* Enable POSIX APIs (nanosleep, clock_gettime, etc.) on glibc/Linux */
-#if !defined(_WIN32) && !defined(_POSIX_C_SOURCE)
+#if defined(__linux__) && !defined(_POSIX_C_SOURCE)
 #define _POSIX_C_SOURCE 199309L
 #endif
 
