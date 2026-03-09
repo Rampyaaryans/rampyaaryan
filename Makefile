@@ -5,7 +5,7 @@
 
 # Compiler
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 -std=c99
+CFLAGS = -Wall -Wextra -O2 -std=gnu99
 LDFLAGS = -lm
 
 # Directories
@@ -73,7 +73,7 @@ debug: CFLAGS += -g -DDEBUG_TRACE_EXECUTION -DDEBUG_STRESS_GC
 debug: $(TARGET)
 
 # Release build (optimized)
-release: CFLAGS = -Wall -O3 -std=c99 -DNDEBUG
+release: CFLAGS = -Wall -O3 -std=gnu99 -DNDEBUG
 release: $(TARGET)
 
 clean:
