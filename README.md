@@ -83,7 +83,14 @@ likho format("10! = {}", factorial(10))
 ## Quick Start
 
 ### Download Binary
-Download the latest release for your platform from [Releases](https://github.com/Rampyaaryans/rampyaaryan/releases).
+
+Download the latest release for your platform from [Releases](https://github.com/Rampyaaryans/rampyaaryan/releases):
+
+| Platform | File | Instructions |
+|----------|------|--------------|
+| Windows  | `rampyaaryan-windows-x64.zip` | Extract and add to PATH |
+| Linux    | `rampyaaryan-linux-x64.tar.gz` | `tar xzf rampyaaryan-linux-x64.tar.gz && sudo mv rampyaaryan /usr/local/bin/` |
+| macOS    | `rampyaaryan-macos-x64.tar.gz` | `tar xzf rampyaaryan-macos-x64.tar.gz && sudo mv rampyaaryan /usr/local/bin/` |
 
 ### Build from Source
 
