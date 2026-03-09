@@ -32,7 +32,7 @@ Installers:
   - Architecture: x64
     InstallerType: inno
     InstallerUrl: https://github.com/Rampyaaryans/rampyaaryan/releases/download/v3.4.0/Rampyaaryan.exe
-    InstallerSha256: REPLACE_WITH_ACTUAL_SHA256
+    InstallerSha256: 8D72A8948B7FDD8B5F1BD5DF279EABEE8D989A0B295F874D94E93E9E604A34A3
     InstallerSwitches:
       Silent: /VERYSILENT /SUPPRESSMSGBOXES
       SilentWithProgress: /SILENT /SUPPRESSMSGBOXES
