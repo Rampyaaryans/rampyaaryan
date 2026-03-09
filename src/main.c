@@ -226,6 +226,114 @@ int main(int argc, char* argv[]) {
             showVersion();
             return 0;
         }
+        if (strcmp(argv[1], "hindi") == 0) {
+#ifdef _WIN32
+            printf("\n");
+            setColor(COLOR_BOLD_YELLOW);
+            printf("  \xe0\xa4\xa8\xe0\xa4\xae\xe0\xa4\xb8\xe0\xa5\x8d\xe0\xa4\xa4\xe0\xa5\x87! ");
+            setColor(COLOR_RESET);
+            printf("Terminal ko Hindi mein set kar rahe hain...\n\n");
+            system("chcp 65001 > nul 2>&1");
+
+            /* Create PowerShell profile with Hindi prompt */
+            char profileDir[512];
+            char profilePath[512];
+            snprintf(profileDir, sizeof(profileDir), "%s\\Documents\\WindowsPowerShell", getenv("USERPROFILE"));
+            snprintf(profilePath, sizeof(profilePath), "%s\\Microsoft.PowerShell_profile.ps1", profileDir);
+
+            /* Create dir if needed */
+            CreateDirectoryA(profileDir, NULL);
+
+            /* Check if already has Hindi prompt */
+            FILE* checkFile = fopen(profilePath, "r");
+            bool alreadySet = false;
+            if (checkFile) {
+                char buf[4096];
+                while (fgets(buf, sizeof(buf), checkFile)) {
+                    if (strstr(buf, "RAMPYAARYAN-HINDI-PROMPT")) {
+                        alreadySet = true;
+                        break;
+                    }
+                }
+                fclose(checkFile);
+            }
+
+            if (!alreadySet) {
+                FILE* pf = fopen(profilePath, "a");
+                if (pf) {
+                    fprintf(pf, "\n# RAMPYAARYAN-HINDI-PROMPT-START\n");
+                    fprintf(pf, "function prompt {\n");
+                    fprintf(pf, "    $loc = (Get-Location).Path\n");
+                    fprintf(pf, "    Write-Host \"\xe0\xa4\xb0\xe0\xa4\xbe\xe0\xa4\xae\xe0\xa4\xaa\xe0\xa5\x8d\xe0\xa4\xaf\xe0\xa4\xbe\xe0\xa4\xb0\xe0\xa4\xaf\xe0\xa4\xa8 \" -NoNewline -ForegroundColor Yellow\n");
+                    fprintf(pf, "    Write-Host \"$loc\" -NoNewline -ForegroundColor Cyan\n");
+                    fprintf(pf, "    Write-Host \" \xe0\xa4\x86\xe0\xa4\xa6\xe0\xa5\x87\xe0\xa4\xb6>\" -NoNewline -ForegroundColor Green\n");
+                    fprintf(pf, "    return \" \"\n");
+                    fprintf(pf, "}\n");
+                    fprintf(pf, "# RAMPYAARYAN-HINDI-PROMPT-END\n");
+                    fclose(pf);
+                }
+            }
+
+            setColor(COLOR_BOLD_GREEN);
+            printf("  \xe2\x9c\x85 ");
+            setColor(COLOR_RESET);
+            printf("Terminal Hindi mein set ho gaya!\n");
+            printf("  \xe2\x9e\x95 UTF-8 encoding enabled (chcp 65001)\n");
+            printf("  \xe2\x9e\x95 Hindi prompt set for PowerShell\n\n");
+            setColor(COLOR_DIM);
+            printf("  Naya PowerShell kholein dekhne ke liye.\n");
+            printf("  Wapas English: rampyaaryan hindi --off\n\n");
+            setColor(COLOR_RESET);
+#else
+            printf("\n");
+            setColor(COLOR_BOLD_YELLOW);
+            printf("  \xe0\xa4\xa8\xe0\xa4\xae\xe0\xa4\xb8\xe0\xa5\x8d\xe0\xa4\xa4\xe0\xa5\x87! ");
+            setColor(COLOR_RESET);
+            printf("Terminal ko Hindi mein set kar rahe hain...\n\n");
+
+            const char* home = getenv("HOME");
+            if (home) {
+                /* Detect shell config file */
+                char rcPath[512];
+#ifdef __APPLE__
+                snprintf(rcPath, sizeof(rcPath), "%s/.zshrc", home);
+#else
+                snprintf(rcPath, sizeof(rcPath), "%s/.bashrc", home);
+#endif
+                /* Check if already set */
+                FILE* checkFile = fopen(rcPath, "r");
+                bool alreadySet = false;
+                if (checkFile) {
+                    char buf[4096];
+                    while (fgets(buf, sizeof(buf), checkFile)) {
+                        if (strstr(buf, "RAMPYAARYAN-HINDI-PROMPT")) {
+                            alreadySet = true;
+                            break;
+                        }
+                    }
+                    fclose(checkFile);
+                }
+
+                if (!alreadySet) {
+                    FILE* pf = fopen(rcPath, "a");
+                    if (pf) {
+                        fprintf(pf, "\n# RAMPYAARYAN-HINDI-PROMPT-START\n");
+                        fprintf(pf, "export LANG=hi_IN.UTF-8\n");
+                        fprintf(pf, "export PS1=\"\\[\\033[1;33m\\]\xe0\xa4\xb0\xe0\xa4\xbe\xe0\xa4\xae\xe0\xa4\xaa\xe0\xa5\x8d\xe0\xa4\xaf\xe0\xa4\xbe\xe0\xa4\xb0\xe0\xa4\xaf\xe0\xa4\xa8 \\[\\033[1;36m\\]\\w \\[\\033[1;32m\\]\xe0\xa4\x86\xe0\xa4\xa6\xe0\xa5\x87\xe0\xa4\xb6>\\[\\033[0m\\] \"\n");
+                        fprintf(pf, "# RAMPYAARYAN-HINDI-PROMPT-END\n");
+                        fclose(pf);
+                    }
+                }
+
+                setColor(COLOR_BOLD_GREEN);
+                printf("  \xe2\x9c\x85 ");
+                setColor(COLOR_RESET);
+                printf("Hindi prompt & UTF-8 set!\n");
+                printf("  Naya terminal kholein. Wapas: rampyaaryan hindi --off\n\n");
+            }
+#endif
+            return 0;
+        }
         /* Run file */
         return runFile(argv[1], false);
     }
@@ -233,6 +341,81 @@ int main(int argc, char* argv[]) {
     if (argc == 3) {
         if (strcmp(argv[1], "--debug") == 0 || strcmp(argv[1], "-d") == 0) {
             return runFile(argv[2], true);
+        }
+        if (strcmp(argv[1], "hindi") == 0 && (strcmp(argv[2], "--off") == 0 || strcmp(argv[2], "--english") == 0)) {
+            printf("\n  Switching terminal back to English...\n\n");
+#ifdef _WIN32
+            system("chcp 437 > nul 2>&1");
+            /* Remove Hindi prompt from PowerShell profile */
+            char profilePath[512];
+            snprintf(profilePath, sizeof(profilePath), "%s\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1", getenv("USERPROFILE"));
+            FILE* rf = fopen(profilePath, "r");
+            if (rf) {
+                char content[65536];
+                size_t totalLen = 0;
+                char line[4096];
+                bool skip = false;
+                while (fgets(line, sizeof(line), rf)) {
+                    if (strstr(line, "RAMPYAARYAN-HINDI-PROMPT-START")) { skip = true; continue; }
+                    if (strstr(line, "RAMPYAARYAN-HINDI-PROMPT-END")) { skip = false; continue; }
+                    if (!skip) {
+                        size_t ll = strlen(line);
+                        if (totalLen + ll < sizeof(content) - 1) {
+                            memcpy(content + totalLen, line, ll);
+                            totalLen += ll;
+                        }
+                    }
+                }
+                content[totalLen] = '\0';
+                fclose(rf);
+                FILE* wf = fopen(profilePath, "w");
+                if (wf) {
+                    fwrite(content, 1, totalLen, wf);
+                    fclose(wf);
+                }
+            }
+#else
+            const char* home = getenv("HOME");
+            if (home) {
+                char rcPath[512];
+#ifdef __APPLE__
+                snprintf(rcPath, sizeof(rcPath), "%s/.zshrc", home);
+#else
+                snprintf(rcPath, sizeof(rcPath), "%s/.bashrc", home);
+#endif
+                FILE* rf = fopen(rcPath, "r");
+                if (rf) {
+                    char content[65536];
+                    size_t totalLen = 0;
+                    char line[4096];
+                    bool skip = false;
+                    while (fgets(line, sizeof(line), rf)) {
+                        if (strstr(line, "RAMPYAARYAN-HINDI-PROMPT-START")) { skip = true; continue; }
+                        if (strstr(line, "RAMPYAARYAN-HINDI-PROMPT-END")) { skip = false; continue; }
+                        if (!skip) {
+                            size_t ll = strlen(line);
+                            if (totalLen + ll < sizeof(content) - 1) {
+                                memcpy(content + totalLen, line, ll);
+                                totalLen += ll;
+                            }
+                        }
+                    }
+                    content[totalLen] = '\0';
+                    fclose(rf);
+                    FILE* wf = fopen(rcPath, "w");
+                    if (wf) {
+                        fwrite(content, 1, totalLen, wf);
+                        fclose(wf);
+                    }
+                }
+            }
+#endif
+            setColor(COLOR_BOLD_GREEN);
+            printf("  \xe2\x9c\x85 ");
+            setColor(COLOR_RESET);
+            printf("Terminal English mein wapas aa gaya!\n");
+            printf("  Naya terminal kholein.\n\n");
+            return 0;
         }
     }
 
