@@ -35,6 +35,8 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           mkdir -p deb-pkg/DEBIAN
           mkdir -p deb-pkg/usr/local/bin
+          mkdir -p deb-pkg/usr/share/mime/packages
+          mkdir -p deb-pkg/usr/share/applications
           cp bin/rampyaaryan deb-pkg/usr/local/bin/
           chmod 755 deb-pkg/usr/local/bin/rampyaaryan
           cat > deb-pkg/DEBIAN/control << EOF
@@ -50,6 +52,27 @@ jobs:
            Write code in a mix of Hindi and English with intuitive keywords.
           EOF
           sed -i 's/^          //' deb-pkg/DEBIAN/control
+          cat > deb-pkg/usr/share/applications/rampyaaryan.desktop << EOF
+          [Desktop Entry]
+          Name=Rampyaaryan
+          Comment=Hinglish Programming Language
+          Exec=rampyaaryan %f
+          Terminal=true
+          Type=Application
+          MimeType=text/x-rampyaaryan;
+          Categories=Development;IDE;
+          EOF
+          sed -i 's/^          //' deb-pkg/usr/share/applications/rampyaaryan.desktop
+          cat > deb-pkg/usr/share/mime/packages/rampyaaryan.xml << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+            <mime-type type="text/x-rampyaaryan">
+              <comment>Rampyaaryan source file</comment>
+              <glob pattern="*.ram"/>
+            </mime-type>
+          </mime-info>
+          EOF
+          sed -i 's/^          //' deb-pkg/usr/share/mime/packages/rampyaaryan.xml
           dpkg-deb --build deb-pkg Rampyaaryan.deb
       - name: Upload artifact
         uses: actions/upload-artifact@v4

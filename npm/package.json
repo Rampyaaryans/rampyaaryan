@@ -1,0 +1,27 @@
+{
+  "name": "rampyaaryan",
+  "version": "3.4.0",
+  "description": "Rampyaaryan — India's First Hinglish Programming Language. Write code in the language you think in.",
+  "keywords": ["rampyaaryan", "hinglish", "hindi", "programming-language", "compiler", "india", "indian"],
+  "author": "Rampyaaryans <rampyaaryan17@gmail.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://rampyaaryans.github.io/rampyaaryan/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rampyaaryans/rampyaaryan"
+  },
+  "bugs": {
+    "url": "https://github.com/Rampyaaryans/rampyaaryan/issues"
+  },
+  "bin": {
+    "rampyaaryan": "./bin/rampyaaryan-runner.js"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "os": ["win32", "linux", "darwin"],
+  "cpu": ["x64", "arm64"],
+  "engines": {
+    "node": ">=14"
+  }
+}

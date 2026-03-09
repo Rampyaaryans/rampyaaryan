@@ -1,9 +1,10 @@
 const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
+const { execFile } = require('child_process');
 
 // ════════════════════════════════════════════════════════════════
-//   Neko Cat  ·  Hindi Status Bar  ·  Mantra Mode
+//   Neko Cat  ·  Hindi Status Bar  ·  Mantra Mode  ·  Run .ram
 //   Rampyaaryan VS Code Extension
 // ════════════════════════════════════════════════════════════════
 
@@ -42,7 +43,6 @@ let mantraEnabled = false;
 let hindiStatusItem = null;
 let mantraStatusItem = null;
 let ramQuoteItem = null;
-let nekoPanel = null;
 
 let mantraInterval = null;
 let mantraIndex = 0;
@@ -55,28 +55,23 @@ function toHindiNumerals(n) {
     return String(n).split('').map(d => HINDI_DIGITS[parseInt(d)] || d).join('');
 }
 
-// ═══════ Neko Webview ═══════
+// ═══════ Neko WebviewView (Panel area) ═══════
 
-function openNekoPanel(context) {
-    if (nekoPanel) {
-        nekoPanel.reveal();
-        return;
+class NekoViewProvider {
+    constructor(extensionUri) {
+        this._extensionUri = extensionUri;
+        this._view = null;
     }
 
-    nekoPanel = vscode.window.createWebviewPanel(
-        'rampyaaryanNeko',
-        'Neko',
-        vscode.ViewColumn.Two,
-        { enableScripts: true, retainContextWhenHidden: true }
-    );
-
-    // Load the neko HTML
-    const nekoHtmlPath = path.join(context.extensionPath, 'media', 'neko.html');
-    let htmlContent = fs.readFileSync(nekoHtmlPath, 'utf8');
-    nekoPanel.webview.html = htmlContent;
-
-    nekoPanel.onDidDispose(() => { nekoPanel = null; }, null, context.subscriptions);
+    resolveWebviewView(webviewView) {
+        this._view = webviewView;
+        webviewView.webview.options = { enableScripts: true };
+        const nekoHtmlPath = path.join(this._extensionUri.fsPath, 'media', 'neko.html');
+        webviewView.webview.html = fs.readFileSync(nekoHtmlPath, 'utf8');
+    }
 }
+
+let nekoViewProvider = null;
 
 // ═══════ Hindi Status Bar ═══════
 
@@ -143,6 +138,21 @@ function stopRamQuotes() {
 function activate(context) {
     const config = vscode.workspace.getConfiguration('rampyaaryan');
 
+    // ── Neko View Provider (Panel area) ──
+    nekoViewProvider = new NekoViewProvider(context.extensionUri);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider('rampyaaryan.nekoView', nekoViewProvider, {
+            webviewOptions: { retainContextWhenHidden: true }
+        })
+    );
+
+    // Auto-show Neko panel on first install
+    if (config.get('neko.enabled', true)) {
+        setTimeout(() => {
+            vscode.commands.executeCommand('rampyaaryan.nekoView.focus');
+        }, 3000);
+    }
+
     // ── Status Bar Items ──
     hindiStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200);
     hindiStatusItem.name = 'Rampyaaryan Hindi Line';
@@ -161,7 +171,40 @@ function activate(context) {
 
     // ── Commands ──
     context.subscriptions.push(
-        vscode.commands.registerCommand('rampyaaryan.openNeko', () => openNekoPanel(context)),
+        vscode.commands.registerCommand('rampyaaryan.openNeko', () => {
+            vscode.commands.executeCommand('rampyaaryan.nekoView.focus');
+        }),
+        vscode.commands.registerCommand('rampyaaryan.toggleNeko', () => {
+            const config = vscode.workspace.getConfiguration('rampyaaryan');
+            const current = config.get('neko.enabled', true);
+            config.update('neko.enabled', !current, vscode.ConfigurationTarget.Global);
+            if (!current) {
+                vscode.commands.executeCommand('rampyaaryan.nekoView.focus');
+                vscode.window.showInformationMessage('Neko Cat enabled! 🐱');
+            } else {
+                vscode.window.showInformationMessage('Neko Cat disabled.');
+            }
+        }),
+        vscode.commands.registerCommand('rampyaaryan.run', () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                vscode.window.showWarningMessage('Koi file khuli nahi hai! Open a .ram file first.');
+                return;
+            }
+            const filePath = editor.document.fileName;
+            if (!filePath.endsWith('.ram')) {
+                vscode.window.showWarningMessage('Yeh .ram file nahi hai! This is not a .ram file.');
+                return;
+            }
+            editor.document.save().then(() => {
+                let terminal = vscode.window.terminals.find(t => t.name === 'Rampyaaryan');
+                if (!terminal) {
+                    terminal = vscode.window.createTerminal('Rampyaaryan');
+                }
+                terminal.show();
+                terminal.sendText(`rampyaaryan "${filePath}"`);
+            });
+        }),
         vscode.commands.registerCommand('rampyaaryan.namaste', () => {
             vscode.window.showInformationMessage(
                 'Namaste! Jai Shri Ram! Welcome to Rampyaaryan.'
@@ -280,7 +323,6 @@ function activate(context) {
 function deactivate() {
     if (mantraInterval) clearInterval(mantraInterval);
     if (quoteInterval) clearInterval(quoteInterval);
-    if (nekoPanel) nekoPanel.dispose();
 }
 
 module.exports = { activate, deactivate };

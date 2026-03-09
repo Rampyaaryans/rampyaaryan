@@ -2,7 +2,7 @@
   "name": "rampyaaryan",
   "displayName": "Rampyaaryan - Hinglish Programming Language",
   "description": "Syntax highlighting, Indian themes, Neko cat, Hindi UI, file icons and language support for Rampyaaryan (.ram) — India's First Hinglish Programming Language",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "publisher": "Rampyaaryans",
   "license": "SEE LICENSE IN LICENSE",
   "icon": "images/icon.png",
@@ -40,6 +40,16 @@
     "onStartupFinished"
   ],
   "contributes": {
+    "views": {
+      "panel": [
+        {
+          "type": "webview",
+          "id": "rampyaaryan.nekoView",
+          "name": "Neko Cat",
+          "when": "config.rampyaaryan.neko.enabled"
+        }
+      ]
+    },
     "languages": [
       {
         "id": "rampyaaryan",
@@ -96,6 +106,8 @@
     ],
     "commands": [
       { "command": "rampyaaryan.openNeko", "title": "Rampyaaryan: Open Neko Cat" },
+      { "command": "rampyaaryan.toggleNeko", "title": "Rampyaaryan: Toggle Neko Cat ON/OFF" },
+      { "command": "rampyaaryan.run", "title": "Rampyaaryan: Run Current File", "icon": "$(play)" },
       { "command": "rampyaaryan.namaste", "title": "Rampyaaryan: Namaste!" },
       { "command": "rampyaaryan.toggleHindiStatusBar", "title": "Rampyaaryan: Toggle Hindi Status Bar" },
       { "command": "rampyaaryan.toggleMantra", "title": "Rampyaaryan: Toggle Mantra Mode" },
@@ -106,6 +118,11 @@
     "configuration": {
       "title": "Rampyaaryan",
       "properties": {
+        "rampyaaryan.neko.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Neko Cat in the bottom panel"
+        },
         "rampyaaryan.hindiStatusBar.enabled": {
           "type": "boolean",
           "default": true,
@@ -122,7 +139,24 @@
           "description": "Show Namaste greeting on startup"
         }
       }
-    }
+    },
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "rampyaaryan.run",
+          "when": "resourceLangId == rampyaaryan",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "rampyaaryan.run",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "resourceLangId == rampyaaryan"
+      }
+    ]
   },
   "galleryBanner": {
     "color": "#2c2416",
