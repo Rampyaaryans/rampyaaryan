@@ -235,14 +235,34 @@ int main(int argc, char* argv[]) {
             printf("Terminal ko Hindi mein set kar rahe hain...\n\n");
             system("chcp 65001 > nul 2>&1");
 
-            /* Create PowerShell profile with Hindi prompt */
-            char profileDir[512];
+            /* Get real $PROFILE path from PowerShell (handles OneDrive redirection) */
             char profilePath[512];
-            snprintf(profileDir, sizeof(profileDir), "%s\\Documents\\WindowsPowerShell", getenv("USERPROFILE"));
-            snprintf(profilePath, sizeof(profilePath), "%s\\Microsoft.PowerShell_profile.ps1", profileDir);
+            {
+                FILE* pp = _popen("powershell -NoProfile -Command \"echo $PROFILE\"", "r");
+                profilePath[0] = '\0';
+                if (pp) {
+                    if (fgets(profilePath, sizeof(profilePath), pp)) {
+                        /* trim newline */
+                        size_t len = strlen(profilePath);
+                        while (len > 0 && (profilePath[len-1] == '\n' || profilePath[len-1] == '\r'))
+                            profilePath[--len] = '\0';
+                    }
+                    _pclose(pp);
+                }
+                if (profilePath[0] == '\0') {
+                    snprintf(profilePath, sizeof(profilePath), "%s\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1", getenv("USERPROFILE"));
+                }
+            }
 
             /* Create dir if needed */
-            CreateDirectoryA(profileDir, NULL);
+            {
+                char profileDir[512];
+                strncpy(profileDir, profilePath, sizeof(profileDir));
+                profileDir[sizeof(profileDir)-1] = '\0';
+                char* lastSlash = strrchr(profileDir, '\\');
+                if (lastSlash) *lastSlash = '\0';
+                CreateDirectoryA(profileDir, NULL);
+            }
 
             /* Check if already has Hindi prompt */
             FILE* checkFile = fopen(profilePath, "r");
@@ -346,9 +366,24 @@ int main(int argc, char* argv[]) {
             printf("\n  Switching terminal back to English...\n\n");
 #ifdef _WIN32
             system("chcp 437 > nul 2>&1");
-            /* Remove Hindi prompt from PowerShell profile */
+            /* Get real $PROFILE path from PowerShell */
             char profilePath[512];
-            snprintf(profilePath, sizeof(profilePath), "%s\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1", getenv("USERPROFILE"));
+            {
+                FILE* pp = _popen("powershell -NoProfile -Command \"echo $PROFILE\"", "r");
+                profilePath[0] = '\0';
+                if (pp) {
+                    if (fgets(profilePath, sizeof(profilePath), pp)) {
+                        size_t len = strlen(profilePath);
+                        while (len > 0 && (profilePath[len-1] == '\n' || profilePath[len-1] == '\r'))
+                            profilePath[--len] = '\0';
+                    }
+                    _pclose(pp);
+                }
+                if (profilePath[0] == '\0') {
+                    snprintf(profilePath, sizeof(profilePath), "%s\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1", getenv("USERPROFILE"));
+                }
+            }
+            /* Remove Hindi prompt from PowerShell profile */
             FILE* rf = fopen(profilePath, "r");
             if (rf) {
                 char content[65536];
