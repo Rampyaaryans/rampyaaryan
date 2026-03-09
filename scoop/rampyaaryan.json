@@ -1,12 +1,12 @@
 {
-    "version": "3.4.0",
+    "version": "3.5.0",
     "description": "India's First Hinglish Programming Language",
     "homepage": "https://rampyaaryans.github.io/rampyaaryan/",
     "license": {
         "identifier": "Freeware",
         "url": "https://github.com/Rampyaaryans/rampyaaryan/blob/main/LICENSE"
     },
-    "url": "https://github.com/Rampyaaryans/rampyaaryan/releases/download/v3.4.0/Rampyaaryan-Windows-Portable.zip",
+    "url": "https://github.com/Rampyaaryans/rampyaaryan/releases/download/v3.5.0/Rampyaaryan-Windows-Portable.zip",
     "hash": "REPLACE_WITH_ACTUAL_SHA256",
     "bin": "rampyaaryan.exe",
     "checkver": "github",

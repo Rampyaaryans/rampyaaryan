@@ -1,7 +1,7 @@
 class Rampyaaryan < Formula
   desc "India's First Hinglish Programming Language"
   homepage "https://rampyaaryans.github.io/rampyaaryan/"
-  url "https://github.com/Rampyaaryans/rampyaaryan/archive/refs/tags/v3.4.0.tar.gz"
+  url "https://github.com/Rampyaaryans/rampyaaryan/archive/refs/tags/v3.5.0.tar.gz"
   sha256 "REPLACE_WITH_ACTUAL_SHA256"
   license "LicenseRef-Rampyaaryan"
 

@@ -2,7 +2,7 @@
 # https://github.com/microsoft/winget-pkgs
 
 PackageIdentifier: Rampyaaryans.Rampyaaryan
-PackageVersion: 3.4.0
+PackageVersion: 3.5.0
 PackageLocale: en-US
 Publisher: Rampyaaryans
 PublisherUrl: https://github.com/Rampyaaryans
@@ -31,7 +31,7 @@ ManifestVersion: 1.6.0
 Installers:
   - Architecture: x64
     InstallerType: inno
-    InstallerUrl: https://github.com/Rampyaaryans/rampyaaryan/releases/download/v3.4.0/Rampyaaryan.exe
+    InstallerUrl: https://github.com/Rampyaaryans/rampyaaryan/releases/download/v3.5.0/Rampyaaryan.exe
     InstallerSha256: 8D72A8948B7FDD8B5F1BD5DF279EABEE8D989A0B295F874D94E93E9E604A34A3
     InstallerSwitches:
       Silent: /VERYSILENT /SUPPRESSMSGBOXES
