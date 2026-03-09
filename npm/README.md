@@ -16,6 +16,12 @@ rampyaaryan hello.ram
 
 # Start interactive REPL
 rampyaaryan
+
+# Switch terminal to Hindi mode (UTF-8 + Hindi prompt)
+rampyaaryan hindi
+
+# Switch back to English
+rampyaaryan hindi --off
 ```
 
 ## Example
