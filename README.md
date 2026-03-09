@@ -9,7 +9,7 @@
 [![License: Rampyaaryan](https://img.shields.io/badge/License-Rampyaaryan-red.svg)](LICENSE)
 [![Language: C99](https://img.shields.io/badge/Built%20with-C99-blue.svg)]()
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-green.svg)]()
-[![Functions](https://img.shields.io/badge/Built--in%20Functions-145-orange.svg)](https://rampyaaryans.github.io/rampyaaryan/api.html)
+[![Functions](https://img.shields.io/badge/Built--in%20Functions-220%2B-orange.svg)](https://rampyaaryans.github.io/rampyaaryan/api.html)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://rampyaaryans.github.io/rampyaaryan/contributing.html)
 [![VS Code Extension](https://img.shields.io/badge/VS%20Code-Extension-blueviolet.svg)](https://marketplace.visualstudio.com/items?itemName=Rampyaaryans.rampyaaryan)
 

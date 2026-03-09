@@ -26,10 +26,10 @@
 /* ============================================================================
  *  VERSION
  * ============================================================================ */
-#define RAMPYAARYAN_VERSION_MAJOR 1
-#define RAMPYAARYAN_VERSION_MINOR 0
-#define RAMPYAARYAN_VERSION_PATCH 0
-#define RAMPYAARYAN_VERSION "1.0.0"
+#define RAMPYAARYAN_VERSION_MAJOR 3
+#define RAMPYAARYAN_VERSION_MINOR 5
+#define RAMPYAARYAN_VERSION_PATCH 2
+#define RAMPYAARYAN_VERSION "3.5.2"
 #define RAM_VERSION RAMPYAARYAN_VERSION
 #define RAMPYAARYAN_FILE_EXTENSION ".ram"
 

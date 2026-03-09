@@ -1,6 +1,6 @@
 name: rampyaaryan
 base: core22
-version: '3.5.0'
+version: '3.5.2'
 summary: India's First Hinglish Programming Language
 description: |
   Rampyaaryan lets you write code in Hinglish — a mix of Hindi and English.

@@ -2,6 +2,25 @@
 
 All notable changes to Rampyaaryan will be documented in this file.
 
+## [3.5.2] - 2026-03-09
+
+### Added
+- 20 comprehensive E2E test suite covering all language features
+- Hindi terminal mode (`rampyaaryan hindi` / `--off`)
+- 220+ built-in native functions (up from 145)
+- Classes (`kaksha`), enums (`ganana`), try-catch (`koshish/pakdo`)
+- String interpolation, lambda expressions, maps, for-in loops
+- VS Code extension with syntax highlighting, file icons, Neko cat
+- Cross-platform installers (Windows .exe, macOS .pkg, Linux .deb)
+- Package manager support (npm, Homebrew, Scoop, Snap, Winget)
+- GitHub Actions CI/CD for automated releases
+- Documentation site with 9 pages
+
+### Fixed
+- License metadata corrected to Rampyaaryan License
+- Hindi terminal prompt UTF-8 encoding on Windows
+- Profile path resolution for OneDrive users
+
 ## [2.0.0] - 2025-07-12
 
 ### Added — New Data Types

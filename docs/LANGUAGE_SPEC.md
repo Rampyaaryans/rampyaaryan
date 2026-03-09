@@ -1,6 +1,6 @@
 # Rampyaaryan Language Specification
 
-**Version 2.0.0**
+**Version 3.5.2**
 
 ## 1. Lexical Structure
 

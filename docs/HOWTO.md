@@ -40,7 +40,7 @@ sudo mv rampyaaryan /usr/local/bin/
 ### Verify Installation
 ```bash
 rampyaaryan --version
-# Output: Rampyaaryan v1.0.0 (bytecode VM, built ...)
+# Output: Rampyaaryan v3.5.2 (bytecode VM, built ...)
 ```
 
 ---
