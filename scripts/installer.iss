@@ -16,13 +16,14 @@ ArchitecturesInstallIn64BitMode=x64compatible
 ChangesEnvironment=yes
 PrivilegesRequired=admin
 LicenseFile=..\LICENSE
-UninstallDisplayIcon={app}\rampyaaryan.exe
+UninstallDisplayIcon={app}\icon.ico
 
 [Files]
 Source: "..\rampyaaryan.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Rampyaaryan"; Filename: "{app}\rampyaaryan.exe"
+Name: "{group}\Rampyaaryan"; Filename: "{app}\rampyaaryan.exe"; IconFilename: "{app}\icon.ico"
 Name: "{group}\Uninstall Rampyaaryan"; Filename: "{uninstallexe}"
 
 [Registry]
