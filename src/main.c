@@ -282,6 +282,9 @@ int main(int argc, char* argv[]) {
                 FILE* pf = fopen(profilePath, "a");
                 if (pf) {
                     fprintf(pf, "\n# RAMPYAARYAN-HINDI-PROMPT-START\n");
+                    fprintf(pf, "chcp 65001 > $null\n");
+                    fprintf(pf, "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8\n");
+                    fprintf(pf, "[Console]::InputEncoding = [System.Text.Encoding]::UTF8\n");
                     fprintf(pf, "function prompt {\n");
                     fprintf(pf, "    $loc = (Get-Location).Path\n");
                     fprintf(pf, "    Write-Host \"\xe0\xa4\xb0\xe0\xa4\xbe\xe0\xa4\xae\xe0\xa4\xaa\xe0\xa5\x8d\xe0\xa4\xaf\xe0\xa4\xbe\xe0\xa4\xb0\xe0\xa4\xaf\xe0\xa4\xa8 \" -NoNewline -ForegroundColor Yellow\n");
