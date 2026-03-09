@@ -1,0 +1,47 @@
+name: rampyaaryan
+base: core22
+version: '3.4.0'
+summary: India's First Hinglish Programming Language
+description: |
+  Rampyaaryan lets you write code in Hinglish — a mix of Hindi and English.
+  No need to memorize English keywords. Use maano (let), likho (print),
+  agar (if), kaam (function), wapas do (return) and 30+ Hinglish keywords.
+
+  Features:
+  - 145 built-in functions (strings, math, lists, maps, file I/O, date/time)
+  - Bytecode VM with 44 opcodes
+  - Garbage collector (tri-color mark-sweep)
+  - Closures, higher-order functions, exception handling
+  - Interactive REPL with syntax colors
+  - Cross-platform: Windows, Linux, macOS
+  - Zero dependencies — single native binary
+
+  Website: https://rampyaaryans.github.io/rampyaaryan/
+  GitHub: https://github.com/Rampyaaryans/rampyaaryan
+
+grade: stable
+confinement: strict
+license: LicenseRef-Rampyaaryan
+
+architectures:
+  - build-on: amd64
+
+parts:
+  rampyaaryan:
+    plugin: make
+    source: .
+    source-type: local
+    build-packages:
+      - gcc
+      - make
+    override-build: |
+      make release
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp bin/rampyaaryan $SNAPCRAFT_PART_INSTALL/bin/
+
+apps:
+  rampyaaryan:
+    command: bin/rampyaaryan
+    plugs:
+      - home
+      - removable-media
