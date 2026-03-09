@@ -29,17 +29,41 @@ jobs:
         run: |
           cd bin
           tar czf ../rampyaaryan-linux-x64.tar.gz rampyaaryan
+      - name: Build .deb package
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          mkdir -p deb-pkg/DEBIAN
+          mkdir -p deb-pkg/usr/local/bin
+          cp bin/rampyaaryan deb-pkg/usr/local/bin/
+          chmod 755 deb-pkg/usr/local/bin/rampyaaryan
+          cat > deb-pkg/DEBIAN/control << EOF
+          Package: rampyaaryan
+          Version: ${VERSION}
+          Section: devel
+          Priority: optional
+          Architecture: amd64
+          Maintainer: Rampyaaryans <rampyaaryan17@gmail.com>
+          Homepage: https://github.com/Rampyaaryans/rampyaaryan
+          Description: Rampyaaryan - Hinglish Programming Language
+           India's first Hinglish programming language compiler.
+           Write code in a mix of Hindi and English with intuitive keywords.
+          EOF
+          sed -i 's/^          //' deb-pkg/DEBIAN/control
+          dpkg-deb --build deb-pkg rampyaaryan-linux-x64.deb
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: rampyaaryan-linux
           path: bin/rampyaaryan
-      - name: Upload release asset
+      - name: Upload release assets
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: release-linux
-          path: rampyaaryan-linux-x64.tar.gz
+          path: |
+            rampyaaryan-linux-x64.tar.gz
+            rampyaaryan-linux-x64.deb
 
   build-macos:
     runs-on: macos-latest
@@ -80,17 +104,24 @@ jobs:
         shell: bash
         run: |
           7z a rampyaaryan-windows-x64.zip rampyaaryan.exe
+      - name: Build Windows installer
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: cmd
+        run: |
+          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" scripts\installer.iss
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: rampyaaryan-windows
           path: rampyaaryan.exe
-      - name: Upload release asset
+      - name: Upload release assets
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
-          path: rampyaaryan-windows-x64.zip
+          path: |
+            rampyaaryan-windows-x64.zip
+            installer-output/rampyaaryan-windows-x64-setup.exe
 
   build-vscode-extension:
     runs-on: ubuntu-latest
@@ -142,6 +173,8 @@ jobs:
           generate_release_notes: true
           files: |
             release-assets/rampyaaryan-linux-x64.tar.gz
+            release-assets/rampyaaryan-linux-x64.deb
             release-assets/rampyaaryan-macos-x64.tar.gz
             release-assets/rampyaaryan-windows-x64.zip
+            release-assets/rampyaaryan-windows-x64-setup.exe
             release-assets/*.vsix

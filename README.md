@@ -88,8 +88,10 @@ Download the latest release for your platform from [Releases](https://github.com
 
 | Platform | File | Instructions |
 |----------|------|--------------|
-| Windows  | `rampyaaryan-windows-x64.zip` | Extract and add to PATH |
-| Linux    | `rampyaaryan-linux-x64.tar.gz` | `tar xzf rampyaaryan-linux-x64.tar.gz && sudo mv rampyaaryan /usr/local/bin/` |
+| Windows (installer)  | `rampyaaryan-windows-x64-setup.exe` | Run installer — adds to PATH automatically |
+| Windows (portable)  | `rampyaaryan-windows-x64.zip` | Extract and add to PATH manually |
+| Linux (Debian/Ubuntu)   | `rampyaaryan-linux-x64.deb` | `sudo dpkg -i rampyaaryan-linux-x64.deb` |
+| Linux (other)    | `rampyaaryan-linux-x64.tar.gz` | `tar xzf rampyaaryan-linux-x64.tar.gz && sudo mv rampyaaryan /usr/local/bin/` |
 | macOS    | `rampyaaryan-macos-x64.tar.gz` | `tar xzf rampyaaryan-macos-x64.tar.gz && sudo mv rampyaaryan /usr/local/bin/` |
 
 ### Build from Source
