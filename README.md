@@ -88,11 +88,12 @@ Download the latest release for your platform from [Releases](https://github.com
 
 | Platform | File | Instructions |
 |----------|------|--------------|
-| Windows (installer)  | `rampyaaryan-windows-x64-setup.exe` | Run installer — adds to PATH automatically |
-| Windows (portable)  | `rampyaaryan-windows-x64.zip` | Extract and add to PATH manually |
-| Linux (Debian/Ubuntu)   | `rampyaaryan-linux-x64.deb` | `sudo dpkg -i rampyaaryan-linux-x64.deb` |
-| Linux (other)    | `rampyaaryan-linux-x64.tar.gz` | `tar xzf rampyaaryan-linux-x64.tar.gz && sudo mv rampyaaryan /usr/local/bin/` |
-| macOS    | `rampyaaryan-macos-x64.tar.gz` | `tar xzf rampyaaryan-macos-x64.tar.gz && sudo mv rampyaaryan /usr/local/bin/` |
+| Windows (installer)  | `Rampyaaryan.exe` | Run installer — adds to PATH automatically |
+| Windows (portable)  | `Rampyaaryan-Windows-Portable.zip` | Extract and add to PATH manually |
+| Linux (Debian/Ubuntu)   | `Rampyaaryan.deb` | `sudo dpkg -i Rampyaaryan.deb` |
+| Linux (portable)    | `Rampyaaryan-Linux-Portable.tar.gz` | Extract and add to PATH |
+| macOS (installer)   | `Rampyaaryan.pkg` | Run installer — installs to `/usr/local/bin` |
+| macOS (portable)    | `Rampyaaryan-macOS-Portable.tar.gz` | Extract and add to PATH |
 
 ### Build from Source
 

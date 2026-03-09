@@ -28,7 +28,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           cd bin
-          tar czf ../rampyaaryan-linux-x64.tar.gz rampyaaryan
+          tar czf ../Rampyaaryan-Linux-Portable.tar.gz rampyaaryan
       - name: Build .deb package
         if: startsWith(github.ref, 'refs/tags/')
         run: |
@@ -50,7 +50,7 @@ jobs:
            Write code in a mix of Hindi and English with intuitive keywords.
           EOF
           sed -i 's/^          //' deb-pkg/DEBIAN/control
-          dpkg-deb --build deb-pkg rampyaaryan-linux-x64.deb
+          dpkg-deb --build deb-pkg Rampyaaryan.deb
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -62,8 +62,8 @@ jobs:
         with:
           name: release-linux
           path: |
-            rampyaaryan-linux-x64.tar.gz
-            rampyaaryan-linux-x64.deb
+            Rampyaaryan-Linux-Portable.tar.gz
+            Rampyaaryan.deb
 
   build-macos:
     runs-on: macos-latest
@@ -77,18 +77,31 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           cd bin
-          tar czf ../rampyaaryan-macos-x64.tar.gz rampyaaryan
+          tar czf ../Rampyaaryan-macOS-Portable.tar.gz rampyaaryan
+      - name: Build macOS installer package
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          mkdir -p pkg-root/usr/local/bin
+          cp bin/rampyaaryan pkg-root/usr/local/bin/
+          chmod 755 pkg-root/usr/local/bin/rampyaaryan
+          pkgbuild --root pkg-root \
+                   --identifier com.rampyaaryans.rampyaaryan \
+                   --version ${GITHUB_REF_NAME#v} \
+                   --install-location / \
+                   Rampyaaryan.pkg
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: rampyaaryan-macos
           path: bin/rampyaaryan
-      - name: Upload release asset
+      - name: Upload release assets
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: release-macos
-          path: rampyaaryan-macos-x64.tar.gz
+          path: |
+            Rampyaaryan-macOS-Portable.tar.gz
+            Rampyaaryan.pkg
 
   build-windows:
     runs-on: windows-latest
@@ -103,13 +116,18 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a rampyaaryan-windows-x64.zip rampyaaryan.exe
+          7z a Rampyaaryan-Windows-Portable.zip rampyaaryan.exe
+      - name: Convert logo to ICO for installer
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        run: |
+          magick vscode-extension/images/icon.png -define icon:auto-resize=256,128,64,48,32,16 scripts/icon.ico
       - name: Build Windows installer
         if: startsWith(github.ref, 'refs/tags/')
         shell: cmd
         run: |
           "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" scripts\installer.iss
-          copy installer-output\rampyaaryan-windows-x64-setup.exe rampyaaryan-windows-x64-setup.exe
+          copy installer-output\Rampyaaryan.exe Rampyaaryan.exe
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -121,8 +139,8 @@ jobs:
         with:
           name: release-windows
           path: |
-            rampyaaryan-windows-x64.zip
-            rampyaaryan-windows-x64-setup.exe
+            Rampyaaryan-Windows-Portable.zip
+            Rampyaaryan.exe
 
   build-vscode-extension:
     runs-on: ubuntu-latest
@@ -171,11 +189,32 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          body: |
+            ## Rampyaaryan — Hinglish Programming Language
+
+            ### Installers (Recommended)
+            | File | Platform | Description |
+            |------|----------|-------------|
+            | **Rampyaaryan.exe** | Windows | Windows installer — auto-adds to PATH, includes uninstaller |
+            | **Rampyaaryan.deb** | Linux (Debian/Ubuntu) | Debian package — install with `sudo dpkg -i Rampyaaryan.deb` |
+            | **Rampyaaryan.pkg** | macOS | macOS installer package — installs to `/usr/local/bin` |
+
+            ### Portable Binaries
+            | File | Platform | Description |
+            |------|----------|-------------|
+            | Rampyaaryan-Windows-Portable.zip | Windows | Standalone binary — extract and run |
+            | Rampyaaryan-Linux-Portable.tar.gz | Linux | Standalone binary — extract and add to PATH |
+            | Rampyaaryan-macOS-Portable.tar.gz | macOS | Standalone binary — extract and add to PATH |
+
+            ### VS Code Extension
+            | File | Description |
+            |------|-------------|
+            | *.vsix | VS Code extension — syntax highlighting, themes, file icons |
           files: |
-            release-assets/rampyaaryan-linux-x64.tar.gz
-            release-assets/rampyaaryan-linux-x64.deb
-            release-assets/rampyaaryan-macos-x64.tar.gz
-            release-assets/rampyaaryan-windows-x64.zip
-            release-assets/rampyaaryan-windows-x64-setup.exe
+            release-assets/Rampyaaryan.exe
+            release-assets/Rampyaaryan.deb
+            release-assets/Rampyaaryan.pkg
+            release-assets/Rampyaaryan-Windows-Portable.zip
+            release-assets/Rampyaaryan-Linux-Portable.tar.gz
+            release-assets/Rampyaaryan-macOS-Portable.tar.gz
             release-assets/*.vsix
